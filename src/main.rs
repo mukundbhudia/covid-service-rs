@@ -2,6 +2,7 @@ use serde::Deserialize;
 use reqwest::Error;
 
 #[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
 struct User {
     userId: u32,
     id: u32,
