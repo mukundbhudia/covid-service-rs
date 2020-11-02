@@ -1,6 +1,7 @@
 # covid-service-rs
 
-Aim to convert the JavaScript https://github.com/mukundbhudia/covid-service into this Rust project
+Aim to convert the JavaScript https://github.com/mukundbhudia/covid-service into this Rust project.
+The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04.
 
 ## Development
 
