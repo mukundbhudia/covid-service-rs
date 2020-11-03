@@ -10,5 +10,6 @@ edition = "2018"
 serde = { version = "1.0.117", features = ["derive"] }
 reqwest = { version = "0.10", features = ["json"] }
 tokio = { version = "0.2", features = ["full"] }
+csv = "1.1.4"
 log = "0.4.11"
 simple_logger = "1.11.0"
