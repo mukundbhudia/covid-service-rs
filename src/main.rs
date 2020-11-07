@@ -65,29 +65,22 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cases_by_country_url = format!("{}{}", gis_service, cases_by_country_query_params);
     let cases_by_country_response = reqwest::get(&cases_by_country_url).await?;
     let cases_by_country: CasesByCountry = cases_by_country_response.json().await?;
-    println!("cases_by_country {:?}", cases_by_country.features);
+    println!("cases_by_country {:?}", cases_by_country.features.len());
 
     // let users: Vec<User> = response.json().await?;
     // println!("Found {:?} users from {}", users.len(), cases_by_country_url);
     // log::info!("found {} users", users.len());
 
-    let csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
-    let csv_response = reqwest::get(&csv_request_url).await?;
+    let confirmed_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
+    let confirmed_csv_response = reqwest::get(&confirmed_csv_request_url).await?;
+    let confirmed_global_cases = confirmed_csv_response.text().await?;
 
-    let confirmed_global_cases = csv_response.text().await?;
+    let deaths_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
+    let deaths_csv_response = reqwest::get(&deaths_csv_request_url).await?;
+    let deaths_global_cases = deaths_csv_response.text().await?;
 
-    let mut reader = csv::Reader::from_reader(confirmed_global_cases.as_bytes());
-    for record in reader.records() {
-        let record = record?;
-        println!(
-            "{} has lat: {} and long: {} with {} days of data",
-            // &record[0], // Province data
-            &record[1],
-            &record[2],
-            &record[3],
-            record.len() - 4,
-        );
-    }
+    let processed_csv = process_csv(confirmed_global_cases, deaths_global_cases);
+    println!("{:?}", processed_csv);
 
     let total_confirmed_url = format!("{}{}", gis_service, total_confirmed_cases_query_params);
     let total_confirmed_response = reqwest::get(&total_confirmed_url).await?;
@@ -115,4 +108,25 @@ async fn main() -> Result<(), Box<dyn Error>> {
     );
 
     Ok(())
+}
+
+fn process_csv(confirmed: String, deaths: String) -> Result<Vec<Case>, Box<dyn Error>> {
+    let mut cases = Vec::new();
+    let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
+    let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
+    // let test = confirmed_csv_reader.records().zip(deaths_csv_reader.records()).collect::<Vec<_>>();
+    // println!("{:?}", test);
+    for (record, record2) in confirmed_csv_reader.records().zip(deaths_csv_reader.records()) {
+        let record = record?;
+        let record2 = record2?;
+        println!(
+            "{} {} has lat: {} and long: {} with {} days of data, last is: {}",
+            // &record[0], // Province data
+            &record[1], &record2[1],
+            &record[2],
+            &record[3],
+            record.len() - 4, &record[record.len() - 1]
+        );
+    }
+    Ok(cases)
 }
