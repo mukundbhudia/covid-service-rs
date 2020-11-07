@@ -14,6 +14,16 @@ use time::now;
 
 #[derive(Deserialize, Debug)]
 #[allow(non_snake_case)]
+struct TimeSeriesCase {
+    confirmed: i64,
+    deaths: i64,
+    confirmedToday: i64,
+    deathsToday: i64,
+    day: String,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
 struct Case {
     Province_State: Option<String>,
     Country_Region: String,
@@ -24,6 +34,16 @@ struct Case {
     Recovered: i64,
     Deaths: i64,
     Active: i64,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct CsvCase {
+    Province_State: Option<String>,
+    Country_Region: String,
+    Lat: f64,
+    Long_: f64,
+    cases: Vec<TimeSeriesCase>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -79,8 +99,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let deaths_csv_response = reqwest::get(&deaths_csv_request_url).await?;
     let deaths_global_cases = deaths_csv_response.text().await?;
 
-    let processed_csv = process_csv(confirmed_global_cases, deaths_global_cases);
-    println!("{:?}", processed_csv);
+    let processed_csv: Vec<CsvCase> = process_csv(confirmed_global_cases, deaths_global_cases)?;
+    println!("{:?}", processed_csv[0]);
 
     let total_confirmed_url = format!("{}{}", gis_service, total_confirmed_cases_query_params);
     let total_confirmed_response = reqwest::get(&total_confirmed_url).await?;
@@ -110,23 +130,39 @@ async fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn process_csv(confirmed: String, deaths: String) -> Result<Vec<Case>, Box<dyn Error>> {
+fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dyn Error>> {
     let mut cases = Vec::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
-    // let test = confirmed_csv_reader.records().zip(deaths_csv_reader.records()).collect::<Vec<_>>();
-    // println!("{:?}", test);
-    for (record, record2) in confirmed_csv_reader.records().zip(deaths_csv_reader.records()) {
+    let headers = confirmed_csv_reader
+        .headers()?
+        .iter()
+        .map(|x| x.to_string())
+        .collect::<Vec<String>>();
+
+    for (record, record2) in confirmed_csv_reader
+        .records()
+        .zip(deaths_csv_reader.records())
+    {
         let record = record?;
         let record2 = record2?;
-        println!(
-            "{} {} has lat: {} and long: {} with {} days of data, last is: {}",
-            // &record[0], // Province data
-            &record[1], &record2[1],
-            &record[2],
-            &record[3],
-            record.len() - 4, &record[record.len() - 1]
-        );
+        let mut time_series: Vec<TimeSeriesCase> = Vec::new();
+        for i in 4..record.len() {
+            time_series.push(TimeSeriesCase {
+                confirmed: record[i].parse().unwrap_or_default(),
+                deaths: record2[i].parse().unwrap_or_default(),
+                confirmedToday: 0,
+                deathsToday: 0,
+                day: headers[i].to_string(),
+            });
+        }
+        cases.push(CsvCase {
+            Province_State: Some(record[0].to_string()),
+            Country_Region: record[1].to_string(),
+            Lat: record[2].parse().unwrap_or_default(),
+            Long_: record[3].parse().unwrap_or_default(),
+            cases: time_series,
+        });
     }
     Ok(cases)
 }
