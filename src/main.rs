@@ -157,7 +157,10 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
             });
         }
         cases.push(CsvCase {
-            Province_State: Some(record[0].to_string()),
+            Province_State: match record[0].is_empty() {
+                true => None,
+                false => Some(record[0].to_string()),
+            },
             Country_Region: record[1].to_string(),
             Lat: record[2].parse().unwrap_or_default(),
             Long_: record[3].parse().unwrap_or_default(),
