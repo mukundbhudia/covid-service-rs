@@ -4,14 +4,6 @@ use time::now;
 // use log;
 // use simple_logger::SimpleLogger;
 
-// #[derive(Deserialize, Debug)]
-// #[allow(non_snake_case)]
-// struct User {
-//     userId: u32,
-//     id: u32,
-//     title: String
-// }
-
 #[derive(Deserialize, Debug)]
 #[allow(non_snake_case)]
 struct TimeSeriesCase {
@@ -87,10 +79,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cases_by_country: CasesByCountry = cases_by_country_response.json().await?;
     println!("cases_by_country {:?}", cases_by_country.features.len());
 
-    // let users: Vec<User> = response.json().await?;
-    // println!("Found {:?} users from {}", users.len(), cases_by_country_url);
-    // log::info!("found {} users", users.len());
-
     let confirmed_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
     let confirmed_csv_response = reqwest::get(&confirmed_csv_request_url).await?;
     let confirmed_global_cases = confirmed_csv_response.text().await?;
@@ -134,36 +122,36 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
     let mut cases = Vec::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
-    let headers = confirmed_csv_reader
+    let csv_headers = confirmed_csv_reader
         .headers()?
         .iter()
         .map(|x| x.to_string())
         .collect::<Vec<String>>();
 
-    for (record, record2) in confirmed_csv_reader
+    for (confirmed_record, deaths_record) in confirmed_csv_reader
         .records()
         .zip(deaths_csv_reader.records())
     {
-        let record = record?;
-        let record2 = record2?;
+        let confirmed_record = confirmed_record?;
+        let deaths_record = deaths_record?;
         let mut time_series: Vec<TimeSeriesCase> = Vec::new();
-        for i in 4..record.len() {
+        for i in 4..confirmed_record.len() {
             time_series.push(TimeSeriesCase {
-                confirmed: record[i].parse().unwrap_or_default(),
-                deaths: record2[i].parse().unwrap_or_default(),
+                confirmed: confirmed_record[i].parse().unwrap_or_default(),
+                deaths: deaths_record[i].parse().unwrap_or_default(),
                 confirmedToday: 0,
                 deathsToday: 0,
-                day: headers[i].to_string(),
+                day: csv_headers[i].to_string(),
             });
         }
         cases.push(CsvCase {
-            Province_State: match record[0].is_empty() {
+            Province_State: match confirmed_record[0].is_empty() {
                 true => None,
-                false => Some(record[0].to_string()),
+                false => Some(confirmed_record[0].to_string()),
             },
-            Country_Region: record[1].to_string(),
-            Lat: record[2].parse().unwrap_or_default(),
-            Long_: record[3].parse().unwrap_or_default(),
+            Country_Region: confirmed_record[1].to_string(),
+            Lat: confirmed_record[2].parse().unwrap_or_default(),
+            Long_: confirmed_record[3].parse().unwrap_or_default(),
             cases: time_series,
         });
     }
