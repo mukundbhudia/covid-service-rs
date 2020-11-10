@@ -5,9 +5,9 @@ The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04.
 
 ## Pre-requisites
 ### Linux
-* Within Raspberry PI, compilers are needed `sudo apt install build-essential`
-* OpenSSL needed `sudo apt install libssl-dev`
-* pkg-config needed `sudo apt install pkg-config`
+* Make sure essential build tools (including compliers) are installed: `sudo apt install build-essential`
+* OpenSSL will be needed `sudo apt install libssl-dev`
+* pkg-config will be needed `sudo apt install pkg-config`
 
 ### OSX
 * Xcode and Xcode command line tools: `xcode-select --install`
@@ -20,6 +20,8 @@ The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04.
 * Within the repo directory run `cargo run`.
 
 * To make a production build, within the repo directory run `cargo build --release`.
+
+* To run the release build, within the project directory run `target/release/covid-service-rs`
 
 ## Usage
 
