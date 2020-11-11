@@ -165,9 +165,6 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
             let death_cases_yesterday = deaths_record[i - 1].parse::<i64>().unwrap_or_default();
 
             if i != first_day_index {
-                confirmed_today = confirmed_cases;
-                deaths_today = death_cases;
-            } else {
                 confirmed_today = confirmed_cases - confirmed_cases_yesterday;
                 deaths_today = death_cases - death_cases_yesterday;
             }
