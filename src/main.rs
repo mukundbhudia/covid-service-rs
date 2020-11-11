@@ -123,6 +123,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .iter()
         .map(|x| bson::to_document(&x).unwrap())
         .collect::<Vec<_>>();
+    cases_collection.drop(None).await?;
     cases_collection
         .insert_many(processed_csv_bson, None)
         .await?;
