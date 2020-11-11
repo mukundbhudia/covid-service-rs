@@ -123,7 +123,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .iter()
         .map(|x| bson::to_document(&x).unwrap())
         .collect::<Vec<_>>();
-    cases_collection.insert_many(processed_csv_bson, None).await?;
+    cases_collection
+        .insert_many(processed_csv_bson, None)
+        .await?;
     println!("Saved to DB");
 
     let execution_stop = now();
@@ -152,12 +154,28 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
         let confirmed_record = confirmed_record?;
         let deaths_record = deaths_record?;
         let mut time_series: Vec<TimeSeriesCase> = Vec::new();
-        for i in 4..confirmed_record.len() {
+        let first_day_index = 4;
+        let mut confirmed_today = 0;
+        let mut deaths_today = 0;
+        for i in first_day_index..confirmed_record.len() {
+            let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
+            let confirmed_cases_yesterday =
+                confirmed_record[i - 1].parse::<i64>().unwrap_or_default();
+            let death_cases = deaths_record[i].parse::<i64>().unwrap_or_default();
+            let death_cases_yesterday = deaths_record[i - 1].parse::<i64>().unwrap_or_default();
+
+            if i != first_day_index {
+                confirmed_today = confirmed_cases;
+                deaths_today = death_cases;
+            } else {
+                confirmed_today = confirmed_cases - confirmed_cases_yesterday;
+                deaths_today = death_cases - death_cases_yesterday;
+            }
             time_series.push(TimeSeriesCase {
-                confirmed: confirmed_record[i].parse().unwrap_or_default(),
-                deaths: deaths_record[i].parse().unwrap_or_default(),
-                confirmedToday: 0,
-                deathsToday: 0,
+                confirmed: confirmed_cases,
+                deaths: death_cases,
+                confirmedToday: confirmed_today,
+                deathsToday: deaths_today,
                 day: csv_headers[i].to_string(),
             });
         }
