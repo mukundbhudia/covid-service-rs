@@ -1,7 +1,7 @@
 # covid-service-rs
 
 Aim: to convert the JavaScript https://github.com/mukundbhudia/covid-service project into this Rust project.
-The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04.
+The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aarch64-unknown-linux-gnu).
 
 ## Pre-requisites
 ### Linux
@@ -18,14 +18,14 @@ The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04.
 ## Development
 
 * Within the repo directory run `cargo run`.
-
 * To make a production build, within the repo directory run `cargo build --release`.
+* To run the release build, within the project directory run `target/release/covid-service-rs`.
 
-* To run the release build, within the project directory run `target/release/covid-service-rs`
+## Advanced builds
 
-## Usage
-
-Once a production release has been built (see Development), within the repo directory run `cargo run` (with arguments just like in the Development section).
+* Run `rustc --print target-list` to see a list of targets you can build for.
+* You can run `rustup target add <my-target>` to add the specific target to your rustup toolchain. This means you can now compile and build for that target.
+* Then running `cargo b --release --target=<my-target>` would create the build for that environment.
 
 ### Resources
 * To [Johns Hopkins CSSE](https://github.com/CSSEGISandData/COVID-19) for the hard work providing and collating the data.
