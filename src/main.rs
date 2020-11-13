@@ -140,6 +140,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dyn Error>> {
     let mut cases = Vec::new();
+    let mut global_cases: Vec<TimeSeriesCase> = Vec::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
     let csv_headers = confirmed_csv_reader
