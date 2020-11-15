@@ -1,118 +1,16 @@
 use mongodb::{bson, Client};
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
 use time::now;
+
 pub mod alpha3_country_codes;
 use alpha3_country_codes::alpha_codes;
+
+pub mod schema;
+use schema::{TimeSeriesCase, CsvCase, CasesByCountry, Total};
+
 // use log;
 // use simple_logger::SimpleLogger;
-
-#[derive(Deserialize, Debug)]
-#[allow(non_snake_case)]
-struct CaseByLocation {
-    idKey: String,
-    countryCode: String,
-    active: i64,
-    confirmed: i64,
-    country: String,
-    deaths: i64,
-    confirmedCasesToday: i64,
-    deathsToday: i64,
-    lastUpdate: String,
-    latitude: String,
-    longitude: String,
-    province: String,
-    recovered: i64,
-    casesByDate: Vec<TimeSeriesCase>,
-    provincesList: Vec<Province>,
-    hasProvince: bool,
-}
-
-#[derive(Deserialize, Debug)]
-#[allow(non_snake_case)]
-struct Province {
-    idKey: String,
-    province: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[allow(non_snake_case)]
-struct TimeSeriesCase {
-    confirmed: i64,
-    deaths: i64,
-    confirmedToday: i64,
-    deathsToday: i64,
-    day: String,
-}
-
-#[allow(non_snake_case)]
-impl TimeSeriesCase {
-    fn new(
-        confirmed: i64,
-        deaths: i64,
-        confirmedToday: i64,
-        deathsToday: i64,
-        day: String,
-    ) -> TimeSeriesCase {
-        TimeSeriesCase {
-            confirmed: confirmed,
-            deaths: deaths,
-            confirmedToday: confirmedToday,
-            deathsToday: deathsToday,
-            day: day,
-        }
-    }
-}
-
-#[derive(Deserialize, Debug)]
-#[allow(non_snake_case)]
-struct Case {
-    Province_State: Option<String>,
-    Country_Region: String,
-    Last_Update: Option<i64>,
-    Lat: Option<f64>,
-    Long_: Option<f64>,
-    Confirmed: i64,
-    Recovered: i64,
-    Deaths: i64,
-    Active: i64,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
-struct CsvCase {
-    Province_State: Option<String>,
-    Country_Region: String,
-    Lat: f64,
-    Long_: f64,
-    cases: Vec<TimeSeriesCase>,
-}
-
-#[derive(Deserialize, Debug)]
-struct TotalsValue {
-    value: i64,
-}
-
-#[derive(Deserialize, Debug)]
-struct TotalsAttributes {
-    attributes: TotalsValue,
-}
-
-#[derive(Deserialize, Debug)]
-struct Total {
-    features: Vec<TotalsAttributes>,
-}
-
-#[derive(Deserialize, Debug)]
-struct CasesAttributes {
-    attributes: Case,
-}
-
-#[derive(Deserialize, Debug)]
-struct CasesByCountry {
-    features: Vec<CasesAttributes>,
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
