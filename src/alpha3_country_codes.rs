@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-// pub mod alpha3_country_codes {
 pub fn alpha_codes() -> HashMap<String, String> {
     let mut alpha3 = HashMap::new();
     alpha3.insert("Afghanistan".to_string(), "AFG".to_string());
@@ -300,4 +299,3 @@ pub fn alpha_codes() -> HashMap<String, String> {
 
     alpha3
 }
-// }
