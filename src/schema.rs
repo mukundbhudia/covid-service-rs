@@ -2,6 +2,19 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Debug)]
 #[allow(non_snake_case)]
+pub struct GlobalCaseByLocation {
+    active: i64,
+    confirmed: i64,
+    country: String,
+    deaths: i64,
+    confirmedCasesToday: i64,
+    deathsToday: i64,
+    lastUpdate: String,
+    timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
 pub struct CaseByLocation {
     idKey: String,
     countryCode: String,
