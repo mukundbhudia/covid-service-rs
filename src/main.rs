@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
 use time::now;
+pub mod alpha3_country_codes;
+use alpha3_country_codes::alpha_codes;
 // use log;
 // use simple_logger::SimpleLogger;
 
@@ -97,6 +99,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // for coll_name in db.list_collection_names(None).await? {
     //     println!("collection: {}", coll_name);
     // }
+
+    let country_alpha_codes = alpha_codes();
+    println!("{:?} alpha3 county codes", country_alpha_codes.values().count());
 
     let gis_service = String::from("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query");
     let cases_by_country_query_params = String::from("?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=");
@@ -199,7 +204,9 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
                 day.to_string(),
             );
 
-            let ts_case_to_change = global_cases_map.entry(day.to_string()).or_insert(time_series_case);
+            let ts_case_to_change = global_cases_map
+                .entry(day.to_string())
+                .or_insert(time_series_case);
             ts_case_to_change.confirmed += confirmed_cases;
             ts_case_to_change.deaths += death_cases;
             ts_case_to_change.confirmedToday += confirmed_today;
@@ -224,7 +231,10 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
             cases: time_series,
         });
     }
-    println!("Global cases date map keys: {:?}", global_cases_map.keys().collect::<Vec<_>>().len());
+    println!(
+        "Global cases date map keys: {:?}",
+        global_cases_map.keys().collect::<Vec<_>>().len()
+    );
     // println!("Global cases '1/22/20': {:?}", global_cases_map["1/22/20"]);
     // println!("Global cases '11/23/20': {:?}", global_cases_map["1/23/20"]);
     // println!("Global cases '11/13/20': {:?}", global_cases_map["11/13/20"]);
