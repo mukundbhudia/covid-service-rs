@@ -8,6 +8,34 @@ use alpha3_country_codes::alpha_codes;
 // use log;
 // use simple_logger::SimpleLogger;
 
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct CaseByLocation {
+    idKey: String,
+    countryCode: String,
+    active: i64,
+    confirmed: i64,
+    country: String,
+    deaths: i64,
+    confirmedCasesToday: i64,
+    deathsToday: i64,
+    lastUpdate: String,
+    latitude: String,
+    longitude: String,
+    province: String,
+    recovered: i64,
+    casesByDate: Vec<TimeSeriesCase>,
+    provincesList: Vec<Province>,
+    hasProvince: bool,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct Province {
+    idKey: String,
+    province: String,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 struct TimeSeriesCase {
