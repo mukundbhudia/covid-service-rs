@@ -1,11 +1,12 @@
 use mongodb::{bson, Client};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::error::Error;
 use time::now;
 // use log;
 // use simple_logger::SimpleLogger;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 struct TimeSeriesCase {
     confirmed: i64,
@@ -13,6 +14,25 @@ struct TimeSeriesCase {
     confirmedToday: i64,
     deathsToday: i64,
     day: String,
+}
+
+#[allow(non_snake_case)]
+impl TimeSeriesCase {
+    fn new(
+        confirmed: i64,
+        deaths: i64,
+        confirmedToday: i64,
+        deathsToday: i64,
+        day: String,
+    ) -> TimeSeriesCase {
+        TimeSeriesCase {
+            confirmed: confirmed,
+            deaths: deaths,
+            confirmedToday: confirmedToday,
+            deathsToday: deathsToday,
+            day: day,
+        }
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -140,7 +160,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dyn Error>> {
     let mut cases = Vec::new();
-    let mut global_cases: Vec<TimeSeriesCase> = Vec::new();
+    let mut global_cases_map: HashMap<String, TimeSeriesCase> = HashMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
     let csv_headers = confirmed_csv_reader
@@ -170,13 +190,28 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
                 confirmed_today = confirmed_cases - confirmed_cases_yesterday;
                 deaths_today = death_cases - death_cases_yesterday;
             }
-            time_series.push(TimeSeriesCase {
-                confirmed: confirmed_cases,
-                deaths: death_cases,
-                confirmedToday: confirmed_today,
-                deathsToday: deaths_today,
-                day: csv_headers[i].to_string(),
-            });
+            let day = &csv_headers[i];
+            let time_series_case = TimeSeriesCase::new(
+                confirmed_cases,
+                death_cases,
+                confirmed_today,
+                deaths_today,
+                day.to_string(),
+            );
+
+            let ts_case_to_change = global_cases_map.entry(day.to_string()).or_insert(time_series_case);
+            ts_case_to_change.confirmed += confirmed_cases;
+            ts_case_to_change.deaths += death_cases;
+            ts_case_to_change.confirmedToday += confirmed_today;
+            ts_case_to_change.deathsToday += deaths_today;
+
+            time_series.push(TimeSeriesCase::new(
+                confirmed_cases,
+                death_cases,
+                confirmed_today,
+                deaths_today,
+                day.to_string(),
+            ));
         }
         cases.push(CsvCase {
             Province_State: match confirmed_record[0].is_empty() {
@@ -189,5 +224,10 @@ fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dy
             cases: time_series,
         });
     }
+    println!("Global cases date map keys: {:?}", global_cases_map.keys().collect::<Vec<_>>().len());
+    // println!("Global cases '1/22/20': {:?}", global_cases_map["1/22/20"]);
+    // println!("Global cases '11/23/20': {:?}", global_cases_map["1/23/20"]);
+    // println!("Global cases '11/13/20': {:?}", global_cases_map["11/13/20"]);
+    // println!("Global cases '11/14/20': {:?}", global_cases_map["11/14/20"]);
     Ok(cases)
 }
