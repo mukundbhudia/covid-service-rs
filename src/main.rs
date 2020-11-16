@@ -7,7 +7,7 @@ pub mod alpha3_country_codes;
 use alpha3_country_codes::alpha_codes;
 
 pub mod schema;
-use schema::{CasesByCountry, CsvCase, TimeSeriesCase, Total};
+use schema::{CasesByCountry, CsvCase, GlobalCaseByLocation, TimeSeriesCase, Total};
 
 // use log;
 // use simple_logger::SimpleLogger;
@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let client = Client::with_uri_str("mongodb://localhost:27017/").await?;
     let db = client.database("covid19r");
     let cases_collection = db.collection("casesByLocation");
-    // let totals_collection = db.collection("totals");
+    let totals_collection = db.collection("totals");
 
     // for coll_name in db.list_collection_names(None).await? {
     //     println!("collection: {}", coll_name);
@@ -66,21 +66,43 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let total_deaths_response = reqwest::get(&total_deaths_url).await?;
     let total_deaths: Total = total_deaths_response.json().await?;
 
+    let global_confirmed = total_confirmed.features[0].attributes.value;
+    let global_recovered = total_recovered.features[0].attributes.value;
+    let global_deaths = total_deaths.features[0].attributes.value;
+
     println!(
         "Total confirmed: {:?}, recovered: {:?}, deaths: {:?}",
-        total_confirmed.features[0].attributes.value,
-        total_recovered.features[0].attributes.value,
-        total_deaths.features[0].attributes.value,
+        global_confirmed, global_recovered, global_deaths,
     );
+
+    let global_cases = GlobalCaseByLocation {
+        active: global_confirmed - (global_recovered + global_deaths),
+        confirmed: global_confirmed,
+        recovered: global_recovered,
+        deaths: global_deaths,
+        confirmedCasesToday: 0,
+        deathsToday: 0,
+        lastUpdate: "".to_string(),
+        timeSeriesTotalCasesByDate: Vec::new(),
+        timeStamp: 0,
+    };
+
+    let global_cases_bson = bson::to_document(&global_cases).unwrap();
 
     let processed_csv_bson = processed_csv
         .iter()
         .map(|x| bson::to_document(&x).unwrap())
         .collect::<Vec<_>>();
     cases_collection.drop(None).await?;
+    totals_collection.drop(None).await?;
     cases_collection
         .insert_many(processed_csv_bson, None)
         .await?;
+
+    totals_collection
+        .insert_one(global_cases_bson, None)
+        .await?;
+
     println!("Saved to DB");
 
     let execution_stop = now();
