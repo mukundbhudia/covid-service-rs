@@ -9,7 +9,7 @@ pub mod schema;
 use schema::{CasesByCountry, CsvCase, GlobalCaseByLocation, Total};
 
 pub mod data_processing;
-use data_processing::{process_csv};
+use data_processing::process_csv;
 
 // use log;
 // use simple_logger::SimpleLogger;
@@ -52,6 +52,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let deaths_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
     let deaths_csv_response = reqwest::get(&deaths_csv_request_url).await?;
     let deaths_global_cases = deaths_csv_response.text().await?;
+
+    let confirmed_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
+    let confirmed_us_csv_response = reqwest::get(&confirmed_us_csv_request_url).await?;
+    let _confirmed_us_cases = confirmed_us_csv_response.text().await?;
+
+    let deaths_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
+    let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await?;
+    let _deaths_us_cases = deaths_us_csv_response.text().await?;
 
     let processed_csv: Vec<CsvCase> = process_csv(confirmed_global_cases, deaths_global_cases)?;
     println!("{:?} CSV cases... ", processed_csv.len());
