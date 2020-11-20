@@ -10,7 +10,6 @@ pub struct GlobalCaseByLocation {
     pub deaths: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
-    pub lastUpdate: String,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
     pub timeStamp: bson::DateTime,
 }

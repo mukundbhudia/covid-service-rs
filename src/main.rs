@@ -91,7 +91,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         deaths: global_deaths,
         confirmedCasesToday: 0,
         deathsToday: 0,
-        lastUpdate: "".to_string(),
         timeSeriesTotalCasesByDate: Vec::new(),
         timeStamp: From::from(Utc::now()),
     };
