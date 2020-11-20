@@ -1,6 +1,6 @@
+use chrono::Utc;
 use mongodb::{bson, Client};
 use std::error::Error;
-use time::now;
 
 pub mod alpha3_country_codes;
 use alpha3_country_codes::alpha_codes;
@@ -16,7 +16,7 @@ use data_processing::process_csv;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let execution_start = now();
+    let execution_start = Utc::now().time();
     // SimpleLogger::new().init().unwrap();
 
     let client = Client::with_uri_str("mongodb://localhost:27017/").await?;
@@ -94,7 +94,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         deathsToday: 0,
         lastUpdate: "".to_string(),
         timeSeriesTotalCasesByDate: Vec::new(),
-        timeStamp: 0,
+        timeStamp: From::from(Utc::now()),
     };
 
     let global_cases_bson = bson::to_document(&global_cases).unwrap();
@@ -115,10 +115,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("Saved to DB");
 
-    let execution_stop = now();
+    let execution_stop = Utc::now().time();
+    let elapsed_execution_time = execution_stop - execution_start;
     println!(
-        "Script took {} seconds",
-        execution_stop.to_timespec().sec - execution_start.to_timespec().sec
+        "Script took {} seconds and {} milliseconds",
+        elapsed_execution_time.num_seconds(),
+        elapsed_execution_time.num_milliseconds(),
     );
 
     Ok(())

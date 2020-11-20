@@ -1,3 +1,4 @@
+use mongodb::bson;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -11,7 +12,7 @@ pub struct GlobalCaseByLocation {
     pub deathsToday: i64,
     pub lastUpdate: String,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
-    pub timeStamp: i64,
+    pub timeStamp: bson::DateTime,
 }
 
 #[derive(Deserialize, Debug)]
