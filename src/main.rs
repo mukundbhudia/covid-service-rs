@@ -3,13 +3,12 @@ use mongodb::{bson, Client};
 use std::error::Error;
 
 pub mod alpha3_country_codes;
-use alpha3_country_codes::alpha_codes;
-
-pub mod schema;
-use schema::{CasesByCountry, CsvCase, GlobalCaseByLocation, Total};
-
 pub mod data_processing;
+pub mod schema;
+
+use alpha3_country_codes::alpha_codes;
 use data_processing::process_csv;
+use schema::{CasesByCountry, CsvCase, GlobalCaseByLocation, Total};
 
 // use log;
 // use simple_logger::SimpleLogger;
