@@ -8,7 +8,7 @@ pub mod schema;
 
 use alpha3_country_codes::alpha_codes;
 use data_processing::process_csv;
-use schema::{CasesByCountry, GlobalCaseByLocation, Total, TimeSeriesCase};
+use schema::{CasesByCountry, GlobalCaseByLocation, TimeSeriesCase, Total};
 
 // use log;
 // use simple_logger::SimpleLogger;
@@ -74,10 +74,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let net_req_time_stop = Utc::now().time();
 
-    let (processed_csv, global_time_series_map) = process_csv(confirmed_global_cases, deaths_global_cases)?;
+    let (processed_csv, global_time_series_map) =
+        process_csv(confirmed_global_cases, deaths_global_cases)?;
+
     println!("{:?} CSV cases... ", processed_csv.len());
 
-    let _cases_by_country = cases_by_country.features.iter().map(|x| { &x.attributes }).collect::<Vec<_>>();
+    let _cases_by_country = cases_by_country
+        .features
+        .iter()
+        .map(|x| &x.attributes)
+        .collect::<Vec<_>>();
     // TODO: merge_csv_gis_cases()
 
     let global_confirmed = total_confirmed.features[0].attributes.value;
@@ -89,7 +95,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         global_confirmed, global_recovered, global_deaths,
     );
 
-    let global_time_series = global_time_series_map.values().cloned().collect::<Vec<TimeSeriesCase>>();
+    let global_time_series = global_time_series_map
+        .values()
+        .cloned()
+        .collect::<Vec<TimeSeriesCase>>();
     let global_confirmed_today = global_confirmed - global_time_series.last().unwrap().confirmed;
     let deaths_today = global_deaths - global_time_series.last().unwrap().deaths;
 
@@ -121,7 +130,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     totals_collection
         .insert_one(global_cases_bson, None)
         .await?;
-    
+
     let db_time_stop = Utc::now().time();
     println!("Saved to DB");
 
