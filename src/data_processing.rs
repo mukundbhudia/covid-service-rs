@@ -1,11 +1,16 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::error::Error;
 
-use crate::schema::{CsvCase, TimeSeriesCase};
+use crate::schema::{CsvCase, TimeSeriesCase, Case, CaseByLocation};
 
-pub fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Box<dyn Error>> {
+pub fn merge_csv_gis_cases(_csv_cases: Vec<CsvCase>, _gis_cases: Vec<Case>) -> Vec<CaseByLocation> {
+    // TODO: implement merge
+    unimplemented!();
+}
+
+pub fn process_csv(confirmed: String, deaths: String) -> Result<(Vec<CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
     let mut cases = Vec::new();
-    let mut global_cases_map: HashMap<String, TimeSeriesCase> = HashMap::new();
+    let mut global_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
     let csv_headers = confirmed_csv_reader
@@ -45,7 +50,7 @@ pub fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Bo
             );
 
             let ts_case_to_change = global_cases_map
-                .entry(day.to_string())
+                .entry(i)
                 .or_insert(time_series_case);
             ts_case_to_change.confirmed += confirmed_cases;
             ts_case_to_change.deaths += death_cases;
@@ -73,7 +78,7 @@ pub fn process_csv(confirmed: String, deaths: String) -> Result<Vec<CsvCase>, Bo
     }
     println!(
         "Global cases date map keys: {:?}",
-        global_cases_map.keys().collect::<Vec<_>>().len()
+        global_cases_map.len()
     );
-    Ok(cases)
+    Ok((cases, global_cases_map))
 }

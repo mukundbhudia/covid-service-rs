@@ -8,14 +8,14 @@ pub mod schema;
 
 use alpha3_country_codes::alpha_codes;
 use data_processing::process_csv;
-use schema::{CasesByCountry, CsvCase, GlobalCaseByLocation, Total};
+use schema::{CasesByCountry, GlobalCaseByLocation, Total, TimeSeriesCase};
 
 // use log;
 // use simple_logger::SimpleLogger;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let execution_start = Utc::now().time();
+    let execution_time_start = Utc::now().time();
     // SimpleLogger::new().init().unwrap();
 
     let client = Client::with_uri_str("mongodb://localhost:27017/").await?;
@@ -60,9 +60,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await?;
     let _deaths_us_cases = deaths_us_csv_response.text().await?;
 
-    let processed_csv: Vec<CsvCase> = process_csv(confirmed_global_cases, deaths_global_cases)?;
-    println!("{:?} CSV cases... ", processed_csv.len());
-
     let total_confirmed_url = format!("{}{}", gis_service, total_confirmed_cases_query_params);
     let total_confirmed_response = reqwest::get(&total_confirmed_url).await?;
     let total_confirmed: Total = total_confirmed_response.json().await?;
@@ -75,6 +72,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let total_deaths_response = reqwest::get(&total_deaths_url).await?;
     let total_deaths: Total = total_deaths_response.json().await?;
 
+    let net_req_time_stop = Utc::now().time();
+
+    let (processed_csv, global_time_series_map) = process_csv(confirmed_global_cases, deaths_global_cases)?;
+    println!("{:?} CSV cases... ", processed_csv.len());
+
+    let _cases_by_country = cases_by_country.features.iter().map(|x| { &x.attributes }).collect::<Vec<_>>();
+    // TODO: merge_csv_gis_cases()
+
     let global_confirmed = total_confirmed.features[0].attributes.value;
     let global_recovered = total_recovered.features[0].attributes.value;
     let global_deaths = total_deaths.features[0].attributes.value;
@@ -84,23 +89,29 @@ async fn main() -> Result<(), Box<dyn Error>> {
         global_confirmed, global_recovered, global_deaths,
     );
 
+    let global_time_series = global_time_series_map.values().cloned().collect::<Vec<TimeSeriesCase>>();
+    let global_confirmed_today = global_confirmed - global_time_series.last().unwrap().confirmed;
+    let deaths_today = global_deaths - global_time_series.last().unwrap().deaths;
+
     let global_cases = GlobalCaseByLocation {
         active: global_confirmed - (global_recovered + global_deaths),
         confirmed: global_confirmed,
         recovered: global_recovered,
         deaths: global_deaths,
-        confirmedCasesToday: 0,
-        deathsToday: 0,
-        timeSeriesTotalCasesByDate: Vec::new(),
+        confirmedCasesToday: global_confirmed_today,
+        deathsToday: deaths_today,
+        timeSeriesTotalCasesByDate: global_time_series,
         timeStamp: From::from(Utc::now()),
     };
 
-    let global_cases_bson = bson::to_document(&global_cases).unwrap();
+    let db_time_start = Utc::now().time();
 
+    let global_cases_bson = bson::to_document(&global_cases).unwrap();
     let processed_csv_bson = processed_csv
         .iter()
         .map(|x| bson::to_document(&x).unwrap())
         .collect::<Vec<_>>();
+
     cases_collection.drop(None).await?;
     totals_collection.drop(None).await?;
     cases_collection
@@ -110,15 +121,23 @@ async fn main() -> Result<(), Box<dyn Error>> {
     totals_collection
         .insert_one(global_cases_bson, None)
         .await?;
-
+    
+    let db_time_stop = Utc::now().time();
     println!("Saved to DB");
 
-    let execution_stop = Utc::now().time();
-    let elapsed_execution_time = execution_stop - execution_start;
+    let execution_time_stop = Utc::now().time();
+    let elapsed_execution_time = execution_time_stop - execution_time_start;
+    let elapsed_net_req_time = net_req_time_stop - execution_time_start;
+    let elapsed_db_time = db_time_stop - db_time_start;
+
     println!(
-        "Script took {} seconds and {} milliseconds",
+        "Script took {} seconds and {} milliseconds.\n {} second(s) and {} milliseconds of network requests. \n {} second(s) and {} milliseconds of db processing.",
         elapsed_execution_time.num_seconds(),
         elapsed_execution_time.num_milliseconds(),
+        elapsed_net_req_time.num_seconds(),
+        elapsed_net_req_time.num_milliseconds(),
+        elapsed_db_time.num_seconds(),
+        elapsed_db_time.num_milliseconds(),
     );
 
     Ok(())
