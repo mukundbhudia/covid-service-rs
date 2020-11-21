@@ -73,6 +73,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let total_deaths: Total = total_deaths_response.json().await?;
 
     let net_req_time_stop = Utc::now().time();
+    let core_processing_time_start = Utc::now().time();
 
     let (processed_csv, global_time_series_map) =
         process_csv(confirmed_global_cases, deaths_global_cases)?;
@@ -113,13 +114,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
         timeStamp: From::from(Utc::now()),
     };
 
-    let db_time_start = Utc::now().time();
-
     let global_cases_bson = bson::to_document(&global_cases).unwrap();
     let processed_csv_bson = processed_csv
         .iter()
         .map(|x| bson::to_document(&x).unwrap())
         .collect::<Vec<_>>();
+
+    let core_processing_time_stop = Utc::now().time();
+    let db_time_start = Utc::now().time();
 
     cases_collection.drop(None).await?;
     totals_collection.drop(None).await?;
@@ -132,21 +134,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
 
     let db_time_stop = Utc::now().time();
-    println!("Saved to DB");
+    println!("Saved to DB\n");
 
     let execution_time_stop = Utc::now().time();
     let elapsed_execution_time = execution_time_stop - execution_time_start;
+    let elapsed_core_time = core_processing_time_stop - core_processing_time_start;
     let elapsed_net_req_time = net_req_time_stop - execution_time_start;
     let elapsed_db_time = db_time_stop - db_time_start;
 
     println!(
-        "Script took {} seconds and {} milliseconds.\n {} second(s) and {} milliseconds of network requests. \n {} second(s) and {} milliseconds of db processing.",
+        "Script took {} seconds and {} milliseconds.\n {} second(s) and {} milliseconds of network requests. \n {} second(s) and {} milliseconds of db processing. \n {} second(s) and {} milliseconds of core processing.",
         elapsed_execution_time.num_seconds(),
         elapsed_execution_time.num_milliseconds(),
         elapsed_net_req_time.num_seconds(),
         elapsed_net_req_time.num_milliseconds(),
         elapsed_db_time.num_seconds(),
         elapsed_db_time.num_milliseconds(),
+        elapsed_core_time.num_seconds(),
+        elapsed_core_time.num_milliseconds(),
     );
 
     Ok(())
