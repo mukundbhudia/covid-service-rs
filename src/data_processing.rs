@@ -3,9 +3,23 @@ use std::error::Error;
 
 use crate::schema::{Case, CaseByLocation, CsvCase, TimeSeriesCase};
 
-pub fn merge_csv_gis_cases(_csv_cases: Vec<CsvCase>, _gis_cases: Vec<Case>) -> Vec<CaseByLocation> {
+fn hyphenate_string(s: String) -> String {
+    s.replace(' ', "-").to_lowercase()
+}
+
+fn generate_id_key(province: &Option<String>, country: &String) -> String {
+    let country = hyphenate_string(country.to_string());
+    if let Some(province) = province {
+        let province = hyphenate_string(province.to_string());
+        format!("{}-{}", country, province)
+    } else {
+        country
+    }
+}
+
+pub fn merge_csv_gis_cases(csv_cases: Vec<CsvCase>, gis_cases: Vec<Case>) -> Vec<CaseByLocation> {
     // TODO: implement merge
-    unimplemented!();
+    Vec::new()
 }
 
 pub fn process_csv(
@@ -66,12 +80,15 @@ pub fn process_csv(
                 day.to_string(),
             ));
         }
+        let province = match confirmed_record[0].is_empty() {
+            true => None,
+            false => Some(confirmed_record[0].to_string()),
+        };
+        let country = confirmed_record[1].to_string();
+        let _id_key = generate_id_key(&province, &country);
         cases.push(CsvCase {
-            Province_State: match confirmed_record[0].is_empty() {
-                true => None,
-                false => Some(confirmed_record[0].to_string()),
-            },
-            Country_Region: confirmed_record[1].to_string(),
+            Province_State: province,
+            Country_Region: country,
             Lat: confirmed_record[2].parse().unwrap_or_default(),
             Long_: confirmed_record[3].parse().unwrap_or_default(),
             cases: time_series,
