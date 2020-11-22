@@ -17,22 +17,22 @@ pub struct GlobalCaseByLocation {
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
 pub struct CaseByLocation {
-    idKey: String,
-    countryCode: String,
-    active: i64,
-    confirmed: i64,
-    country: String,
-    deaths: i64,
-    confirmedCasesToday: i64,
-    deathsToday: i64,
-    lastUpdate: String,
-    latitude: String,
-    longitude: String,
-    province: String,
-    recovered: i64,
-    casesByDate: Vec<TimeSeriesCase>,
-    provincesList: Vec<Province>,
-    hasProvince: bool,
+    pub idKey: String,
+    pub countryCode: String,
+    pub active: i64,
+    pub confirmed: i64,
+    pub country: String,
+    pub deaths: i64,
+    pub confirmedCasesToday: i64,
+    pub deathsToday: i64,
+    pub lastUpdate: Option<i64>,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub province: Option<String>,
+    pub recovered: i64,
+    pub casesByDate: Vec<TimeSeriesCase>,
+    pub provincesList: Vec<Province>,
+    pub hasProvince: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
