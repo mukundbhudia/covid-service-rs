@@ -9,10 +9,15 @@ fn hyphenate_string(s: String) -> String {
 }
 
 pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
+    country.to_lowercase();
     let country = hyphenate_string(country.to_string());
     if let Some(province) = province {
-        let province = hyphenate_string(province.to_string());
-        format!("{}-{}", country, province)
+        if province == "Unknown" {
+            country
+        } else {
+            let province = hyphenate_string(province.to_string());
+            format!("{}-{}", country, province)
+        }
     } else {
         country
     }
@@ -23,32 +28,38 @@ pub fn merge_csv_gis_cases(
     mut gis_cases: HashMap<String, Case>,
 ) -> Vec<CaseByLocation> {
     let mut cases_by_location = Vec::new();
-    let mut alpha_codes = alpha_codes();
+    let alpha_codes = alpha_codes();
 
     for (id_key, csv_case) in csv_cases.drain() {
-        println!("idkey: {}", id_key);
-        let gis_case = gis_cases.get_mut(&id_key).unwrap();
-        cases_by_location.push(CaseByLocation {
-            idKey: id_key,
-            countryCode: String::new(),     // TODO: Yield value here
-            active: gis_case.Active,
-            confirmed: gis_case.Confirmed,
-            recovered: gis_case.Recovered,
-            country: csv_case.Country_Region,
-            deaths: gis_case.Deaths,
-            confirmedCasesToday: gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
-            deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
-            lastUpdate: gis_case.Last_Update,
-            latitude: csv_case.Lat,
-            longitude: csv_case.Long_,
-            hasProvince: match &csv_case.Province_State {
-                None => false,
-                Some(_) => true,
-            },
-            province: csv_case.Province_State,
-            casesByDate: csv_case.cases,
-            provincesList: Vec::new(), // TODO: Form value here
-        });
+        // println!("idkey: {}, province: {:?}", id_key, csv_case.Province_State);
+        // let gis_case = gis_cases.get_mut(&id_key).unwrap();
+        if let Some(gis_case) = gis_cases.get_mut(&id_key) {
+            let country_code = match alpha_codes.get(&csv_case.Country_Region) {
+                Some(code) => code.to_string(),
+                None => String::new(),
+            };
+            cases_by_location.push(CaseByLocation {
+                idKey: id_key,
+                countryCode: country_code,
+                active: gis_case.Active,
+                confirmed: gis_case.Confirmed,
+                recovered: gis_case.Recovered,
+                country: csv_case.Country_Region,
+                deaths: gis_case.Deaths,
+                confirmedCasesToday: gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
+                deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
+                lastUpdate: gis_case.Last_Update,
+                latitude: csv_case.Lat,
+                longitude: csv_case.Long_,
+                hasProvince: match &csv_case.Province_State {
+                    None => false,
+                    Some(_) => true,
+                },
+                province: csv_case.Province_State,
+                casesByDate: csv_case.cases,
+                provincesList: Vec::new(), // TODO: Form value here
+            });
+        }
     }
     cases_by_location
 }
