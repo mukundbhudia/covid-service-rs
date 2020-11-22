@@ -1,14 +1,15 @@
 use chrono::Utc;
 use mongodb::{bson, Client};
+use std::collections::HashMap;
 use std::error::Error;
 
 pub mod alpha3_country_codes;
 pub mod data_processing;
 pub mod schema;
 
-use alpha3_country_codes::alpha_codes;
-use data_processing::process_csv;
-use schema::{CasesByCountry, GlobalCaseByLocation, TimeSeriesCase, Total};
+// use alpha3_country_codes::alpha_codes;
+use data_processing::{generate_id_key, merge_csv_gis_cases, process_csv};
+use schema::{Case, CasesByCountry, GlobalCaseByLocation, TimeSeriesCase, Total};
 
 // use log;
 // use simple_logger::SimpleLogger;
@@ -27,11 +28,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     //     println!("collection: {}", coll_name);
     // }
 
-    let country_alpha_codes = alpha_codes();
-    println!(
-        "{:?} alpha3 county codes",
-        country_alpha_codes.values().count()
-    );
+    // let country_alpha_codes = alpha_codes();
+    // println!(
+    //     "{:?} alpha3 county codes",
+    //     country_alpha_codes.values().count()
+    // );
 
     let gis_service = String::from("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query");
     let cases_by_country_query_params = String::from("?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=");
@@ -80,12 +81,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("{:?} CSV cases... ", processed_csv.len());
 
-    let _cases_by_country = cases_by_country
+    let cases_by_country = cases_by_country
         .features
         .iter()
-        .map(|x| &x.attributes)
-        .collect::<Vec<_>>();
-    // TODO: merge_csv_gis_cases()
+        .cloned()
+        .map(|x| x.attributes)
+        .map(|y| {
+            let id_key = generate_id_key(&y.Province_State, &y.Country_Region);
+            (id_key, y)
+        })
+        .collect::<HashMap<String, Case>>();
+    let cases_by_location = merge_csv_gis_cases(processed_csv, cases_by_country);
 
     let global_confirmed = total_confirmed.features[0].attributes.value;
     let global_recovered = total_recovered.features[0].attributes.value;
@@ -115,7 +121,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
 
     let global_cases_bson = bson::to_document(&global_cases).unwrap();
-    let processed_csv_bson = processed_csv
+    let processed_cases_by_location = cases_by_location
         .iter()
         .map(|x| bson::to_document(&x).unwrap())
         .collect::<Vec<_>>();
@@ -126,7 +132,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     cases_collection.drop(None).await?;
     totals_collection.drop(None).await?;
     cases_collection
-        .insert_many(processed_csv_bson, None)
+        .insert_many(processed_cases_by_location, None)
         .await?;
 
     totals_collection
