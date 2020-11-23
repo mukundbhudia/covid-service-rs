@@ -1,13 +1,12 @@
 use chrono::Utc;
 use mongodb::{bson, Client};
-use std::collections::HashMap;
 use std::error::Error;
 
 pub mod alpha3_country_codes;
 pub mod data_processing;
 pub mod schema;
 
-use data_processing::{generate_id_key, merge_csv_gis_cases, process_csv};
+use data_processing::{merge_csv_gis_cases, process_cases_by_country, process_csv};
 use schema::{Case, CasesByCountry, GlobalCaseByLocation, TimeSeriesCase, Total};
 
 // use log;
@@ -79,31 +78,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .iter()
         .cloned()
         .map(|x| x.attributes)
-        .map(|y| {
-            // TODO: combine these to one struct: Spain|Brazil|Belgium|Russia|Mexico|Colombia|Peru|Chile|Germany|Italy|Ukraine|Japan|Sweden|India|Pakistan|United Kingdom
-            // y.Province_State = match y.Country_Region.as_str() {
-            //     "Spain" => None,
-            //     "Brazil" => None,
-            //     "Belgium" => None,
-            //     "Russia" => None,
-            //     "Mexico" => None,
-            //     "Colombia" => None,
-            //     "Peru" => None,
-            //     "Chile" => None,
-            //     "Germany" => None,
-            //     "Italy" => None,
-            //     "Ukraine" => None,
-            //     "Japan" => None,
-            //     "Sweden" => None,
-            //     "India" => None,
-            //     "Pakistan" => None,
-            //     "United Kingdom" => None,
-            //     _ => y.Province_State
-            // };
-            let id_key = generate_id_key(&y.Province_State, &y.Country_Region);
-            (id_key, y)
-        })
-        .collect::<HashMap<String, Case>>();
+        .collect::<Vec<Case>>();
+    let cases_by_country = process_cases_by_country(cases_by_country);
     let cases_by_location = merge_csv_gis_cases(processed_csv, cases_by_country);
 
     let global_confirmed = total_confirmed.features[0].attributes.value;

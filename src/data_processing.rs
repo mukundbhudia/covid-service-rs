@@ -64,6 +64,45 @@ pub fn merge_csv_gis_cases(
     cases_by_location
 }
 
+pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, Case> {
+    let mut cases_by_country_map: HashMap<String, Case> = HashMap::new();
+    for case_by_country in cases_by_country {
+        // These countries are fragmented, they are as one in CSVs but are
+        // split by provinces in GIS cases. We join them up in this function
+        let province_state = match case_by_country.Country_Region.as_str() {
+            "Spain" => &None,
+            "Brazil" => &None,
+            "Belgium" => &None,
+            "Russia" => &None,
+            "Mexico" => &None,
+            "Colombia" => &None,
+            "Peru" => &None,
+            "Chile" => &None,
+            "Germany" => &None,
+            "Italy" => &None,
+            "Ukraine" => &None,
+            "Japan" => &None,
+            "Sweden" => &None,
+            "India" => &None,
+            "Pakistan" => &None,
+            // "United Kingdom" => &None,
+            _ => &case_by_country.Province_State,
+        };
+
+        let id_key = generate_id_key(&province_state, &case_by_country.Country_Region);
+
+        if let Some(case_found) = cases_by_country_map.get_mut(&id_key) {
+            case_found.Confirmed += case_by_country.Confirmed;
+            case_found.Recovered += case_by_country.Recovered;
+            case_found.Active += case_by_country.Active;
+            case_found.Deaths += case_by_country.Deaths;
+        } else {
+            cases_by_country_map.insert(id_key, case_by_country);
+        }
+    }
+    cases_by_country_map
+}
+
 pub fn process_csv(
     confirmed: String,
     deaths: String,
