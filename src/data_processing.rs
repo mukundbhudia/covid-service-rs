@@ -69,6 +69,8 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
     for case_by_country in cases_by_country {
         // These countries are fragmented, they are as one in CSVs but are
         // split by provinces in GIS cases. We join them up in this function
+
+        // TODO: Combine these UK provinces Anguilla|Bermuda|British Virgin Islands|Cayman Islands|Channel Islands|Falkland Islands \(Malvinas\)|Gibraltar|Isle of Man|Montserrat|Turks and Caicos Islands
         let province_state = match case_by_country.Country_Region.as_str() {
             "Spain" => &None,
             "Brazil" => &None,
