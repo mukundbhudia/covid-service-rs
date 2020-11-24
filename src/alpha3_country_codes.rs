@@ -17,7 +17,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Australia".to_string(), "AUS".to_string());
     alpha3.insert("Austria".to_string(), "AUT".to_string());
     alpha3.insert("Azerbaijan".to_string(), "AZE".to_string());
-    alpha3.insert("Bahamas (the)".to_string(), "BHS".to_string());
+    alpha3.insert("Bahamas".to_string(), "BHS".to_string());
     alpha3.insert("Bahrain".to_string(), "BHR".to_string());
     alpha3.insert("Bangladesh".to_string(), "BGD".to_string());
     alpha3.insert("Barbados".to_string(), "BRB".to_string());
@@ -37,7 +37,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Bouvet Island".to_string(), "BVT".to_string());
     alpha3.insert("Brazil".to_string(), "BRA".to_string());
     alpha3.insert(
-        "British Indian Ocean Territory (the)".to_string(),
+        "British Indian Ocean Territory".to_string(),
         "IOT".to_string(),
     );
     alpha3.insert("Brunei".to_string(), "BRN".to_string());
@@ -48,9 +48,9 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Cambodia".to_string(), "KHM".to_string());
     alpha3.insert("Cameroon".to_string(), "CMR".to_string());
     alpha3.insert("Canada".to_string(), "CAN".to_string());
-    alpha3.insert("Cayman Islands (the)".to_string(), "CYM".to_string());
+    alpha3.insert("Cayman Islands".to_string(), "CYM".to_string());
     alpha3.insert(
-        "Central African Republic (the)".to_string(),
+        "Central African Republic".to_string(),
         "CAF".to_string(),
     );
     alpha3.insert("Chad".to_string(), "TCD".to_string());
@@ -58,14 +58,14 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("China".to_string(), "CHN".to_string());
     alpha3.insert("Christmas Island".to_string(), "CXR".to_string());
     alpha3.insert(
-        "Cocos (Keeling) Islands (the)".to_string(),
+        "Cocos (Keeling) Islands".to_string(),
         "CCK".to_string(),
     );
     alpha3.insert("Colombia".to_string(), "COL".to_string());
-    alpha3.insert("Comoros (the)".to_string(), "COM".to_string());
+    alpha3.insert("Comoros".to_string(), "COM".to_string());
     alpha3.insert("Congo (Kinshasa)".to_string(), "COD".to_string());
     alpha3.insert("Congo (Brazzaville)".to_string(), "COG".to_string());
-    alpha3.insert("Cook Islands (the)".to_string(), "COK".to_string());
+    alpha3.insert("Cook Islands".to_string(), "COK".to_string());
     alpha3.insert("Costa Rica".to_string(), "CRI".to_string());
     alpha3.insert("Croatia".to_string(), "HRV".to_string());
     alpha3.insert("Cuba".to_string(), "CUB".to_string());
@@ -76,7 +76,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Denmark".to_string(), "DNK".to_string());
     alpha3.insert("Djibouti".to_string(), "DJI".to_string());
     alpha3.insert("Dominica".to_string(), "DMA".to_string());
-    alpha3.insert("Dominican Republic (the)".to_string(), "DOM".to_string());
+    alpha3.insert("Dominican Republic".to_string(), "DOM".to_string());
     alpha3.insert("Ecuador".to_string(), "ECU".to_string());
     alpha3.insert("Egypt".to_string(), "EGY".to_string());
     alpha3.insert("El Salvador".to_string(), "SLV".to_string());
@@ -86,21 +86,21 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Eswatini".to_string(), "SWZ".to_string());
     alpha3.insert("Ethiopia".to_string(), "ETH".to_string());
     alpha3.insert(
-        "Falkland Islands (the) [Malvinas]".to_string(),
+        "Falkland Islands [Malvinas]".to_string(),
         "FLK".to_string(),
     );
-    alpha3.insert("Faroe Islands (the)".to_string(), "FRO".to_string());
+    alpha3.insert("Faroe Islands".to_string(), "FRO".to_string());
     alpha3.insert("Fiji".to_string(), "FJI".to_string());
     alpha3.insert("Finland".to_string(), "FIN".to_string());
     alpha3.insert("France".to_string(), "FRA".to_string());
     alpha3.insert("French Guiana".to_string(), "GUF".to_string());
     alpha3.insert("French Polynesia".to_string(), "PYF".to_string());
     alpha3.insert(
-        "French Southern Territories (the)".to_string(),
+        "French Southern Territories".to_string(),
         "ATF".to_string(),
     );
     alpha3.insert("Gabon".to_string(), "GAB".to_string());
-    alpha3.insert("Gambia (the)".to_string(), "GMB".to_string());
+    alpha3.insert("Gambia".to_string(), "GMB".to_string());
     alpha3.insert("Georgia".to_string(), "GEO".to_string());
     alpha3.insert("Germany".to_string(), "DEU".to_string());
     alpha3.insert("Ghana".to_string(), "GHA".to_string());
@@ -120,7 +120,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
         "Heard Island and McDonald Islands".to_string(),
         "HMD".to_string(),
     );
-    alpha3.insert("Holy See (the)".to_string(), "VAT".to_string());
+    alpha3.insert("Holy See".to_string(), "VAT".to_string());
     alpha3.insert("Honduras".to_string(), "HND".to_string());
     alpha3.insert("Hong Kong".to_string(), "HKG".to_string());
     alpha3.insert("Hungary".to_string(), "HUN".to_string());
@@ -163,7 +163,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Maldives".to_string(), "MDV".to_string());
     alpha3.insert("Mali".to_string(), "MLI".to_string());
     alpha3.insert("Malta".to_string(), "MLT".to_string());
-    alpha3.insert("Marshall Islands (the)".to_string(), "MHL".to_string());
+    alpha3.insert("Marshall Islands".to_string(), "MHL".to_string());
     alpha3.insert("Martinique".to_string(), "MTQ".to_string());
     alpha3.insert("Mauritania".to_string(), "MRT".to_string());
     alpha3.insert("Mauritius".to_string(), "MUS".to_string());
@@ -184,16 +184,16 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Namibia".to_string(), "NAM".to_string());
     alpha3.insert("Nauru".to_string(), "NRU".to_string());
     alpha3.insert("Nepal".to_string(), "NPL".to_string());
-    alpha3.insert("Netherlands (the)".to_string(), "NLD".to_string());
+    alpha3.insert("Netherlands".to_string(), "NLD".to_string());
     alpha3.insert("New Caledonia".to_string(), "NCL".to_string());
     alpha3.insert("New Zealand".to_string(), "NZL".to_string());
     alpha3.insert("Nicaragua".to_string(), "NIC".to_string());
-    alpha3.insert("Niger (the)".to_string(), "NER".to_string());
+    alpha3.insert("Niger".to_string(), "NER".to_string());
     alpha3.insert("Nigeria".to_string(), "NGA".to_string());
     alpha3.insert("Niue".to_string(), "NIU".to_string());
     alpha3.insert("Norfolk Island".to_string(), "NFK".to_string());
     alpha3.insert(
-        "Northern Mariana Islands (the)".to_string(),
+        "Northern Mariana Islands".to_string(),
         "MNP".to_string(),
     );
     alpha3.insert("Norway".to_string(), "NOR".to_string());
@@ -205,15 +205,15 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Papua New Guinea".to_string(), "PNG".to_string());
     alpha3.insert("Paraguay".to_string(), "PRY".to_string());
     alpha3.insert("Peru".to_string(), "PER".to_string());
-    alpha3.insert("Philippines (the)".to_string(), "PHL".to_string());
+    alpha3.insert("Philippines".to_string(), "PHL".to_string());
     alpha3.insert("Pitcairn".to_string(), "PCN".to_string());
     alpha3.insert("Poland".to_string(), "POL".to_string());
     alpha3.insert("Portugal".to_string(), "PRT".to_string());
     alpha3.insert("Puerto Rico".to_string(), "PRI".to_string());
     alpha3.insert("Qatar".to_string(), "QAT".to_string());
-    alpha3.insert("Republic of North Macedonia".to_string(), "MKD".to_string());
+    alpha3.insert("North Macedonia".to_string(), "MKD".to_string());
     alpha3.insert("Romania".to_string(), "ROU".to_string());
-    alpha3.insert("Russian".to_string(), "RUS".to_string());
+    alpha3.insert("Russia".to_string(), "RUS".to_string());
     alpha3.insert("Rwanda".to_string(), "RWA".to_string());
     alpha3.insert("Réunion".to_string(), "REU".to_string());
     alpha3.insert("Saint Barthélemy".to_string(), "BLM".to_string());
@@ -251,12 +251,12 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("South Sudan".to_string(), "SSD".to_string());
     alpha3.insert("Spain".to_string(), "ESP".to_string());
     alpha3.insert("Sri Lanka".to_string(), "LKA".to_string());
-    alpha3.insert("Sudan (the)".to_string(), "SDN".to_string());
+    alpha3.insert("Sudan".to_string(), "SDN".to_string());
     alpha3.insert("Suriname".to_string(), "SUR".to_string());
     alpha3.insert("Svalbard and Jan Mayen".to_string(), "SJM".to_string());
     alpha3.insert("Sweden".to_string(), "SWE".to_string());
     alpha3.insert("Switzerland".to_string(), "CHE".to_string());
-    alpha3.insert("Syrian".to_string(), "SYR".to_string());
+    alpha3.insert("Syria".to_string(), "SYR".to_string());
     alpha3.insert("Taiwan*".to_string(), "TWN".to_string());
     alpha3.insert("Tajikistan".to_string(), "TJK".to_string());
     alpha3.insert("Tanzania".to_string(), "TZA".to_string());
@@ -270,16 +270,16 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Turkey".to_string(), "TUR".to_string());
     alpha3.insert("Turkmenistan".to_string(), "TKM".to_string());
     alpha3.insert(
-        "Turks and Caicos Islands (the)".to_string(),
+        "Turks and Caicos Islands".to_string(),
         "TCA".to_string(),
     );
     alpha3.insert("Tuvalu".to_string(), "TUV".to_string());
     alpha3.insert("Uganda".to_string(), "UGA".to_string());
     alpha3.insert("Ukraine".to_string(), "UKR".to_string());
-    alpha3.insert("United Arab Emirates (the)".to_string(), "ARE".to_string());
+    alpha3.insert("United Arab Emirates".to_string(), "ARE".to_string());
     alpha3.insert("United Kingdom".to_string(), "GBR".to_string());
     alpha3.insert(
-        "United States Minor Outlying Islands (the)".to_string(),
+        "United States Minor Outlying Islands".to_string(),
         "UMI".to_string(),
     );
     alpha3.insert("US".to_string(), "USA".to_string());
