@@ -1,3 +1,4 @@
+use ::std::io::Write;
 use chrono::Utc;
 use mongodb::{bson, Client};
 use std::error::Error;
@@ -17,7 +18,23 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let execution_time_start = Utc::now().time();
     // SimpleLogger::new().init().unwrap();
 
-    let client = Client::with_uri_str("mongodb://localhost:27017/").await?;
+    let args = std::env::args().collect::<Vec<String>>();
+
+    if args.len() != 2 {
+        writeln!(std::io::stderr(), "No mongoDB URI supplied.").unwrap();
+        writeln!(std::io::stderr(), "Usage: covid-service-rs \"DB_URI\"").unwrap();
+        writeln!(
+            std::io::stderr(),
+            "Example: {} \"mongodb://localhost:27017/\". For connection to local mongoDb instance.",
+            args[0]
+        )
+        .unwrap();
+        std::process::exit(1);
+    }
+
+    let db_uri = &args[1];
+
+    let client = Client::with_uri_str(db_uri).await?;
     let db = client.database("covid19r");
     let cases_collection = db.collection("casesByLocation");
     let totals_collection = db.collection("totals");
