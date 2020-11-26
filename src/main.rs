@@ -20,12 +20,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let args = std::env::args().collect::<Vec<String>>();
 
-    if args.len() != 2 {
-        writeln!(std::io::stderr(), "No mongoDB URI supplied.").unwrap();
-        writeln!(std::io::stderr(), "Usage: covid-service-rs \"DB_URI\"").unwrap();
+    if args.len() != 3 {
         writeln!(
             std::io::stderr(),
-            "Example: {} \"mongodb://localhost:27017/\". For connection to local mongoDb instance.",
+            "Incorrect number of arguments supplied."
+        )
+        .unwrap();
+        writeln!(
+            std::io::stderr(),
+            "Usage: covid-service-rs \"DB_URI\" \"DB_NAME\""
+        )
+        .unwrap();
+        writeln!(
+            std::io::stderr(),
+            "Example: {} \"mongodb://localhost:27017/\" \"covid19\". For connection to local mongoDb instance to the database: covid19.",
             args[0]
         )
         .unwrap();
@@ -33,9 +41,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     let db_uri = &args[1];
+    let db_name = &args[2];
 
     let client = Client::with_uri_str(db_uri).await?;
-    let db = client.database("covid19r");
+    let db = client.database(db_name);
     let cases_collection = db.collection("casesByLocation");
     let totals_collection = db.collection("totals");
 
