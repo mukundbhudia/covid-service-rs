@@ -21,6 +21,11 @@ The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aa
 * To make a production build, within the repo directory run `cargo build --release`.
 * To run the release build, within the project directory run `target/release/covid-service-rs`.
 
+## Tests
+* To run **all** your tests, within the repo directory run `cargo test --tests`. This will run all tests in the `/tests` directory.
+
+* To run test a **specific** test such as `/tests/my_test.rs`, within the repo directory run `cargo test --test my_test`.
+
 ## Advanced builds
 
 * Run `rustc --print target-list` to see a list of targets you can build for.
