@@ -4,7 +4,7 @@ use std::error::Error;
 use crate::alpha3_country_codes::alpha_codes;
 use crate::schema::{Case, CaseByLocation, CsvCase, TimeSeriesCase};
 
-fn hyphenate_string(s: String) -> String {
+pub fn hyphenate_string(s: String) -> String {
     s.replace(' ', "-").to_lowercase()
 }
 
