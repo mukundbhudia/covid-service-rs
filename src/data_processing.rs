@@ -11,12 +11,16 @@ pub fn hyphenate_string(s: String) -> String {
 pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
     country.to_lowercase();
     let country = hyphenate_string(country.to_string());
-    if let Some(province) = province {
-        if province == "Unknown" {
-            country
+    if country.len() > 0 {
+        if let Some(province) = province {
+            if province == "Unknown" {
+                country
+            } else {
+                let province = hyphenate_string(province.to_string());
+                format!("{}-{}", country, province)
+            }
         } else {
-            let province = hyphenate_string(province.to_string());
-            format!("{}-{}", country, province)
+            country
         }
     } else {
         country
