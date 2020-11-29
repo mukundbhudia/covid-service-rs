@@ -160,7 +160,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let elapsed_db_time = db_time_stop - db_time_start;
 
     println!(
-        "Script took {} seconds and {} milliseconds.\n {} second(s) and {} milliseconds of network requests. \n {} second(s) and {} milliseconds of db processing. \n {} second(s) and {} milliseconds of core processing.",
+        "Script took {} seconds ({} milliseconds).\n {} second(s) ({} milliseconds) of network requests. \n {} second(s) ({} milliseconds) of db processing. \n {} second(s) ({} milliseconds) of core processing.",
         elapsed_execution_time.num_seconds(),
         elapsed_execution_time.num_milliseconds(),
         elapsed_net_req_time.num_seconds(),
