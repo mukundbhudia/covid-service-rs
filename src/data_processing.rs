@@ -5,7 +5,7 @@ use crate::alpha3_country_codes::alpha_codes;
 use crate::schema::{Case, CaseByLocation, CsvCase, TimeSeriesCase};
 
 pub fn hyphenate_string(s: String) -> String {
-    s.replace(' ', "-").to_lowercase()
+    s.to_lowercase().trim().replace(' ', "-")
 }
 
 pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
