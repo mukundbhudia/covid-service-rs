@@ -1,4 +1,16 @@
 use covid_service_rs::data_processing;
+use covid_service_rs::schema::TimeSeriesCase;
+
+fn vec_compare(v1: Vec<TimeSeriesCase>, v2: Vec<TimeSeriesCase>) -> bool {
+    (v1.len() == v2.len())
+        && v1.iter().zip(v2).all(|(a, b)| {
+            a.confirmed == b.confirmed
+                && a.deaths == b.deaths
+                && a.confirmedToday == b.confirmedToday
+                && a.deathsToday == b.deathsToday
+                && a.day == b.day
+        })
+}
 
 #[test]
 fn test_string_hyphenation() {
@@ -58,4 +70,36 @@ fn test_id_key_gen_no_country() {
         data_processing::generate_id_key(&Some("Hong Kong".to_string()), &"".to_string()),
         "".to_string()
     );
+}
+
+#[test]
+fn test_join_two_time_series_vectors() {
+    let day1_province1 = TimeSeriesCase {
+        confirmed: 20,
+        deaths: 5,
+        confirmedToday: 3,
+        deathsToday: 4,
+        day: "02/12/20".to_string(),
+    };
+    let day1_province2 = TimeSeriesCase {
+        confirmed: 560,
+        deaths: 30,
+        confirmedToday: 56,
+        deathsToday: 33,
+        day: "02/12/20".to_string(),
+    };
+    let combined_day1 = TimeSeriesCase {
+        confirmed: 580,
+        deaths: 35,
+        confirmedToday: 59,
+        deathsToday: 37,
+        day: "02/12/20".to_string(),
+    };
+    let vec1 = Vec::from([day1_province1]);
+    let vec2 = Vec::from([day1_province2]);
+    let result = Vec::from([combined_day1]);
+    assert!(vec_compare(
+        data_processing::combine_time_series_cases(vec1, vec2),
+        result
+    ));
 }
