@@ -27,6 +27,22 @@ pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
     }
 }
 
+pub fn combine_time_series_cases(
+    vec1: Vec<TimeSeriesCase>,
+    vec2: Vec<TimeSeriesCase>,
+) -> Vec<TimeSeriesCase> {
+    vec1.iter()
+        .zip(vec2.iter())
+        .map(|(x, y)| TimeSeriesCase {
+            confirmed: x.confirmed + y.confirmed,
+            deaths: x.deaths + y.deaths,
+            confirmedToday: x.confirmedToday + y.confirmedToday,
+            deathsToday: x.deathsToday + y.deathsToday,
+            day: x.day.clone(),
+        })
+        .collect()
+}
+
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
