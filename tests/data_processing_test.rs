@@ -2,14 +2,7 @@ use covid_service_rs::data_processing;
 use covid_service_rs::schema::TimeSeriesCase;
 
 fn vec_compare(v1: Vec<TimeSeriesCase>, v2: Vec<TimeSeriesCase>) -> bool {
-    (v1.len() == v2.len())
-        && v1.iter().zip(v2).all(|(a, b)| {
-            a.confirmed == b.confirmed
-                && a.deaths == b.deaths
-                && a.confirmedToday == b.confirmedToday
-                && a.deathsToday == b.deathsToday
-                && a.day == b.day
-        })
+    (v1.len() == v2.len()) && v1.iter().zip(v2).all(|(a, b)| a == &b)
 }
 
 #[test]

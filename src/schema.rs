@@ -42,7 +42,7 @@ pub struct Province {
     province: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[allow(non_snake_case)]
 pub struct TimeSeriesCase {
     pub confirmed: i64,
