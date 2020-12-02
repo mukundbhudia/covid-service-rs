@@ -14,7 +14,7 @@ pub struct GlobalCaseByLocation {
     pub timeStamp: bson::DateTime,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct CaseByLocation {
     pub idKey: String,
@@ -35,11 +35,11 @@ pub struct CaseByLocation {
     pub hasProvince: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct Province {
-    idKey: String,
-    province: String,
+    pub idKey: String,
+    pub province: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -85,7 +85,7 @@ pub struct Case {
     pub Active: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct CsvCase {
     pub Province_State: Option<String>,

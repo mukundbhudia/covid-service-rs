@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
 
 use crate::alpha3_country_codes::alpha_codes;
-use crate::schema::{Case, CaseByLocation, CsvCase, TimeSeriesCase};
+use crate::schema::{Case, CaseByLocation, CsvCase, Province, TimeSeriesCase};
 
 pub fn hyphenate_string(s: String) -> String {
     s.to_lowercase().trim().replace(' ', "-")
@@ -48,16 +48,56 @@ pub fn merge_csv_gis_cases(
     mut gis_cases: HashMap<String, Case>,
 ) -> Vec<CaseByLocation> {
     let mut cases_by_location = Vec::new();
+    let mut countries_with_provinces: HashMap<String, CaseByLocation> = HashMap::new();
     let alpha_codes = alpha_codes();
 
     for (id_key, csv_case) in csv_cases.drain() {
-        // println!("idkey: {}, province: {:?}", id_key, csv_case.Province_State);
-        // let gis_case = gis_cases.get_mut(&id_key).unwrap();
         if let Some(gis_case) = gis_cases.get_mut(&id_key) {
             let country_code = match alpha_codes.get(&csv_case.Country_Region) {
                 Some(code) => code.to_string(),
                 None => String::new(),
             };
+            if let Some(province) = &csv_case.Province_State {
+                let id_key = generate_id_key(&Some(province.clone()), &csv_case.Country_Region);
+                let province = Province {
+                    idKey: id_key,
+                    province: province.to_string(),
+                };
+                if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
+                {
+                    case_found.confirmed += gis_case.Confirmed;
+                    case_found.recovered += gis_case.Recovered;
+                    case_found.active += gis_case.Active;
+                    case_found.deaths += gis_case.Deaths;
+                    case_found.casesByDate = combine_time_series_cases(
+                        case_found.casesByDate.clone(),
+                        csv_case.cases.clone(),
+                    );
+                    case_found.provincesList.push(province);
+                } else {
+                    countries_with_provinces.insert(
+                        csv_case.Country_Region.clone(),
+                        CaseByLocation {
+                            idKey: generate_id_key(&None, &csv_case.Country_Region),
+                            countryCode: country_code.clone(),
+                            active: gis_case.Active,
+                            confirmed: gis_case.Confirmed,
+                            recovered: gis_case.Recovered,
+                            country: csv_case.Country_Region.clone(),
+                            deaths: gis_case.Deaths,
+                            confirmedCasesToday: 0, // TODO: fix share issue
+                            deathsToday: 0,         // TODO: fix share issue
+                            lastUpdate: gis_case.Last_Update,
+                            latitude: csv_case.Lat,
+                            longitude: csv_case.Long_,
+                            hasProvince: true,
+                            province: None,
+                            casesByDate: csv_case.cases.clone(),
+                            provincesList: Vec::from([province]),
+                        },
+                    );
+                }
+            }
             cases_by_location.push(CaseByLocation {
                 idKey: id_key,
                 countryCode: country_code,
@@ -81,6 +121,11 @@ pub fn merge_csv_gis_cases(
             });
         }
     }
+    let mut separate_countries = countries_with_provinces
+        .values()
+        .cloned()
+        .collect::<Vec<CaseByLocation>>();
+    cases_by_location.append(&mut separate_countries);
     cases_by_location
 }
 
