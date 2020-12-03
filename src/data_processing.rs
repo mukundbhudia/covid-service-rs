@@ -85,8 +85,8 @@ pub fn merge_csv_gis_cases(
                             recovered: gis_case.Recovered,
                             country: csv_case.Country_Region.clone(),
                             deaths: gis_case.Deaths,
-                            confirmedCasesToday: 0, // TODO: fix share issue
-                            deathsToday: 0,         // TODO: fix share issue
+                            confirmedCasesToday: gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
+                            deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
                             lastUpdate: gis_case.Last_Update,
                             latitude: csv_case.Lat,
                             longitude: csv_case.Long_,
