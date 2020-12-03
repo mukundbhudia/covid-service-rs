@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 
 use crate::alpha3_country_codes::alpha_codes;
@@ -57,10 +57,11 @@ pub fn merge_csv_gis_cases(
                 Some(code) => code.to_string(),
                 None => String::new(),
             };
+            let province = csv_case.Province_State.clone();
+            let id_key = generate_id_key(&province, &csv_case.Country_Region);
             if let Some(province) = &csv_case.Province_State {
-                let id_key = generate_id_key(&Some(province.clone()), &csv_case.Country_Region);
-                let province = Province {
-                    idKey: id_key,
+                let province_type = Province {
+                    idKey: id_key.clone(),
                     province: province.to_string(),
                 };
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
@@ -73,7 +74,7 @@ pub fn merge_csv_gis_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
                     );
-                    case_found.provincesList.push(province);
+                    case_found.provincesList.push(province_type);
                 } else {
                     countries_with_provinces.insert(
                         csv_case.Country_Region.clone(),
@@ -90,10 +91,10 @@ pub fn merge_csv_gis_cases(
                             lastUpdate: gis_case.Last_Update,
                             latitude: csv_case.Lat,
                             longitude: csv_case.Long_,
-                            hasProvince: true,
+                            hasProvince: false,
                             province: None,
                             casesByDate: csv_case.cases.clone(),
-                            provincesList: Vec::from([province]),
+                            provincesList: Vec::from([province_type]),
                         },
                     );
                 }
@@ -115,7 +116,7 @@ pub fn merge_csv_gis_cases(
                     None => false,
                     Some(_) => true,
                 },
-                province: csv_case.Province_State,
+                province: province,
                 casesByDate: csv_case.cases,
                 provincesList: Vec::new(), // TODO: Form value here
             });
@@ -175,6 +176,7 @@ pub fn process_csv(
     deaths: String,
 ) -> Result<(HashMap<String, CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
     let mut cases = HashMap::new();
+    let mut countries_encountered: HashSet<String> = HashSet::new();
     let mut global_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
@@ -228,12 +230,21 @@ pub fn process_csv(
                 day.to_string(),
             ));
         }
+
         let province = match confirmed_record[0].is_empty() {
-            true => None,
+            true => {
+                if countries_encountered.contains(&confirmed_record[1]) {
+                    Some("mainland".to_string())
+                } else {
+                    None
+                }
+            },
             false => Some(confirmed_record[0].to_string()),
         };
         let country = confirmed_record[1].to_string();
+        countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
+        // println!("province: {:?}, country: {}", province, country);
         cases.insert(
             id_key,
             CsvCase {
