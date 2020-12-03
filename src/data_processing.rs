@@ -86,7 +86,8 @@ pub fn merge_csv_gis_cases(
                             recovered: gis_case.Recovered,
                             country: csv_case.Country_Region.clone(),
                             deaths: gis_case.Deaths,
-                            confirmedCasesToday: gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
+                            confirmedCasesToday: gis_case.Confirmed
+                                - csv_case.cases.last().unwrap().confirmed,
                             deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
                             lastUpdate: gis_case.Last_Update,
                             latitude: csv_case.Lat,
@@ -238,7 +239,7 @@ pub fn process_csv(
                 } else {
                     None
                 }
-            },
+            }
             false => Some(confirmed_record[0].to_string()),
         };
         let country = confirmed_record[1].to_string();
