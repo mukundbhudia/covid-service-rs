@@ -141,7 +141,6 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
         // These countries are fragmented, they are as one in CSVs but are
         // split by provinces in GIS cases. We join them up in this function
 
-        // TODO: Combine these UK provinces Anguilla|Bermuda|British Virgin Islands|Cayman Islands|Channel Islands|Falkland Islands \(Malvinas\)|Gibraltar|Isle of Man|Montserrat|Turks and Caicos Islands
         let province_state = match case_by_country.Country_Region.as_str() {
             "Spain" => &None,
             "Brazil" => &None,
@@ -163,19 +162,32 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
         };
 
         let mut id_key = generate_id_key(&province_state, &case_by_country.Country_Region);
+        let mainland_id_key = generate_id_key(
+            &Some("mainland".to_string()),
+            &case_by_country.Country_Region,
+        );
 
         if case_by_country.Province_State.is_none() {
-            let mainland_id_key = generate_id_key(
-                &Some("mainland".to_string()),
-                &case_by_country.Country_Region,
-            );
             id_key = match case_by_country.Country_Region.as_str() {
                 "France" => mainland_id_key,
-                "United Kingdom" => mainland_id_key,
                 "Denmark" => mainland_id_key,
                 "Netherlands" => mainland_id_key,
                 _ => id_key,
             };
+        } else {
+            if case_by_country.Country_Region.as_str() == "United Kingdom" {
+                if let Some(uk_province) = &case_by_country.Province_State {
+                    let uk_province = uk_province.as_str();
+                    id_key = match uk_province {
+                        "England" => mainland_id_key,
+                        "Wales" => mainland_id_key,
+                        "Scotland" => mainland_id_key,
+                        "Northern Ireland" => mainland_id_key,
+                        "Unknown" => mainland_id_key,
+                        _ => id_key,
+                    }
+                }
+            }
         }
 
         if let Some(case_found) = cases_by_country_map.get_mut(&id_key) {
