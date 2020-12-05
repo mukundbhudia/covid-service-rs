@@ -168,7 +168,18 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
             _ => &case_by_country.Province_State,
         };
 
-        let id_key = generate_id_key(&province_state, &case_by_country.Country_Region);
+        let mut id_key = generate_id_key(&province_state, &case_by_country.Country_Region);
+
+        if case_by_country.Province_State.is_none() {
+            let mainland_id_key = generate_id_key(&Some("mainland".to_string()), &case_by_country.Country_Region);
+            id_key = match case_by_country.Country_Region.as_str() {
+                "France" => mainland_id_key,
+                "United Kingdom" => mainland_id_key,
+                "Denmark" => mainland_id_key,
+                "Netherlands" => mainland_id_key,
+                _ => id_key,
+            };
+        }
 
         if let Some(case_found) = cases_by_country_map.get_mut(&id_key) {
             case_found.Confirmed += case_by_country.Confirmed;
@@ -255,7 +266,6 @@ pub fn process_csv(
         let country = confirmed_record[1].to_string();
         countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
-        // println!("province: {:?}, country: {}", province, country);
         cases.insert(
             id_key,
             CsvCase {
