@@ -17,6 +17,7 @@ pub struct GlobalCaseByLocation {
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
+    pub globalCasesByDate: Vec<String>,
     pub timeStamp: bson::DateTime,
 }
 
@@ -53,7 +54,7 @@ pub struct Province {
 pub struct TimeSeriesCase {
     pub confirmed: i64,
     pub deaths: i64,
-    pub confirmedToday: i64,
+    pub confirmedCasesToday: i64,
     pub deathsToday: i64,
     pub day: String,
 }
@@ -63,14 +64,14 @@ impl TimeSeriesCase {
     pub fn new(
         confirmed: i64,
         deaths: i64,
-        confirmedToday: i64,
+        confirmedCasesToday: i64,
         deathsToday: i64,
         day: String,
     ) -> TimeSeriesCase {
         TimeSeriesCase {
             confirmed: confirmed,
             deaths: deaths,
-            confirmedToday: confirmedToday,
+            confirmedCasesToday: confirmedCasesToday,
             deathsToday: deathsToday,
             day: day,
         }

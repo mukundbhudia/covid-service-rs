@@ -97,21 +97,21 @@ fn test_join_two_time_series_vectors() {
     let day1_province1 = TimeSeriesCase {
         confirmed: 20,
         deaths: 5,
-        confirmedToday: 3,
+        confirmedCasesToday: 3,
         deathsToday: 4,
         day: "02/12/20".to_string(),
     };
     let day1_province2 = TimeSeriesCase {
         confirmed: 560,
         deaths: 30,
-        confirmedToday: 56,
+        confirmedCasesToday: 56,
         deathsToday: 33,
         day: "02/12/20".to_string(),
     };
     let combined_day1 = TimeSeriesCase {
         confirmed: 580,
         deaths: 35,
-        confirmedToday: 59,
+        confirmedCasesToday: 59,
         deathsToday: 37,
         day: "02/12/20".to_string(),
     };

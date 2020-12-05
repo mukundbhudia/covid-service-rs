@@ -36,7 +36,7 @@ pub fn combine_time_series_cases(
         .map(|(x, y)| TimeSeriesCase {
             confirmed: x.confirmed + y.confirmed,
             deaths: x.deaths + y.deaths,
-            confirmedToday: x.confirmedToday + y.confirmedToday,
+            confirmedCasesToday: x.confirmedCasesToday + y.confirmedCasesToday,
             deathsToday: x.deathsToday + y.deathsToday,
             day: x.day.clone(),
         })
@@ -267,7 +267,7 @@ pub fn process_csv(
             let ts_case_to_change = time_series_cases_map.entry(i).or_insert(time_series_case);
             ts_case_to_change.confirmed += confirmed_cases;
             ts_case_to_change.deaths += death_cases;
-            ts_case_to_change.confirmedToday += confirmed_today;
+            ts_case_to_change.confirmedCasesToday += confirmed_today;
             ts_case_to_change.deathsToday += deaths_today;
 
             time_series.push(TimeSeriesCase::new(

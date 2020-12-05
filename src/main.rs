@@ -90,10 +90,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
 
-    let (mut processed_csv, mut global_time_series_map) =
+    let (mut processed_csv, global_time_series_map) =
         process_csv(confirmed_global_cases, deaths_global_cases, Region::Global)?;
 
-    let (us_processed_csv, mut us_time_series_map) =
+    let (us_processed_csv, us_time_series_map) =
         process_csv(confirmed_us_cases, deaths_us_cases, Region::US)?;
 
     println!(
@@ -103,8 +103,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     );
 
     processed_csv.extend(us_processed_csv);
-    // TODO: correctly append US and Global time series
-    // global_time_series_map.append(&mut us_time_series_map);
 
     let cases_by_country = cases_by_country
         .features
@@ -125,9 +123,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     );
 
     let global_time_series = global_time_series_map
-        .values()
-        .cloned()
+        .iter()
+        .zip(us_time_series_map.iter())
+        .map(|((_, global_ts), (_, us_ts))| TimeSeriesCase {
+            confirmed: global_ts.confirmed + us_ts.confirmed,
+            deaths: global_ts.deaths + us_ts.deaths,
+            confirmedCasesToday: global_ts.confirmedCasesToday + us_ts.confirmedCasesToday,
+            deathsToday: global_ts.deathsToday + us_ts.deathsToday,
+            day: global_ts.day.clone(),
+        })
         .collect::<Vec<TimeSeriesCase>>();
+
     let global_confirmed_today = global_confirmed - global_time_series.last().unwrap().confirmed;
     let deaths_today = global_deaths - global_time_series.last().unwrap().deaths;
 
@@ -139,6 +145,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         confirmedCasesToday: global_confirmed_today,
         deathsToday: deaths_today,
         timeSeriesTotalCasesByDate: global_time_series,
+        globalCasesByDate: Vec::new(),
         timeStamp: From::from(Utc::now()),
     };
 
