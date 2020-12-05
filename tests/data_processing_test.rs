@@ -66,6 +66,33 @@ fn test_id_key_gen_no_country() {
 }
 
 #[test]
+fn test_id_key_gen_with_quote_mark() {
+    assert_eq!(
+        data_processing::generate_id_key(&None, &"Cote d'Ivoire".to_string()),
+        "cote-d'ivoire".to_string()
+    );
+}
+
+#[test]
+fn test_id_key_gen_with_bracket() {
+    assert_eq!(
+        data_processing::generate_id_key(&None, &"Congo (Brazzaville)".to_string()),
+        "congo-brazzaville".to_string()
+    );
+}
+
+#[test]
+fn test_id_key_gen_with_comma() {
+    assert_eq!(
+        data_processing::generate_id_key(
+            &Some("Bonaire, Sint Eustatius and Saba".to_string()),
+            &"Congo (Brazzaville)".to_string()
+        ),
+        "netherlands-bonaire-sint-eustatius-and-saba".to_string()
+    );
+}
+
+#[test]
 fn test_join_two_time_series_vectors() {
     let day1_province1 = TimeSeriesCase {
         confirmed: 20,
