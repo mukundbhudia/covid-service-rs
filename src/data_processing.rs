@@ -157,7 +157,6 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
             "Sweden" => &None,
             "India" => &None,
             "Pakistan" => &None,
-            // "United Kingdom" => &None,
             _ => &case_by_country.Province_State,
         };
 
@@ -167,27 +166,28 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
             &case_by_country.Country_Region,
         );
 
-        if case_by_country.Province_State.is_none() {
+        if let Some(province_name) = &case_by_country.Province_State {
+            // UK is fragmented into different states in the GIS cases from its
+            // mainland appearance in the CSV file. Below we assert them
+            // to be part of the mainland
+            if case_by_country.Country_Region.as_str() == "United Kingdom" {
+                let province_name = province_name.as_str();
+                id_key = match province_name {
+                    "England" => mainland_id_key,
+                    "Wales" => mainland_id_key,
+                    "Scotland" => mainland_id_key,
+                    "Northern Ireland" => mainland_id_key,
+                    "Unknown" => mainland_id_key,
+                    _ => id_key,
+                }
+            }
+        } else {
             id_key = match case_by_country.Country_Region.as_str() {
                 "France" => mainland_id_key,
                 "Denmark" => mainland_id_key,
                 "Netherlands" => mainland_id_key,
                 _ => id_key,
             };
-        } else {
-            if case_by_country.Country_Region.as_str() == "United Kingdom" {
-                if let Some(uk_province) = &case_by_country.Province_State {
-                    let uk_province = uk_province.as_str();
-                    id_key = match uk_province {
-                        "England" => mainland_id_key,
-                        "Wales" => mainland_id_key,
-                        "Scotland" => mainland_id_key,
-                        "Northern Ireland" => mainland_id_key,
-                        "Unknown" => mainland_id_key,
-                        _ => id_key,
-                    }
-                }
-            }
         }
 
         if let Some(case_found) = cases_by_country_map.get_mut(&id_key) {
