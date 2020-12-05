@@ -8,7 +8,7 @@ pub mod data_processing;
 pub mod schema;
 
 use data_processing::{merge_csv_gis_cases, process_cases_by_country, process_csv};
-use schema::{Case, CasesByCountry, GlobalCaseByLocation, TimeSeriesCase, Total};
+use schema::{Case, CasesByCountry, GlobalCaseByLocation, Region, TimeSeriesCase, Total};
 
 // use log;
 // use simple_logger::SimpleLogger;
@@ -67,13 +67,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let deaths_csv_response = reqwest::get(&deaths_csv_request_url).await?;
     let deaths_global_cases = deaths_csv_response.text().await?;
 
-    let confirmed_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
+    let confirmed_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv");
     let confirmed_us_csv_response = reqwest::get(&confirmed_us_csv_request_url).await?;
-    let _confirmed_us_cases = confirmed_us_csv_response.text().await?;
+    let confirmed_us_cases = confirmed_us_csv_response.text().await?;
 
-    let deaths_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
+    let deaths_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv");
     let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await?;
-    let _deaths_us_cases = deaths_us_csv_response.text().await?;
+    let deaths_us_cases = deaths_us_csv_response.text().await?;
 
     let total_confirmed_url = format!("{}{}", gis_service, total_confirmed_cases_query_params);
     let total_confirmed_response = reqwest::get(&total_confirmed_url).await?;
@@ -90,10 +90,21 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
 
-    let (processed_csv, global_time_series_map) =
-        process_csv(confirmed_global_cases, deaths_global_cases)?;
+    let (mut processed_csv, mut global_time_series_map) =
+        process_csv(confirmed_global_cases, deaths_global_cases, Region::Global)?;
 
-    println!("{:?} CSV cases... ", processed_csv.len());
+    let (us_processed_csv, mut us_time_series_map) =
+        process_csv(confirmed_us_cases, deaths_us_cases, Region::US)?;
+
+    println!(
+        "{:?} Global and {:?} US CSV cases... ",
+        processed_csv.len(),
+        us_processed_csv.len()
+    );
+
+    processed_csv.extend(us_processed_csv);
+    // TODO: correctly append US and Global time series
+    // global_time_series_map.append(&mut us_time_series_map);
 
     let cases_by_country = cases_by_country
         .features

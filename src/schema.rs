@@ -1,6 +1,12 @@
 use mongodb::bson;
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug)]
+pub enum Region {
+    Global,
+    US,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
 pub struct GlobalCaseByLocation {

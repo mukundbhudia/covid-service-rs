@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 
 use crate::alpha3_country_codes::alpha_codes;
-use crate::schema::{Case, CaseByLocation, CsvCase, Province, TimeSeriesCase};
+use crate::schema::{Case, CaseByLocation, CsvCase, Province, Region, TimeSeriesCase};
 
 pub fn hyphenate_string(s: String) -> String {
     s.to_lowercase().trim().replace(' ', "-")
@@ -205,10 +205,11 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
 pub fn process_csv(
     confirmed: String,
     deaths: String,
+    region: Region,
 ) -> Result<(HashMap<String, CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
     let mut cases = HashMap::new();
     let mut countries_encountered: HashSet<String> = HashSet::new();
-    let mut global_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
+    let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
     let csv_headers = confirmed_csv_reader
@@ -224,17 +225,33 @@ pub fn process_csv(
         let confirmed_record = confirmed_record?;
         let deaths_record = deaths_record?;
         let mut time_series: Vec<TimeSeriesCase> = Vec::new();
-        let first_day_index = 4;
         let mut confirmed_today = 0;
         let mut deaths_today = 0;
-        for i in first_day_index..confirmed_record.len() {
+
+        let mut country_csv_header_index = 1;
+        let mut province_csv_header_index = 0;
+        let mut latitude_csv_header_index = 2;
+        let mut longitude_csv_header_index = 3;
+        let mut first_day_csv_header_index = 4;
+        match region {
+            Region::US => {
+                country_csv_header_index = 7;
+                province_csv_header_index = 6;
+                latitude_csv_header_index = 8;
+                longitude_csv_header_index = 9;
+                first_day_csv_header_index = 11;
+            }
+            _ => {}
+        }
+
+        for i in first_day_csv_header_index..confirmed_record.len() {
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
             let confirmed_cases_yesterday =
                 confirmed_record[i - 1].parse::<i64>().unwrap_or_default();
             let death_cases = deaths_record[i].parse::<i64>().unwrap_or_default();
             let death_cases_yesterday = deaths_record[i - 1].parse::<i64>().unwrap_or_default();
 
-            if i != first_day_index {
+            if i != first_day_csv_header_index {
                 confirmed_today = confirmed_cases - confirmed_cases_yesterday;
                 deaths_today = death_cases - death_cases_yesterday;
             }
@@ -247,7 +264,7 @@ pub fn process_csv(
                 day.to_string(),
             );
 
-            let ts_case_to_change = global_cases_map.entry(i).or_insert(time_series_case);
+            let ts_case_to_change = time_series_cases_map.entry(i).or_insert(time_series_case);
             ts_case_to_change.confirmed += confirmed_cases;
             ts_case_to_change.deaths += death_cases;
             ts_case_to_change.confirmedToday += confirmed_today;
@@ -262,17 +279,17 @@ pub fn process_csv(
             ));
         }
 
-        let province = match confirmed_record[0].is_empty() {
+        let province = match confirmed_record[province_csv_header_index].is_empty() {
             true => {
-                if countries_encountered.contains(&confirmed_record[1]) {
+                if countries_encountered.contains(&confirmed_record[country_csv_header_index]) {
                     Some("mainland".to_string())
                 } else {
                     None
                 }
             }
-            false => Some(confirmed_record[0].to_string()),
+            false => Some(confirmed_record[province_csv_header_index].to_string()),
         };
-        let country = confirmed_record[1].to_string();
+        let country = confirmed_record[country_csv_header_index].to_string();
         countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
         cases.insert(
@@ -280,12 +297,20 @@ pub fn process_csv(
             CsvCase {
                 Province_State: province,
                 Country_Region: country,
-                Lat: confirmed_record[2].parse().unwrap_or_default(),
-                Long_: confirmed_record[3].parse().unwrap_or_default(),
+                Lat: confirmed_record[latitude_csv_header_index]
+                    .parse()
+                    .unwrap_or_default(),
+                Long_: confirmed_record[longitude_csv_header_index]
+                    .parse()
+                    .unwrap_or_default(),
                 cases: time_series,
             },
         );
     }
-    println!("Global cases date map keys: {:?}", global_cases_map.len());
-    Ok((cases, global_cases_map))
+    println!(
+        "{:?} cases date map keys: {:?}",
+        region,
+        time_series_cases_map.len()
+    );
+    Ok((cases, time_series_cases_map))
 }
