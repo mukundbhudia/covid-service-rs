@@ -103,13 +103,7 @@ pub fn merge_csv_gis_cases(
             }
 
             let has_province = match &csv_case.Province_State {
-                None => {
-                    if countries_with_provinces.contains_key(&country_code) {
-                        true
-                    } else {
-                        false
-                    }
-                },
+                None => countries_with_provinces.contains_key(&country_code),
                 Some(_) => false,
             };
 
