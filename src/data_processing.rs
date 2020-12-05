@@ -75,6 +75,7 @@ pub fn merge_csv_gis_cases(
                         csv_case.cases.clone(),
                     );
                     case_found.provincesList.push(province_type);
+                    case_found.hasProvince = true;
                 } else {
                     countries_with_provinces.insert(
                         csv_case.Country_Region.clone(),
@@ -100,6 +101,18 @@ pub fn merge_csv_gis_cases(
                     );
                 }
             }
+
+            let has_province = match &csv_case.Province_State {
+                None => {
+                    if countries_with_provinces.contains_key(&country_code) {
+                        true
+                    } else {
+                        false
+                    }
+                },
+                Some(_) => false,
+            };
+
             cases_by_location.push(CaseByLocation {
                 idKey: id_key,
                 countryCode: country_code,
@@ -113,10 +126,7 @@ pub fn merge_csv_gis_cases(
                 lastUpdate: gis_case.Last_Update,
                 latitude: csv_case.Lat,
                 longitude: csv_case.Long_,
-                hasProvince: match &csv_case.Province_State {
-                    None => false,
-                    Some(_) => true,
-                },
+                hasProvince: has_province,
                 province: province,
                 casesByDate: csv_case.cases,
                 provincesList: Vec::new(), // TODO: Form value here
