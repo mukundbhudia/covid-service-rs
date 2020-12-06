@@ -64,12 +64,18 @@ pub fn merge_csv_gis_cases(
                     idKey: id_key.clone(),
                     province: province.to_string(),
                 };
+                let confirmed_cases_today =
+                    gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed;
+                let deaths_today = gis_case.Deaths - csv_case.cases.last().unwrap().deaths;
+
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
                 {
                     case_found.confirmed += gis_case.Confirmed;
                     case_found.recovered += gis_case.Recovered;
                     case_found.active += gis_case.Active;
                     case_found.deaths += gis_case.Deaths;
+                    case_found.confirmedCasesToday += confirmed_cases_today;
+                    case_found.deathsToday = deaths_today;
                     case_found.casesByDate = combine_time_series_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
@@ -87,9 +93,8 @@ pub fn merge_csv_gis_cases(
                             recovered: gis_case.Recovered,
                             country: csv_case.Country_Region.clone(),
                             deaths: gis_case.Deaths,
-                            confirmedCasesToday: gis_case.Confirmed
-                                - csv_case.cases.last().unwrap().confirmed,
-                            deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
+                            confirmedCasesToday: confirmed_cases_today,
+                            deathsToday: deaths_today,
                             lastUpdate: gis_case.Last_Update,
                             latitude: csv_case.Lat,
                             longitude: csv_case.Long_,
