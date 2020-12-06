@@ -253,8 +253,17 @@ pub fn process_csv(
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
             let confirmed_cases_yesterday =
                 confirmed_record[i - 1].parse::<i64>().unwrap_or_default();
-            let death_cases = deaths_record[i].parse::<i64>().unwrap_or_default();
-            let death_cases_yesterday = deaths_record[i - 1].parse::<i64>().unwrap_or_default();
+            // US death cases CSV has an extra column before dates and so needs to be shifted
+            let deaths_index = match region {
+                Region::US => i + 1,
+                _ => i,
+            };
+            let death_cases = deaths_record[deaths_index]
+                .parse::<i64>()
+                .unwrap_or_default();
+            let death_cases_yesterday = deaths_record[deaths_index - 1]
+                .parse::<i64>()
+                .unwrap_or_default();
 
             if i != first_day_csv_header_index {
                 confirmed_today = confirmed_cases - confirmed_cases_yesterday;
