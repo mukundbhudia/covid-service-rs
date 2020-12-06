@@ -75,7 +75,7 @@ pub fn merge_csv_gis_cases(
                     case_found.active += gis_case.Active;
                     case_found.deaths += gis_case.Deaths;
                     case_found.confirmedCasesToday += confirmed_cases_today;
-                    case_found.deathsToday = deaths_today;
+                    case_found.deathsToday += deaths_today;
                     case_found.casesByDate = combine_time_series_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
@@ -267,7 +267,15 @@ pub fn process_csv(
 
             if i != first_day_csv_header_index {
                 confirmed_today = confirmed_cases - confirmed_cases_yesterday;
+                confirmed_today = match confirmed_today.is_negative() {
+                    true => 0,
+                    false => confirmed_today,
+                };
                 deaths_today = death_cases - death_cases_yesterday;
+                deaths_today = match deaths_today.is_negative() {
+                    true => 0,
+                    false => deaths_today,
+                };
             }
             let day = &csv_headers[i];
             let time_series_case = TimeSeriesCase::new(
