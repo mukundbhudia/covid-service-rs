@@ -212,7 +212,7 @@ pub fn process_csv(
     deaths: String,
     region: Region,
 ) -> Result<(HashMap<String, CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
-    let mut cases = HashMap::new();
+    let mut cases: HashMap<String, CsvCase> = HashMap::new();
     let mut countries_encountered: HashSet<String> = HashSet::new();
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
@@ -314,21 +314,27 @@ pub fn process_csv(
         let country = confirmed_record[country_csv_header_index].to_string();
         countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
-        cases.insert(
-            id_key,
-            CsvCase {
-                Province_State: province,
-                Country_Region: country,
-                Lat: confirmed_record[latitude_csv_header_index]
-                    .parse()
-                    .unwrap_or_default(),
-                Long_: confirmed_record[longitude_csv_header_index]
-                    .parse()
-                    .unwrap_or_default(),
-                cases: time_series,
-            },
-        );
+
+        if let Some(found_case) = cases.get_mut(&id_key) {
+            found_case.cases = combine_time_series_cases(found_case.cases.clone(), time_series);
+        } else {
+            cases.insert(
+                id_key,
+                CsvCase {
+                    Province_State: province,
+                    Country_Region: country,
+                    Lat: confirmed_record[latitude_csv_header_index]
+                        .parse()
+                        .unwrap_or_default(),
+                    Long_: confirmed_record[longitude_csv_header_index]
+                        .parse()
+                        .unwrap_or_default(),
+                    cases: time_series,
+                },
+            );
+        }
     }
+
     println!(
         "{:?} cases date map keys: {:?}",
         region,
