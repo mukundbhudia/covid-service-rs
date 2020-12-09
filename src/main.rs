@@ -127,8 +127,18 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .cloned()
         .collect::<Vec<TimeSeriesCase>>();
 
-    let global_confirmed_today = global_confirmed - global_time_series.last().unwrap().confirmed;
-    let deaths_today = global_deaths - global_time_series.last().unwrap().deaths;
+    let global_confirmed_yesterday = global_time_series.last().unwrap().confirmed;
+    let global_deaths_yesterday = global_time_series.last().unwrap().deaths;
+    let global_confirmed_today = global_confirmed - global_confirmed_yesterday;
+    let global_deaths_today = global_deaths - global_deaths_yesterday;
+
+    println!(
+        "Confirmed yesterday: {}, deaths yesterday: {}. \nConfirmed today: {}, deaths today: {}",
+        global_confirmed_yesterday,
+        global_deaths_yesterday,
+        global_confirmed_today,
+        global_deaths_today
+    );
 
     let global_cases = GlobalCaseByLocation {
         active: global_confirmed - (global_recovered + global_deaths),
@@ -136,7 +146,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         recovered: global_recovered,
         deaths: global_deaths,
         confirmedCasesToday: global_confirmed_today,
-        deathsToday: deaths_today,
+        deathsToday: global_deaths_today,
         timeSeriesTotalCasesByDate: global_time_series,
         globalCasesByDate: Vec::new(),
         timeStamp: From::from(Utc::now()),
