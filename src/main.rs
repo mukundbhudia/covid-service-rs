@@ -123,15 +123,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     );
 
     let global_time_series = global_time_series_map
-        .iter()
-        .zip(us_time_series_map.iter())
-        .map(|((_, global_ts), (_, us_ts))| TimeSeriesCase {
-            confirmed: global_ts.confirmed + us_ts.confirmed,
-            deaths: global_ts.deaths + us_ts.deaths,
-            confirmedCasesToday: global_ts.confirmedCasesToday + us_ts.confirmedCasesToday,
-            deathsToday: global_ts.deathsToday + us_ts.deathsToday,
-            day: global_ts.day.clone(),
-        })
+        .values()
+        .cloned()
         .collect::<Vec<TimeSeriesCase>>();
 
     let global_confirmed_today = global_confirmed - global_time_series.last().unwrap().confirmed;
