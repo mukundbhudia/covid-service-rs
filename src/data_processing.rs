@@ -286,19 +286,15 @@ pub fn process_csv(
                 day.to_string(),
             );
 
-            let ts_case_to_change = time_series_cases_map.entry(i).or_insert(time_series_case);
+            let ts_case_to_change = time_series_cases_map
+                .entry(i)
+                .or_insert(time_series_case.clone());
             ts_case_to_change.confirmed += confirmed_cases;
             ts_case_to_change.deaths += death_cases;
             ts_case_to_change.confirmedCasesToday += confirmed_today;
             ts_case_to_change.deathsToday += deaths_today;
 
-            time_series.push(TimeSeriesCase::new(
-                confirmed_cases,
-                death_cases,
-                confirmed_today,
-                deaths_today,
-                day.to_string(),
-            ));
+            time_series.push(time_series_case);
         }
 
         let province = match confirmed_record[province_csv_header_index].is_empty() {
