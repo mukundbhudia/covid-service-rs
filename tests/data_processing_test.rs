@@ -93,7 +93,7 @@ fn test_id_key_gen_with_comma() {
 }
 
 #[test]
-fn test_join_two_time_series_vectors() {
+fn test_join_two_time_series_vectors_with_one_entry() {
     let day1_province1 = TimeSeriesCase {
         confirmed: 20,
         deaths: 5,
@@ -118,6 +118,59 @@ fn test_join_two_time_series_vectors() {
     let vec1 = Vec::from([day1_province1]);
     let vec2 = Vec::from([day1_province2]);
     let result = Vec::from([combined_day1]);
+    assert!(vec_compare(
+        data_processing::combine_time_series_cases(vec1, vec2),
+        result
+    ));
+}
+
+#[test]
+fn test_join_two_time_series_vectors_with_two_entries() {
+    let day1_province1 = TimeSeriesCase {
+        confirmed: 20,
+        deaths: 5,
+        confirmedCasesToday: 3,
+        deathsToday: 4,
+        day: "02/12/20".to_string(),
+    };
+    let day2_province1 = TimeSeriesCase {
+        confirmed: 27,
+        deaths: 8,
+        confirmedCasesToday: 7,
+        deathsToday: 3,
+        day: "03/12/20".to_string(),
+    };
+    let day1_province2 = TimeSeriesCase {
+        confirmed: 560,
+        deaths: 30,
+        confirmedCasesToday: 56,
+        deathsToday: 33,
+        day: "02/12/20".to_string(),
+    };
+    let day2_province2 = TimeSeriesCase {
+        confirmed: 569,
+        deaths: 31,
+        confirmedCasesToday: 9,
+        deathsToday: 1,
+        day: "03/12/20".to_string(),
+    };
+    let combined_day1 = TimeSeriesCase {
+        confirmed: 580,
+        deaths: 35,
+        confirmedCasesToday: 59,
+        deathsToday: 37,
+        day: "02/12/20".to_string(),
+    };
+    let combined_day2 = TimeSeriesCase {
+        confirmed: 596,
+        deaths: 39,
+        confirmedCasesToday: 16,
+        deathsToday: 4,
+        day: "03/12/20".to_string(),
+    };
+    let vec1 = Vec::from([day1_province1, day2_province1]);
+    let vec2 = Vec::from([day1_province2, day2_province2]);
+    let result = Vec::from([combined_day1, combined_day2]);
     assert!(vec_compare(
         data_processing::combine_time_series_cases(vec1, vec2),
         result
