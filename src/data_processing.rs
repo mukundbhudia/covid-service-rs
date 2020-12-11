@@ -286,13 +286,14 @@ pub fn process_csv(
                 day.to_string(),
             );
 
-            let ts_case_to_change = time_series_cases_map
-                .entry(i)
-                .or_insert(time_series_case.clone());
-            ts_case_to_change.confirmed += confirmed_cases;
-            ts_case_to_change.deaths += death_cases;
-            ts_case_to_change.confirmedCasesToday += confirmed_today;
-            ts_case_to_change.deathsToday += deaths_today;
+            if let Some(found_ts_case) = time_series_cases_map.get_mut(&i) {
+                found_ts_case.confirmed += confirmed_cases;
+                found_ts_case.deaths += death_cases;
+                found_ts_case.confirmedCasesToday += confirmed_today;
+                found_ts_case.deathsToday += deaths_today;
+            } else {
+                time_series_cases_map.insert(i, time_series_case.clone());
+            }
 
             time_series.push(time_series_case);
         }
