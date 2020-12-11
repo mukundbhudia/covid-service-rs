@@ -238,15 +238,14 @@ pub fn process_csv(
         let mut latitude_csv_header_index = 2;
         let mut longitude_csv_header_index = 3;
         let mut first_day_csv_header_index = 4;
-        match region {
-            Region::US => {
-                country_csv_header_index = 7;
-                province_csv_header_index = 6;
-                latitude_csv_header_index = 8;
-                longitude_csv_header_index = 9;
-                first_day_csv_header_index = 11;
-            }
-            _ => {}
+
+        // US CSV has extra columns compared to global CSV
+        if region == Region::US {
+            country_csv_header_index = 7;
+            province_csv_header_index = 6;
+            latitude_csv_header_index = 8;
+            longitude_csv_header_index = 9;
+            first_day_csv_header_index = 11;
         }
 
         for i in first_day_csv_header_index..confirmed_record.len() {
@@ -286,13 +285,16 @@ pub fn process_csv(
                 day.to_string(),
             );
 
-            if let Some(found_ts_case) = time_series_cases_map.get_mut(&i) {
-                found_ts_case.confirmed += confirmed_cases;
-                found_ts_case.deaths += death_cases;
-                found_ts_case.confirmedCasesToday += confirmed_today;
-                found_ts_case.deathsToday += deaths_today;
-            } else {
-                time_series_cases_map.insert(i, time_series_case.clone());
+            // Global CSV contains US as a row so no need to accumulate a US time series
+            if region == Region::Global {
+                if let Some(found_ts_case) = time_series_cases_map.get_mut(&i) {
+                    found_ts_case.confirmed += confirmed_cases;
+                    found_ts_case.deaths += death_cases;
+                    found_ts_case.confirmedCasesToday += confirmed_today;
+                    found_ts_case.deathsToday += deaths_today;
+                } else {
+                    time_series_cases_map.insert(i, time_series_case.clone());
+                }
             }
 
             time_series.push(time_series_case);

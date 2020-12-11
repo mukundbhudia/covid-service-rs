@@ -93,8 +93,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let (mut processed_csv, global_time_series_map) =
         process_csv(confirmed_global_cases, deaths_global_cases, Region::Global)?;
 
-    let (us_processed_csv, us_time_series_map) =
-        process_csv(confirmed_us_cases, deaths_us_cases, Region::US)?;
+    let (us_processed_csv, _) = process_csv(confirmed_us_cases, deaths_us_cases, Region::US)?;
 
     println!(
         "{:?} Global and {:?} US CSV cases... ",

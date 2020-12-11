@@ -1,7 +1,7 @@
 use mongodb::bson;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Region {
     Global,
     US,
