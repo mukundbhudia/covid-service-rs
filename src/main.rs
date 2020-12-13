@@ -51,10 +51,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cases_collection = db.collection("casesByLocation");
     let totals_collection = db.collection("totals");
 
-    // for coll_name in db.list_collection_names(None).await? {
-    //     println!("collection: {}", coll_name);
-    // }
-
     let gis_service = String::from("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query");
     let cases_by_country_query_params = String::from("?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=");
     let total_confirmed_cases_query_params = String::from("?where=(Confirmed+>+0)&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=[{'statisticType'%3A'sum'%2C'onStatisticField'%3A'Confirmed'%2C'outStatisticFieldName'%3A'value'}]&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=");
@@ -64,7 +60,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cases_by_country_url = format!("{}{}", gis_service, cases_by_country_query_params);
     let cases_by_country_response = reqwest::get(&cases_by_country_url).await?;
     let cases_by_country: CasesByCountry = cases_by_country_response.json().await?;
-    println!("cases_by_country {:?}", cases_by_country.features.len());
 
     let confirmed_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
     let confirmed_csv_response = reqwest::get(&confirmed_csv_request_url).await?;
@@ -122,8 +117,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         None,
     )?;
 
+    println!("GIS cases: {}", cases_by_country.features.len());
+
+    println!("Days since first cases: {}", global_time_series_map.len());
+
     println!(
-        "{:?} Global and {:?} US CSV cases... ",
+        "{:?} Global and {:?} US CSV cases",
         processed_csv.len(),
         us_processed_csv.len()
     );
@@ -184,6 +183,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         globalCasesByDate: global_day_cases,
         timeStamp: From::from(Utc::now()),
     };
+
+    println!("Saving to db...\n");
 
     let global_cases_bson = bson::to_document(&global_cases).unwrap();
     let processed_cases_by_location = cases_by_location

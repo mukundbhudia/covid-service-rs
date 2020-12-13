@@ -370,12 +370,6 @@ pub fn process_csv(
         );
         time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
     }
-
-    println!(
-        "{:?} cases date map keys: {:?}",
-        region,
-        time_series_cases_map.len()
-    );
     Ok((cases, time_series_cases_map))
 }
 
