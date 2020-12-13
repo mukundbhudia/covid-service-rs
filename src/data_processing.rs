@@ -70,10 +70,11 @@ pub fn merge_csv_gis_cases(
             );
             csv_case.cases.push(today_time_series_cases);
 
-            let mut country_code = match alpha_codes.get(&csv_case.Country_Region) {
-                Some(code) => code.to_string(),
-                None => String::new(),
-            };
+            let mut country_code = alpha_codes
+                .get(&csv_case.Country_Region)
+                .unwrap_or(&String::new())
+                .to_string();
+
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &csv_case.Country_Region);
             if let Some(province_found) = &csv_case.Province_State {
