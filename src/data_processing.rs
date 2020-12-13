@@ -70,17 +70,24 @@ pub fn merge_csv_gis_cases(
             );
             csv_case.cases.push(today_time_series_cases);
 
-            let country_code = match alpha_codes.get(&csv_case.Country_Region) {
+            let mut country_code = match alpha_codes.get(&csv_case.Country_Region) {
                 Some(code) => code.to_string(),
                 None => String::new(),
             };
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &csv_case.Country_Region);
-            if let Some(province) = &csv_case.Province_State {
+            if let Some(province_found) = &csv_case.Province_State {
                 let province_type = Province {
                     idKey: id_key.clone(),
-                    province: province.to_string(),
+                    province: province_found.to_string(),
                 };
+
+                if province_found == "Greenland" {
+                    country_code = alpha_codes
+                        .get(&province_found.to_string())
+                        .unwrap_or(&String::new())
+                        .to_string();
+                }
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
                 {
@@ -122,7 +129,7 @@ pub fn merge_csv_gis_cases(
             }
 
             let has_province = match &csv_case.Province_State {
-                None => countries_with_provinces.contains_key(&country_code),
+                None => countries_with_provinces.contains_key(&csv_case.Country_Region),
                 Some(_) => false,
             };
 
@@ -384,6 +391,7 @@ pub fn process_global_cases_by_date(
         for (_case_key, country_case) in cases {
             if country_case.province.is_none()
                 || country_case.province == Some("mainland".to_string())
+                || country_case.province == Some("Greenland".to_string())
             {
                 let global_case_by_date = GlobalCaseByDate {
                     idKey: country_case.idKey.clone(),
