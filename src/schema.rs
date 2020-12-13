@@ -17,7 +17,7 @@ pub struct GlobalCaseByLocation {
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
-    pub globalCasesByDate: Vec<String>,
+    pub globalCasesByDate: Vec<GlobalDayCase>,
     pub timeStamp: bson::DateTime,
 }
 
@@ -42,14 +42,14 @@ pub struct CaseByLocation {
     pub hasProvince: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct GlobalDayCase {
     pub day: String,
-    pub globalCasesByDate: Vec<GlobalCaseByDate>,
+    pub casesOfTheDay: Vec<GlobalCaseByDate>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct GlobalCaseByDate {
     pub idKey: String,
@@ -57,6 +57,8 @@ pub struct GlobalCaseByDate {
     pub countryCode: String,
     pub confirmed: i64,
     pub deaths: i64,
+    pub recovered: i64,
+    pub active: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
 }

@@ -1,5 +1,5 @@
 use ::std::io::Write;
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use mongodb::{bson, Client};
 use std::error::Error;
 
@@ -11,7 +11,8 @@ use data_processing::{
     merge_csv_gis_cases, process_cases_by_country, process_csv, process_global_cases_by_date,
 };
 use schema::{
-    Case, CaseByLocation, CasesByCountry, GlobalCaseByLocation, Region, TimeSeriesCase, Total,
+    Case, CaseByLocation, CasesByCountry, GlobalCaseByLocation, GlobalDayCase, Region,
+    TimeSeriesCase, Total,
 };
 
 // use log;
@@ -19,6 +20,8 @@ use schema::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let now: DateTime<Utc> = Utc::now();
+    let today_m_d_y = now.format("%m/%d/%C");
     let execution_time_start = Utc::now().time();
     // SimpleLogger::new().init().unwrap();
 
@@ -94,10 +97,30 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
 
-    let (mut processed_csv, global_time_series_map) =
-        process_csv(confirmed_global_cases, deaths_global_cases, Region::Global)?;
+    let global_confirmed = total_confirmed.features[0].attributes.value;
+    let global_recovered = total_recovered.features[0].attributes.value;
+    let global_deaths = total_deaths.features[0].attributes.value;
 
-    let (us_processed_csv, _) = process_csv(confirmed_us_cases, deaths_us_cases, Region::US)?;
+    println!(
+        "Total confirmed: {:?}, recovered: {:?}, deaths: {:?}",
+        global_confirmed, global_recovered, global_deaths,
+    );
+
+    let (mut processed_csv, global_time_series_map) = process_csv(
+        confirmed_global_cases,
+        deaths_global_cases,
+        Region::Global,
+        today_m_d_y.to_string(),
+        Some((global_confirmed, global_deaths)),
+    )?;
+
+    let (us_processed_csv, _) = process_csv(
+        confirmed_us_cases,
+        deaths_us_cases,
+        Region::US,
+        today_m_d_y.to_string(),
+        None,
+    )?;
 
     println!(
         "{:?} Global and {:?} US CSV cases... ",
@@ -114,40 +137,40 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .map(|x| x.attributes)
         .collect::<Vec<Case>>();
     let cases_by_country = process_cases_by_country(cases_by_country);
-    let cases_by_location_map = merge_csv_gis_cases(processed_csv, cases_by_country);
+    let cases_by_location_map =
+        merge_csv_gis_cases(processed_csv, cases_by_country, today_m_d_y.to_string());
 
-    let _something = process_global_cases_by_date(&cases_by_location_map, &global_time_series_map);
+    let global_day_cases =
+        process_global_cases_by_date(&cases_by_location_map, &global_time_series_map);
+    let global_day_cases = global_day_cases
+        .values()
+        .cloned()
+        .collect::<Vec<GlobalDayCase>>();
 
     let cases_by_location = cases_by_location_map
         .values()
         .cloned()
         .collect::<Vec<CaseByLocation>>();
 
-    let global_confirmed = total_confirmed.features[0].attributes.value;
-    let global_recovered = total_recovered.features[0].attributes.value;
-    let global_deaths = total_deaths.features[0].attributes.value;
-
-    println!(
-        "Total confirmed: {:?}, recovered: {:?}, deaths: {:?}",
-        global_confirmed, global_recovered, global_deaths,
-    );
-
     let global_time_series = global_time_series_map
         .values()
         .cloned()
         .collect::<Vec<TimeSeriesCase>>();
 
-    let global_confirmed_yesterday = global_time_series.last().unwrap().confirmed;
-    let global_deaths_yesterday = global_time_series.last().unwrap().deaths;
+    let global_confirmed_yesterday = global_time_series
+        .get(global_time_series.len() - 2)
+        .unwrap()
+        .confirmed;
+    let global_deaths_yesterday = global_time_series
+        .get(global_time_series.len() - 2)
+        .unwrap()
+        .deaths;
     let global_confirmed_today = global_confirmed - global_confirmed_yesterday;
     let global_deaths_today = global_deaths - global_deaths_yesterday;
 
     println!(
-        "Confirmed yesterday: {}, deaths yesterday: {}. \nConfirmed today: {}, deaths today: {}",
-        global_confirmed_yesterday,
-        global_deaths_yesterday,
-        global_confirmed_today,
-        global_deaths_today
+        "Confirmed today: {}, deaths today: {}",
+        global_confirmed_today, global_deaths_today
     );
 
     let global_cases = GlobalCaseByLocation {
@@ -158,7 +181,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         confirmedCasesToday: global_confirmed_today,
         deathsToday: global_deaths_today,
         timeSeriesTotalCasesByDate: global_time_series,
-        globalCasesByDate: Vec::new(),
+        globalCasesByDate: global_day_cases,
         timeStamp: From::from(Utc::now()),
     };
 

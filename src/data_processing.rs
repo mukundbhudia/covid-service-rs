@@ -49,13 +49,27 @@ pub fn combine_time_series_cases(
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
+    today: String,
 ) -> HashMap<String, CaseByLocation> {
     let mut cases_by_location: HashMap<String, CaseByLocation> = HashMap::new();
     let mut countries_with_provinces: HashMap<String, CaseByLocation> = HashMap::new();
     let alpha_codes = alpha_codes();
 
-    for (id_key, csv_case) in csv_cases.drain() {
+    for (id_key, mut csv_case) in csv_cases.drain() {
         if let Some(gis_case) = gis_cases.get_mut(&id_key) {
+            let confirmed_cases_today =
+                gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed;
+            let deaths_today = gis_case.Deaths - csv_case.cases.last().unwrap().deaths;
+
+            let today_time_series_cases = TimeSeriesCase::new(
+                gis_case.Confirmed,
+                gis_case.Deaths,
+                confirmed_cases_today,
+                deaths_today,
+                today.clone(),
+            );
+            csv_case.cases.push(today_time_series_cases);
+
             let country_code = match alpha_codes.get(&csv_case.Country_Region) {
                 Some(code) => code.to_string(),
                 None => String::new(),
@@ -67,9 +81,6 @@ pub fn merge_csv_gis_cases(
                     idKey: id_key.clone(),
                     province: province.to_string(),
                 };
-                let confirmed_cases_today =
-                    gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed;
-                let deaths_today = gis_case.Deaths - csv_case.cases.last().unwrap().deaths;
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
                 {
@@ -125,9 +136,8 @@ pub fn merge_csv_gis_cases(
                     recovered: gis_case.Recovered,
                     country: csv_case.Country_Region,
                     deaths: gis_case.Deaths,
-                    confirmedCasesToday: gis_case.Confirmed
-                        - csv_case.cases.last().unwrap().confirmed,
-                    deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
+                    confirmedCasesToday: confirmed_cases_today,
+                    deathsToday: deaths_today,
                     lastUpdate: gis_case.Last_Update,
                     latitude: csv_case.Lat,
                     longitude: csv_case.Long_,
@@ -214,12 +224,30 @@ pub fn process_csv(
     confirmed: String,
     deaths: String,
     region: Region,
+    today: String,
+    global_current_cases: Option<(i64, i64)>,
 ) -> Result<(HashMap<String, CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
     let mut cases: HashMap<String, CsvCase> = HashMap::new();
     let mut countries_encountered: HashSet<String> = HashSet::new();
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
+
+    let mut country_csv_header_index = 1;
+    let mut province_csv_header_index = 0;
+    let mut latitude_csv_header_index = 2;
+    let mut longitude_csv_header_index = 3;
+    let mut first_day_csv_header_index = 4;
+
+    // US CSV has extra columns compared to global CSV
+    if region == Region::US {
+        country_csv_header_index = 7;
+        province_csv_header_index = 6;
+        latitude_csv_header_index = 8;
+        longitude_csv_header_index = 9;
+        first_day_csv_header_index = 11;
+    }
+
     let csv_headers = confirmed_csv_reader
         .headers()?
         .iter()
@@ -235,21 +263,6 @@ pub fn process_csv(
         let mut time_series: Vec<TimeSeriesCase> = Vec::new();
         let mut confirmed_today = 0;
         let mut deaths_today = 0;
-
-        let mut country_csv_header_index = 1;
-        let mut province_csv_header_index = 0;
-        let mut latitude_csv_header_index = 2;
-        let mut longitude_csv_header_index = 3;
-        let mut first_day_csv_header_index = 4;
-
-        // US CSV has extra columns compared to global CSV
-        if region == Region::US {
-            country_csv_header_index = 7;
-            province_csv_header_index = 6;
-            latitude_csv_header_index = 8;
-            longitude_csv_header_index = 9;
-            first_day_csv_header_index = 11;
-        }
 
         for i in first_day_csv_header_index..confirmed_record.len() {
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
@@ -337,6 +350,27 @@ pub fn process_csv(
         }
     }
 
+    // Add the most recent days
+    if let Some(global_current_cases) = global_current_cases {
+        let (global_confirmed, global_deaths) = global_current_cases;
+        let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
+        let global_confirmed_today = global_confirmed
+            - time_series_cases_map
+                .get(&last_day_index)
+                .unwrap()
+                .confirmed;
+        let global_deaths_today =
+            global_deaths - time_series_cases_map.get(&last_day_index).unwrap().deaths;
+        let current_time_series_case = TimeSeriesCase::new(
+            global_confirmed,
+            global_deaths,
+            global_confirmed_today,
+            global_deaths_today,
+            today.to_string(),
+        );
+        time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
+    }
+
     println!(
         "{:?} cases date map keys: {:?}",
         region,
@@ -363,18 +397,20 @@ pub fn process_global_cases_by_date(
                     countryCode: country_case.countryCode.clone(),
                     confirmed: country_case.casesByDate[j].confirmed,
                     deaths: country_case.casesByDate[j].deaths,
+                    active: country_case.active,
+                    recovered: country_case.recovered,
                     confirmedCasesToday: country_case.casesByDate[j].confirmedCasesToday,
                     deathsToday: country_case.casesByDate[j].deathsToday,
                 };
 
                 if let Some(global_day_case) = global_cases_by_date.get_mut(day) {
-                    global_day_case.globalCasesByDate.push(global_case_by_date);
+                    global_day_case.casesOfTheDay.push(global_case_by_date);
                 } else {
                     global_cases_by_date.insert(
                         day.to_string(),
                         GlobalDayCase {
                             day: day.to_string(),
-                            globalCasesByDate: Vec::from([global_case_by_date]),
+                            casesOfTheDay: Vec::from([global_case_by_date]),
                         },
                     );
                 }
@@ -382,6 +418,5 @@ pub fn process_global_cases_by_date(
         }
         j += 1;
     }
-    // println!("{:?}", global_cases_by_date);
     global_cases_by_date
 }
