@@ -384,9 +384,9 @@ pub fn process_csv(
 pub fn process_global_cases_by_date(
     cases: &HashMap<String, CaseByLocation>,
     time_series_cases_map: &BTreeMap<usize, TimeSeriesCase>,
-) -> HashMap<String, GlobalDayCase> {
-    let mut global_cases_by_date: HashMap<String, GlobalDayCase> = HashMap::new();
-    let mut j = 0;
+) -> BTreeMap<usize, GlobalDayCase> {
+    let mut global_cases_by_date: BTreeMap<usize, GlobalDayCase> = BTreeMap::new();
+    let mut i = 0;
     for (_ts_key, ts_case) in time_series_cases_map {
         let day = &ts_case.day;
         for (_case_key, country_case) in cases {
@@ -398,19 +398,19 @@ pub fn process_global_cases_by_date(
                     idKey: country_case.idKey.clone(),
                     country: country_case.country.clone(),
                     countryCode: country_case.countryCode.clone(),
-                    confirmed: country_case.casesByDate[j].confirmed,
-                    deaths: country_case.casesByDate[j].deaths,
+                    confirmed: country_case.casesByDate[i].confirmed,
+                    deaths: country_case.casesByDate[i].deaths,
                     active: country_case.active,
                     recovered: country_case.recovered,
-                    confirmedCasesToday: country_case.casesByDate[j].confirmedCasesToday,
-                    deathsToday: country_case.casesByDate[j].deathsToday,
+                    confirmedCasesToday: country_case.casesByDate[i].confirmedCasesToday,
+                    deathsToday: country_case.casesByDate[i].deathsToday,
                 };
 
-                if let Some(global_day_case) = global_cases_by_date.get_mut(day) {
+                if let Some(global_day_case) = global_cases_by_date.get_mut(&i) {
                     global_day_case.casesOfTheDay.push(global_case_by_date);
                 } else {
                     global_cases_by_date.insert(
-                        day.to_string(),
+                        i,
                         GlobalDayCase {
                             day: day.to_string(),
                             casesOfTheDay: Vec::from([global_case_by_date]),
@@ -419,7 +419,7 @@ pub fn process_global_cases_by_date(
                 }
             }
         }
-        j += 1;
+        i += 1;
     }
     global_cases_by_date
 }
