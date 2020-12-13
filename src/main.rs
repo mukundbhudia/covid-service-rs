@@ -7,8 +7,12 @@ pub mod alpha3_country_codes;
 pub mod data_processing;
 pub mod schema;
 
-use data_processing::{merge_csv_gis_cases, process_cases_by_country, process_csv};
-use schema::{Case, CasesByCountry, GlobalCaseByLocation, Region, TimeSeriesCase, Total};
+use data_processing::{
+    merge_csv_gis_cases, process_cases_by_country, process_csv, process_global_cases_by_date,
+};
+use schema::{
+    Case, CaseByLocation, CasesByCountry, GlobalCaseByLocation, Region, TimeSeriesCase, Total,
+};
 
 // use log;
 // use simple_logger::SimpleLogger;
@@ -110,7 +114,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .map(|x| x.attributes)
         .collect::<Vec<Case>>();
     let cases_by_country = process_cases_by_country(cases_by_country);
-    let cases_by_location = merge_csv_gis_cases(processed_csv, cases_by_country);
+    let cases_by_location_map = merge_csv_gis_cases(processed_csv, cases_by_country);
+
+    let _something = process_global_cases_by_date(&cases_by_location_map, &global_time_series_map);
+
+    let cases_by_location = cases_by_location_map
+        .values()
+        .cloned()
+        .collect::<Vec<CaseByLocation>>();
 
     let global_confirmed = total_confirmed.features[0].attributes.value;
     let global_recovered = total_recovered.features[0].attributes.value;

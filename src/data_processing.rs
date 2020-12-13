@@ -2,7 +2,10 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 
 use crate::alpha3_country_codes::alpha_codes;
-use crate::schema::{Case, CaseByLocation, CsvCase, Province, Region, TimeSeriesCase};
+use crate::schema::{
+    Case, CaseByLocation, CsvCase, GlobalCaseByDate, GlobalDayCase, Province, Region,
+    TimeSeriesCase,
+};
 
 pub fn hyphenate_string(s: String) -> String {
     s.to_lowercase().trim().replace(' ', "-")
@@ -46,8 +49,8 @@ pub fn combine_time_series_cases(
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
-) -> Vec<CaseByLocation> {
-    let mut cases_by_location = Vec::new();
+) -> HashMap<String, CaseByLocation> {
+    let mut cases_by_location: HashMap<String, CaseByLocation> = HashMap::new();
     let mut countries_with_provinces: HashMap<String, CaseByLocation> = HashMap::new();
     let alpha_codes = alpha_codes();
 
@@ -112,31 +115,31 @@ pub fn merge_csv_gis_cases(
                 Some(_) => false,
             };
 
-            cases_by_location.push(CaseByLocation {
-                idKey: id_key,
-                countryCode: country_code,
-                active: gis_case.Active,
-                confirmed: gis_case.Confirmed,
-                recovered: gis_case.Recovered,
-                country: csv_case.Country_Region,
-                deaths: gis_case.Deaths,
-                confirmedCasesToday: gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
-                deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
-                lastUpdate: gis_case.Last_Update,
-                latitude: csv_case.Lat,
-                longitude: csv_case.Long_,
-                hasProvince: has_province,
-                province: province,
-                casesByDate: csv_case.cases,
-                provincesList: Vec::new(), // TODO: Form value here
-            });
+            cases_by_location.insert(
+                id_key.clone(),
+                CaseByLocation {
+                    idKey: id_key,
+                    countryCode: country_code,
+                    active: gis_case.Active,
+                    confirmed: gis_case.Confirmed,
+                    recovered: gis_case.Recovered,
+                    country: csv_case.Country_Region,
+                    deaths: gis_case.Deaths,
+                    confirmedCasesToday: gis_case.Confirmed
+                        - csv_case.cases.last().unwrap().confirmed,
+                    deathsToday: gis_case.Deaths - csv_case.cases.last().unwrap().deaths,
+                    lastUpdate: gis_case.Last_Update,
+                    latitude: csv_case.Lat,
+                    longitude: csv_case.Long_,
+                    hasProvince: has_province,
+                    province: province,
+                    casesByDate: csv_case.cases,
+                    provincesList: Vec::new(),
+                },
+            );
         }
     }
-    let mut separate_countries = countries_with_provinces
-        .values()
-        .cloned()
-        .collect::<Vec<CaseByLocation>>();
-    cases_by_location.append(&mut separate_countries);
+    cases_by_location.extend(countries_with_provinces);
     cases_by_location
 }
 
@@ -340,4 +343,45 @@ pub fn process_csv(
         time_series_cases_map.len()
     );
     Ok((cases, time_series_cases_map))
+}
+
+pub fn process_global_cases_by_date(
+    cases: &HashMap<String, CaseByLocation>,
+    time_series_cases_map: &BTreeMap<usize, TimeSeriesCase>,
+) -> HashMap<String, GlobalDayCase> {
+    let mut global_cases_by_date: HashMap<String, GlobalDayCase> = HashMap::new();
+    let mut j = 0;
+    for (_ts_key, ts_case) in time_series_cases_map {
+        let day = &ts_case.day;
+        for (_case_key, country_case) in cases {
+            if country_case.province.is_none()
+                || country_case.province == Some("mainland".to_string())
+            {
+                let global_case_by_date = GlobalCaseByDate {
+                    idKey: country_case.idKey.clone(),
+                    country: country_case.country.clone(),
+                    countryCode: country_case.countryCode.clone(),
+                    confirmed: country_case.casesByDate[j].confirmed,
+                    deaths: country_case.casesByDate[j].deaths,
+                    confirmedCasesToday: country_case.casesByDate[j].confirmedCasesToday,
+                    deathsToday: country_case.casesByDate[j].deathsToday,
+                };
+
+                if let Some(global_day_case) = global_cases_by_date.get_mut(day) {
+                    global_day_case.globalCasesByDate.push(global_case_by_date);
+                } else {
+                    global_cases_by_date.insert(
+                        day.to_string(),
+                        GlobalDayCase {
+                            day: day.to_string(),
+                            globalCasesByDate: Vec::from([global_case_by_date]),
+                        },
+                    );
+                }
+            }
+        }
+        j += 1;
+    }
+    // println!("{:?}", global_cases_by_date);
+    global_cases_by_date
 }

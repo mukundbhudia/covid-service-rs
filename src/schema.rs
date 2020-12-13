@@ -42,6 +42,25 @@ pub struct CaseByLocation {
     pub hasProvince: bool,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct GlobalDayCase {
+    pub day: String,
+    pub globalCasesByDate: Vec<GlobalCaseByDate>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct GlobalCaseByDate {
+    pub idKey: String,
+    pub country: String,
+    pub countryCode: String,
+    pub confirmed: i64,
+    pub deaths: i64,
+    pub confirmedCasesToday: i64,
+    pub deathsToday: i64,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct Province {
