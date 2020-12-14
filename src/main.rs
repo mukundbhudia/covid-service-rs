@@ -1,5 +1,7 @@
 use ::std::io::Write;
 use chrono::{DateTime, Utc};
+use log::{error, info, warn};
+use log4rs;
 use mongodb::{bson, Client};
 use std::error::Error;
 
@@ -15,15 +17,13 @@ use schema::{
     TimeSeriesCase, Total,
 };
 
-// use log;
-// use simple_logger::SimpleLogger;
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let now: DateTime<Utc> = Utc::now();
     let today_m_d_y = now.format("%m/%d/%C");
     let execution_time_start = Utc::now().time();
-    // SimpleLogger::new().init().unwrap();
+
+    log4rs::init_file("log4rs.yml", Default::default()).unwrap();
 
     let args = std::env::args().collect::<Vec<String>>();
 
@@ -96,7 +96,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let global_recovered = total_recovered.features[0].attributes.value;
     let global_deaths = total_deaths.features[0].attributes.value;
 
-    println!(
+    info!(
         "Total confirmed: {:?}, recovered: {:?}, deaths: {:?}",
         global_confirmed, global_recovered, global_deaths,
     );
@@ -117,11 +117,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         None,
     )?;
 
-    println!("GIS cases: {}", cases_by_country.features.len());
+    info!("GIS cases: {}", cases_by_country.features.len());
 
-    println!("Days since first cases: {}", global_time_series_map.len());
+    info!("Days since first cases: {}", global_time_series_map.len());
 
-    println!(
+    info!(
         "{:?} Global and {:?} US CSV cases",
         processed_csv.len(),
         us_processed_csv.len()
@@ -167,7 +167,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let global_confirmed_today = global_confirmed - global_confirmed_yesterday;
     let global_deaths_today = global_deaths - global_deaths_yesterday;
 
-    println!(
+    info!(
         "Confirmed today: {}, deaths today: {}",
         global_confirmed_today, global_deaths_today
     );
@@ -184,7 +184,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         timeStamp: From::from(Utc::now()),
     };
 
-    println!("Saving to db...\n");
+    info!("Saving to db...\n");
 
     let global_cases_bson = bson::to_document(&global_cases).unwrap();
     let processed_cases_by_location = cases_by_location
@@ -206,7 +206,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
 
     let db_time_stop = Utc::now().time();
-    println!("Saved to DB\n");
+    info!("Saved to DB\n");
 
     let execution_time_stop = Utc::now().time();
     let elapsed_execution_time = execution_time_stop - execution_time_start;
@@ -214,7 +214,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let elapsed_net_req_time = net_req_time_stop - execution_time_start;
     let elapsed_db_time = db_time_stop - db_time_start;
 
-    println!(
+    info!(
         "Script took {} seconds ({} milliseconds).\n {} second(s) ({} milliseconds) of network requests. \n {} second(s) ({} milliseconds) of db processing. \n {} second(s) ({} milliseconds) of core processing.",
         elapsed_execution_time.num_seconds(),
         elapsed_execution_time.num_milliseconds(),
