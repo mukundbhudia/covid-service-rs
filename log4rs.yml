@@ -7,25 +7,16 @@ appenders:
     encoder:
       pattern: "{d(%d-%m-%Y %H:%M:%S)}::{l}: {m}{n}"
 
-  # An appender named "requests" that writes to a file with a custom pattern encoder
-  requests:
+  # An appender named "output" that writes to a file with a custom pattern encoder
+  output:
     kind: file
     path: "log/output.log"
     encoder:
       pattern: "{d(%d-%m-%Y %H:%M:%S)}::{l}: {m}{n}"
 
-# Set the default logging level to "warn" and attach the "stdout" appender to the root
+# Set the default logging level and attach the "stdout" appender to the root
 root:
   level: info
   appenders:
     - stdout
-    - requests
-
-loggers:
-  # Route log events sent to the "app::requests" logger to the "requests" appender,
-  # and *not* the normal appenders installed at the root
-  app::requests:
-    level: info
-    appenders:
-      - requests
-    additive: false
+    - output

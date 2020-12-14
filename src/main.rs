@@ -1,6 +1,6 @@
 use ::std::io::Write;
 use chrono::{DateTime, Utc};
-use log::{error, info, warn};
+use log::{debug, info};
 use log4rs;
 use mongodb::{bson, Client};
 use std::error::Error;
@@ -42,6 +42,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .unwrap();
         std::process::exit(1);
     }
+
+    info!("Starting {}", args[0]);
 
     let db_uri = &args[1];
     let db_name = &args[2];
@@ -184,7 +186,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         timeStamp: From::from(Utc::now()),
     };
 
-    info!("Saving to db...\n");
+    debug!("Saving to db...");
 
     let global_cases_bson = bson::to_document(&global_cases).unwrap();
     let processed_cases_by_location = cases_by_location
@@ -206,7 +208,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
 
     let db_time_stop = Utc::now().time();
-    info!("Saved to DB\n");
+    debug!("Saved to DB");
 
     let execution_time_stop = Utc::now().time();
     let elapsed_execution_time = execution_time_stop - execution_time_start;
@@ -215,7 +217,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let elapsed_db_time = db_time_stop - db_time_start;
 
     info!(
-        "Script took {} seconds ({} milliseconds).\n {} second(s) ({} milliseconds) of network requests. \n {} second(s) ({} milliseconds) of db processing. \n {} second(s) ({} milliseconds) of core processing.",
+        "Script took {} seconds ({} milliseconds). {} second(s) ({} milliseconds) of network requests. {} second(s) ({} milliseconds) of db processing. {} second(s) ({} milliseconds) of core processing.",
         elapsed_execution_time.num_seconds(),
         elapsed_execution_time.num_milliseconds(),
         elapsed_net_req_time.num_seconds(),
