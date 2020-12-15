@@ -20,3 +20,12 @@ root:
   appenders:
     - stdout
     - output
+
+loggers:
+  # Route log events sent to the "app::output" logger to the "output" appender,
+  # and *not* the normal appenders installed at the root
+  app::output:
+    level: debug
+    appenders:
+      - output
+    additive: false

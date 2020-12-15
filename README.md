@@ -19,10 +19,11 @@ The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aa
 
 ### All platforms
 * mongoDB - see: https://docs.mongodb.com/manual/installation/ for install instructions for your platform.
+* The `log4rs.yml` file must be present in the same directory as the binary for logging configuration to be set.
 
 ## Development
 * Within the repo directory run `cargo r "DB_URI" "DB_NAME"` where `DB_URI` is your mongo instance and `DB_NAME` is your mongo database. 
-* For example `cargo r "mongodb://localhost:27017/" "covid19r"` for connection to local mongoDb instance to the database: `covid19`.
+* For example `cargo r "mongodb://localhost:27017/" "covid19"` for connection to local mongoDb instance to the database: `covid19`.
 
 ## Production
 * To make a production build, within the repo directory run `cargo b --release`.
@@ -30,7 +31,6 @@ The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aa
 
 ## Testing
 * To run **all** your tests, within the repo directory run `cargo t`. This will run all tests in the `/tests` directory.
-
 * To run test a **specific** test such as `/tests/my_test.rs`, within the repo directory run `cargo t --test my_test`.
 
 ## Advanced builds
