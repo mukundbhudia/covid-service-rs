@@ -1,8 +1,12 @@
 # covid-service-rs
 
-A conversion of the (now archived) JavaScript https://github.com/mukundbhudia/covid-service project into a Rust project.
+Collects, processes and aggregates live COVID-19, and historical time series data from Johns Hopkins University. The aggregated data is then used to populate a mongoDB database which supplies data to https://github.com/mukundbhudia/covid-api and subsequently https://github.com/mukundbhudia/covid-web.
 
-The target environment will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aarch64-unknown-linux-gnu).
+This is a conversion of the (now archived) JavaScript https://github.com/mukundbhudia/covid-service project into a Rust project.
+
+The target environment (for my personal use case) will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aarch64-unknown-linux-gnu). However any environment that supports the Rust toolchain should suffice. The service will run as a cron task at regular intervals.
+
+**Note**: only Linux & OS X environments with aarch64 & x86_64 architectures have been tested though.
 
 ## Pre-requisites
 
