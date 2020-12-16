@@ -51,6 +51,13 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 - You can run `rustup target add <my-target>` to add the specific target to your rustup toolchain. This means you can now compile and build for that target.
 - Then running `cargo b --release --target=<my-target>` would create the build for that environment.
 
+## Target schema
+
+The intended mongo database should comprise of two collections:
+
+- `casesByLocation` which holds data on every country and/or state along with the time series data. The stuct for this collection can be found as `CaseByLocation` in `/src/schema.rs`.
+- `totals` which holds global data including global time series data and . The stuct for this collection can be found as `GlobalCaseByLocation` in `/src/schema.rs`.
+
 ## Resources & Thanks
 
 - To [Johns Hopkins CSSE](https://github.com/CSSEGISandData/COVID-19) for the hard work providing and collating the data.
