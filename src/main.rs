@@ -23,7 +23,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let today_m_d_y = now.format("%m/%d/%C");
     let execution_time_start = Utc::now().time();
 
-    log4rs::init_file("log4rs.yml", Default::default()).unwrap();
+    log4rs::init_file("log4rs.yml", Default::default())
+        .expect("The log4rs.yml is inaccessible, please check the root directory of the binary.");
 
     let args = std::env::args().collect::<Vec<String>>();
 
