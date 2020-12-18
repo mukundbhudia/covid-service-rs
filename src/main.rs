@@ -88,7 +88,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         None,
     )?;
 
-    info!("GIS cases: {}", cases_by_country.features.len());
+    info!("GIS cases: {}", cases_by_country.len());
 
     info!("Days since first cases: {}", global_time_series_map.len());
 
@@ -101,7 +101,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     processed_csv.extend(us_processed_csv);
 
     let cases_by_country = cases_by_country
-        .features
         .iter()
         .cloned()
         .map(|x| x.attributes)
@@ -135,6 +134,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .get(global_time_series.len() - 2)
         .unwrap()
         .deaths;
+
     let global_confirmed_today = global_confirmed - global_confirmed_yesterday;
     let global_deaths_today = global_deaths - global_deaths_yesterday;
 

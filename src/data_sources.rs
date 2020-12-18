@@ -1,4 +1,4 @@
-use crate::schema::{CasesByCountry, Total};
+use crate::schema::{CasesAttributes, CasesByCountry, Total};
 use std::error::Error;
 
 fn get_sources() -> (
@@ -42,7 +42,7 @@ fn get_sources() -> (
 
 pub async fn get_data_from_sources() -> Result<
     (
-        CasesByCountry,
+        Vec<CasesAttributes>,
         String,
         String,
         String,
@@ -93,7 +93,7 @@ pub async fn get_data_from_sources() -> Result<
     let global_deaths = total_deaths.features[0].attributes.value;
 
     Ok((
-        cases_by_country,
+        cases_by_country.features,
         confirmed_global_cases,
         deaths_global_cases,
         confirmed_us_cases,
