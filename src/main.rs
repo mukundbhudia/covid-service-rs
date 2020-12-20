@@ -1,19 +1,20 @@
 use ::std::io::Write;
 use chrono::{DateTime, Utc};
 use log::{debug, info};
-use log4rs;
 use mongodb::{bson, Client};
 use std::error::Error;
 
 pub mod alpha3_country_codes;
 pub mod data_processing;
 pub mod data_sources;
+pub mod logging;
 pub mod schema;
 
 use data_processing::{
     merge_csv_gis_cases, process_cases_by_country, process_csv, process_global_cases_by_date,
 };
 use data_sources::get_data_from_sources;
+use logging::initialise_logging;
 use schema::{Case, CaseByLocation, GlobalCaseByLocation, GlobalDayCase, Region, TimeSeriesCase};
 
 #[tokio::main]
@@ -22,8 +23,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let today_m_d_y = now.format("%m/%d/%C");
     let execution_time_start = Utc::now().time();
 
-    log4rs::init_file("log4rs.yml", Default::default())
-        .expect("The log4rs.yml is inaccessible, please check the root directory of the binary.");
+    initialise_logging();
 
     let args = std::env::args().collect::<Vec<String>>();
 
