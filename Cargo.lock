@@ -208,7 +208,7 @@ checksum = "ea221b5284a47e40033bf9b66f35f984ec0ea2931eb03505246cd27a963f981b"
 
 [[package]]
 name = "covid-service-rs"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "chrono",
  "csv",
