@@ -44,6 +44,10 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 - To run **all** your tests, within the repo directory run `cargo t`. This will run all tests in the `/tests` directory.
 - To run test a **specific** test such as `/tests/my_test.rs`, within the repo directory run `cargo t --test my_test`.
 
+## Installation
+
+- Run `cargo install --path .` within the repo directory then `covid-service-rs` will be callable throughout your host environment as a standard binary.
+
 ## Advanced builds (cross-compilation)
 
 - Run `rustc --print target-list` to see a list of targets you can build for.
