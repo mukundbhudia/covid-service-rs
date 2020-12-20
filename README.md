@@ -28,7 +28,6 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 ### All platforms
 
 - mongoDB - see: https://docs.mongodb.com/manual/installation/ for install instructions for your platform.
-- The `log4rs.yml` file must be present in the same directory as the binary for logging configuration to be set.
 
 ## Development
 
@@ -45,11 +44,14 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 - To run **all** your tests, within the repo directory run `cargo t`. This will run all tests in the `/tests` directory.
 - To run test a **specific** test such as `/tests/my_test.rs`, within the repo directory run `cargo t --test my_test`.
 
-## Advanced builds
+## Advanced builds (cross-compilation)
 
 - Run `rustc --print target-list` to see a list of targets you can build for.
 - You can run `rustup target add <my-target>` to add the specific target to your rustup toolchain. This means you can now compile and build for that target.
+- Running `rustup show` will show toolchains already installed on your host environment.
 - Then running `cargo b --release --target=<my-target>` would create the build for that environment.
+
+For more information on cross-compilation see https://rust-lang.github.io/rustup/cross-compilation.html.
 
 ## Target schema
 
