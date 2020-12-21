@@ -1,10 +1,13 @@
 # covid-service-rs
 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mukundbhudia/covid-service-rs)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mukundbhudia/covid-service-rs/Rust)
+
 Collects, processes and aggregates live COVID-19, and historical time series data from Johns Hopkins University. The aggregated data is then used to populate a mongoDB database which supplies data to https://github.com/mukundbhudia/covid-api and subsequently https://github.com/mukundbhudia/covid-web.
 
 This is a conversion of the (now archived) JavaScript https://github.com/mukundbhudia/covid-service project into a Rust project.
 
-The target environment (for my personal use case) will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aarch64-unknown-linux-gnu). However any environment that supports the Rust toolchain should suffice. The service will run as a cron task at regular intervals.
+The target environment (for my personal use case) will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aarch64-unknown-linux-gnu). However any environment that supports the Rust toolchain should suffice. The service will run as a cron task at regular intervals for example every 20 minutes.
 
 **Note**: only Linux & OS X environments with aarch64 & x86_64 architectures have been tested though.
 
@@ -46,7 +49,9 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 
 ## Installation
 
-- Run `cargo install --path .` within the repo directory then `covid-service-rs` will be callable throughout your host environment as a standard binary.
+- Run `cargo install --path .` within the repo directory then `covid-service-rs` will be moved to your cargo bin directory and will be callable throughout your host environment as a standard binary.
+- To install as a cron task, an example entry under `crontab -e` to run the service every 20 minutes would be `*/20 * * * *    /home/my-user-name/.cargo/bin/covid-service-rs "mongodb://localhost:27017/" "covid19"`
+- Subsequent upgrades would then only require `cargo install --path .` to be run again to build and move the binary to cargo bin.
 
 ## Advanced builds (cross-compilation)
 
