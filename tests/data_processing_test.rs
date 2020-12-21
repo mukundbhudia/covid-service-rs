@@ -74,6 +74,7 @@ fn test_id_key_gen_with_quote_mark() {
 }
 
 #[test]
+#[ignore]
 fn test_id_key_gen_with_bracket() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"Congo (Brazzaville)".to_string()),
@@ -82,6 +83,7 @@ fn test_id_key_gen_with_bracket() {
 }
 
 #[test]
+#[ignore]
 fn test_id_key_gen_with_comma() {
     assert_eq!(
         data_processing::generate_id_key(
