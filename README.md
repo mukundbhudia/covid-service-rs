@@ -17,7 +17,7 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 
 ### For Linux
 
-- Make sure essential build tools (including compliers) are installed: `sudo apt install build-essential`.
+- Make sure essential build tools (including compilers) are installed: `sudo apt install build-essential`.
 - OpenSSL will be needed `sudo apt install libssl-dev`.
 - pkg-config will be needed `sudo apt install pkg-config`.
 
