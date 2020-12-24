@@ -1,6 +1,6 @@
 use ::std::io::Write;
 use chrono::{DateTime, Utc};
-use log::{debug, info};
+use log::{debug, info, warn};
 use mongodb::{bson, Client};
 use std::error::Error;
 
@@ -52,6 +52,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let db = client.database(db_name);
     let cases_collection = db.collection("casesByLocation");
     let totals_collection = db.collection("totals");
+    let max_db_execution_seconds = 60;
 
     let (
         cases_by_country,
@@ -184,6 +185,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let elapsed_core_time = core_processing_time_stop - core_processing_time_start;
     let elapsed_net_req_time = net_req_time_stop - execution_time_start;
     let elapsed_db_time = db_time_stop - db_time_start;
+
+    if elapsed_db_time.num_seconds() > max_db_execution_seconds {
+        warn!(
+            "DB processing and execution took longer than {} seconds.",
+            max_db_execution_seconds
+        );
+    }
 
     info!(
         "Script took {} seconds ({} milliseconds). {} second(s) ({} milliseconds) of network requests. {} second(s) ({} milliseconds) of db processing. {} second(s) ({} milliseconds) of core processing.",
