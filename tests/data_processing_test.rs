@@ -69,12 +69,11 @@ fn test_id_key_gen_no_country() {
 fn test_id_key_gen_with_quote_mark() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"Cote d'Ivoire".to_string()),
-        "cote-d'ivoire".to_string()
+        "cote-divoire".to_string()
     );
 }
 
 #[test]
-#[ignore]
 fn test_id_key_gen_with_bracket() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"Congo (Brazzaville)".to_string()),
@@ -83,12 +82,11 @@ fn test_id_key_gen_with_bracket() {
 }
 
 #[test]
-#[ignore]
 fn test_id_key_gen_with_comma() {
     assert_eq!(
         data_processing::generate_id_key(
             &Some("Bonaire, Sint Eustatius and Saba".to_string()),
-            &"Congo (Brazzaville)".to_string()
+            &"Netherlands".to_string()
         ),
         "netherlands-bonaire-sint-eustatius-and-saba".to_string()
     );
