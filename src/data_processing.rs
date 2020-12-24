@@ -8,7 +8,10 @@ use crate::schema::{
 };
 
 pub fn hyphenate_string(s: String) -> String {
-    s.to_lowercase().trim().replace(' ', "-")
+    s.replace(&['(', ')', ',', '\'', '\"', '.', ';', ':', '\''][..], "")
+        .to_lowercase()
+        .trim()
+        .replace(' ', "-")
 }
 
 pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
