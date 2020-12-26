@@ -1,6 +1,6 @@
 use ::std::io::Write;
 use chrono::{DateTime, Utc};
-use log::{debug, info, warn};
+use log::{debug, error, info, warn};
 use mongodb::{bson, Client};
 use std::error::Error;
 
@@ -53,6 +53,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cases_collection = db.collection("casesByLocation");
     let totals_collection = db.collection("totals");
     let max_db_execution_seconds = 60;
+
+    match db.list_collection_names(None).await {
+        Ok(collections) => {
+            debug!("{} collection(s) found in the database.", collections.len());
+        }
+        Err(error) => {
+            error!("Error connecting to the database with details: {:?}", error);
+            std::process::exit(1);
+        }
+    }
 
     let (
         cases_by_country,
