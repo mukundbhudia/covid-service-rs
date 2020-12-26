@@ -166,26 +166,33 @@ async fn main() -> Result<(), Box<dyn Error>> {
         timeStamp: From::from(Utc::now()),
     };
 
-    debug!("Saving to db...");
-
-    let global_cases_bson = bson::to_document(&global_cases).unwrap();
-    let processed_cases_by_location = cases_by_location
-        .iter()
-        .map(|x| bson::to_document(&x).unwrap())
-        .collect::<Vec<_>>();
-
     let core_processing_time_stop = Utc::now().time();
     let db_time_start = Utc::now().time();
 
-    cases_collection.drop(None).await?;
-    totals_collection.drop(None).await?;
-    cases_collection
-        .insert_many(processed_cases_by_location, None)
-        .await?;
+    debug!("Saving to db...");
 
-    totals_collection
-        .insert_one(global_cases_bson, None)
-        .await?;
+    let save_to_db_totals_task = tokio::spawn(async move {
+        let global_cases_bson = bson::to_document(&global_cases).unwrap();
+        totals_collection.drop(None).await.unwrap();
+        totals_collection
+            .insert_one(global_cases_bson, None)
+            .await
+            .unwrap();
+    });
+
+    let save_to_db_cases_task = tokio::spawn(async move {
+        let processed_cases_by_location = cases_by_location
+            .iter()
+            .map(|x| bson::to_document(&x).unwrap())
+            .collect::<Vec<_>>();
+        cases_collection.drop(None).await.unwrap();
+        cases_collection
+            .insert_many(processed_cases_by_location, None)
+            .await
+            .unwrap();
+    });
+
+    tokio::try_join!(save_to_db_totals_task, save_to_db_cases_task)?;
 
     let db_time_stop = Utc::now().time();
     debug!("Saved to DB");
