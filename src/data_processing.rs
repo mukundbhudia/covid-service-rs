@@ -7,6 +7,13 @@ use crate::schema::{
     TimeSeriesCase,
 };
 
+fn force_to_zero_if_negative(number: i64) -> i64 {
+    match number.is_negative() {
+        true => 0,
+        false => number,
+    }
+}
+
 pub fn hyphenate_string(s: String) -> String {
     s.replace(&['(', ')', ',', '\'', '\"', '.', ';', ':', '\''][..], "")
         .to_lowercase()
@@ -67,8 +74,8 @@ pub fn merge_csv_gis_cases(
             let today_time_series_cases = TimeSeriesCase::new(
                 gis_case.Confirmed,
                 gis_case.Deaths,
-                confirmed_cases_today,
-                deaths_today,
+                force_to_zero_if_negative(confirmed_cases_today),
+                force_to_zero_if_negative(deaths_today),
                 today.clone(),
             );
             csv_case.cases.push(today_time_series_cases);
@@ -292,17 +299,11 @@ pub fn process_csv(
                 .unwrap_or_default();
 
             if i != first_day_csv_header_index {
-                confirmed_today = confirmed_cases - confirmed_cases_yesterday;
-                confirmed_today = match confirmed_today.is_negative() {
-                    true => 0,
-                    false => confirmed_today,
-                };
-                deaths_today = death_cases - death_cases_yesterday;
-                deaths_today = match deaths_today.is_negative() {
-                    true => 0,
-                    false => deaths_today,
-                };
+                confirmed_today =
+                    force_to_zero_if_negative(confirmed_cases - confirmed_cases_yesterday);
+                deaths_today = force_to_zero_if_negative(death_cases - death_cases_yesterday);
             }
+
             let day = &csv_headers[i];
             let time_series_case = TimeSeriesCase::new(
                 confirmed_cases,
