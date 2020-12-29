@@ -79,18 +79,30 @@ pub async fn get_data_from_sources() -> Result<
     let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await?;
     let deaths_us_cases = deaths_us_csv_response.text().await?;
 
-    let total_confirmed_response = reqwest::get(&total_confirmed_url).await?;
-    let total_confirmed: Total = total_confirmed_response.json().await?;
+    let get_global_confirmed_task = tokio::spawn(async move {
+        let total_confirmed_response = reqwest::get(&total_confirmed_url).await.unwrap();
+        let total_confirmed: Total = total_confirmed_response.json().await.unwrap();
+        total_confirmed.features[0].attributes.value
+    });
 
-    let total_recovered_response = reqwest::get(&total_recovered_url).await?;
-    let total_recovered: Total = total_recovered_response.json().await?;
+    let get_global_recovered_task = tokio::spawn(async move {
+        let total_recovered_response = reqwest::get(&total_recovered_url).await.unwrap();
+        let total_recovered: Total = total_recovered_response.json().await.unwrap();
+        total_recovered.features[0].attributes.value
+    });
 
-    let total_deaths_response = reqwest::get(&total_deaths_url).await?;
-    let total_deaths: Total = total_deaths_response.json().await?;
+    let get_global_deaths_task = tokio::spawn(async move {
+        let total_deaths_response = reqwest::get(&total_deaths_url).await.unwrap();
+        let total_deaths: Total = total_deaths_response.json().await.unwrap();
+        total_deaths.features[0].attributes.value
+    });
 
-    let global_confirmed = total_confirmed.features[0].attributes.value;
-    let global_recovered = total_recovered.features[0].attributes.value;
-    let global_deaths = total_deaths.features[0].attributes.value;
+    let (global_confirmed, global_recovered, global_deaths) = tokio::try_join!(
+        get_global_confirmed_task,
+        get_global_recovered_task,
+        get_global_deaths_task
+    )
+    .unwrap();
 
     Ok((
         cases_by_country.features,
