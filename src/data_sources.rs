@@ -64,20 +64,31 @@ pub async fn get_data_from_sources() -> Result<
         total_deaths_url,
     ) = get_sources();
 
-    let cases_by_country_response = reqwest::get(&cases_by_country_url).await?;
-    let cases_by_country: CasesByCountry = cases_by_country_response.json().await?;
+    let get_cases_by_country_task = tokio::spawn(async move {
+        let cases_by_country_response = reqwest::get(&cases_by_country_url).await.unwrap();
+        let cases_by_country: CasesByCountry = cases_by_country_response.json().await.unwrap();
+        cases_by_country
+    });
 
-    let confirmed_csv_response = reqwest::get(&confirmed_csv_request_url).await?;
-    let confirmed_global_cases = confirmed_csv_response.text().await?;
+    let get_confirmed_global_csv_cases_task = tokio::spawn(async move {
+        let confirmed_csv_response = reqwest::get(&confirmed_csv_request_url).await.unwrap();
+        confirmed_csv_response.text().await.unwrap()
+    });
 
-    let deaths_csv_response = reqwest::get(&deaths_csv_request_url).await?;
-    let deaths_global_cases = deaths_csv_response.text().await?;
+    let get_death_global_csv_cases_task = tokio::spawn(async move {
+        let deaths_csv_response = reqwest::get(&deaths_csv_request_url).await.unwrap();
+        deaths_csv_response.text().await.unwrap()
+    });
 
-    let confirmed_us_csv_response = reqwest::get(&confirmed_us_csv_request_url).await?;
-    let confirmed_us_cases = confirmed_us_csv_response.text().await?;
+    let get_confirmed_us_csv_cases_task = tokio::spawn(async move {
+        let confirmed_us_csv_response = reqwest::get(&confirmed_us_csv_request_url).await.unwrap();
+        confirmed_us_csv_response.text().await.unwrap()
+    });
 
-    let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await?;
-    let deaths_us_cases = deaths_us_csv_response.text().await?;
+    let get_death_us_csv_cases_task = tokio::spawn(async move {
+        let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await.unwrap();
+        deaths_us_csv_response.text().await.unwrap()
+    });
 
     let get_global_confirmed_task = tokio::spawn(async move {
         let total_confirmed_response = reqwest::get(&total_confirmed_url).await.unwrap();
@@ -97,10 +108,24 @@ pub async fn get_data_from_sources() -> Result<
         total_deaths.features[0].attributes.value
     });
 
-    let (global_confirmed, global_recovered, global_deaths) = tokio::try_join!(
+    let (
+        cases_by_country,
+        confirmed_global_cases,
+        deaths_global_cases,
+        confirmed_us_cases,
+        deaths_us_cases,
+        global_confirmed,
+        global_recovered,
+        global_deaths,
+    ) = tokio::try_join!(
+        get_cases_by_country_task,
+        get_confirmed_global_csv_cases_task,
+        get_death_global_csv_cases_task,
+        get_confirmed_us_csv_cases_task,
+        get_death_us_csv_cases_task,
         get_global_confirmed_task,
         get_global_recovered_task,
-        get_global_deaths_task
+        get_global_deaths_task,
     )
     .unwrap();
 
