@@ -6,7 +6,7 @@ fn vec_compare(v1: Vec<TimeSeriesCase>, v2: Vec<TimeSeriesCase>) -> bool {
 }
 
 #[test]
-fn test_string_hyphenation() {
+fn string_hyphenation() {
     assert_eq!(
         data_processing::hyphenate_string("hello world".to_string()),
         "hello-world".to_string()
@@ -14,7 +14,7 @@ fn test_string_hyphenation() {
 }
 
 #[test]
-fn test_empty_string_hyphenation() {
+fn empty_string_hyphenation() {
     assert_eq!(
         data_processing::hyphenate_string("".to_string()),
         "".to_string()
@@ -22,7 +22,7 @@ fn test_empty_string_hyphenation() {
 }
 
 #[test]
-fn test_multiple_worded_string_hyphenation() {
+fn multiple_worded_string_hyphenation() {
     assert_eq!(
         data_processing::hyphenate_string("Saint Vincent and the Grenadines".to_string()),
         "saint-vincent-and-the-grenadines".to_string()
@@ -30,7 +30,7 @@ fn test_multiple_worded_string_hyphenation() {
 }
 
 #[test]
-fn test_worded_start_and_end_with_space_string_hyphenation() {
+fn worded_start_and_end_with_space_string_hyphenation() {
     assert_eq!(
         data_processing::hyphenate_string(" San Marino ".to_string()),
         "san-marino".to_string()
@@ -38,7 +38,7 @@ fn test_worded_start_and_end_with_space_string_hyphenation() {
 }
 
 #[test]
-fn test_id_key_gen() {
+fn id_key_gen() {
     assert_eq!(
         data_processing::generate_id_key(&Some("Hong Kong".to_string()), &"China".to_string()),
         "china-hong-kong".to_string()
@@ -50,7 +50,7 @@ fn test_id_key_gen() {
 }
 
 #[test]
-fn test_id_key_gen_no_province() {
+fn id_key_gen_no_province() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"China".to_string()),
         "china".to_string()
@@ -58,7 +58,7 @@ fn test_id_key_gen_no_province() {
 }
 
 #[test]
-fn test_id_key_gen_no_country() {
+fn id_key_gen_no_country() {
     assert_eq!(
         data_processing::generate_id_key(&Some("Hong Kong".to_string()), &"".to_string()),
         "".to_string()
@@ -66,7 +66,7 @@ fn test_id_key_gen_no_country() {
 }
 
 #[test]
-fn test_id_key_gen_with_quote_mark() {
+fn id_key_gen_with_quote_mark() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"Cote d'Ivoire".to_string()),
         "cote-divoire".to_string()
@@ -74,7 +74,7 @@ fn test_id_key_gen_with_quote_mark() {
 }
 
 #[test]
-fn test_id_key_gen_with_bracket() {
+fn id_key_gen_with_bracket() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"Congo (Brazzaville)".to_string()),
         "congo-brazzaville".to_string()
@@ -82,7 +82,7 @@ fn test_id_key_gen_with_bracket() {
 }
 
 #[test]
-fn test_id_key_gen_with_comma() {
+fn id_key_gen_with_comma() {
     assert_eq!(
         data_processing::generate_id_key(
             &Some("Bonaire, Sint Eustatius and Saba".to_string()),
@@ -93,7 +93,7 @@ fn test_id_key_gen_with_comma() {
 }
 
 #[test]
-fn test_join_two_time_series_vectors_with_one_entry() {
+fn join_two_time_series_vectors_with_one_entry() {
     let day1_province1 = TimeSeriesCase {
         confirmed: 20,
         deaths: 5,
@@ -125,7 +125,7 @@ fn test_join_two_time_series_vectors_with_one_entry() {
 }
 
 #[test]
-fn test_join_two_time_series_vectors_with_two_entries() {
+fn join_two_time_series_vectors_with_two_entries() {
     let day1_province1 = TimeSeriesCase {
         confirmed: 20,
         deaths: 5,

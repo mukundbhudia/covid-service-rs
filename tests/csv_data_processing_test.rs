@@ -3,8 +3,8 @@ use covid_service_rs::schema::{CsvCase, Region, TimeSeriesCase};
 use std::collections::{BTreeMap, HashMap};
 
 #[test]
-fn test_basic_process_one_country_4_days_global_csv() {
-    let mut time_series_cases = vec![
+fn basic_process_one_country_4_days_global_csv() {
+    let mut afghanistan_time_series_cases = vec![
         TimeSeriesCase {
             confirmed: 0,
             deaths: 0,
@@ -43,12 +43,12 @@ fn test_basic_process_one_country_4_days_global_csv() {
             Country_Region: "Afghanistan".to_string(),
             Lat: 33.93911,
             Long_: 67.709953,
-            cases: time_series_cases.clone(),
+            cases: afghanistan_time_series_cases.clone(),
         },
     );
 
     // We add the current day's cases to the expected time series
-    time_series_cases.push(TimeSeriesCase {
+    afghanistan_time_series_cases.push(TimeSeriesCase {
         confirmed: 0,
         deaths: 0,
         confirmedCasesToday: 0,
@@ -58,7 +58,7 @@ fn test_basic_process_one_country_4_days_global_csv() {
 
     let first_day_csv_index = 4;
     let expected_time_series_map = (first_day_csv_index..)
-        .zip(time_series_cases)
+        .zip(afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
     let global_confirmed_csv =
