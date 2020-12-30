@@ -113,7 +113,7 @@ pub struct Case {
     pub Active: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[allow(non_snake_case)]
 pub struct CsvCase {
     pub Province_State: Option<String>,
