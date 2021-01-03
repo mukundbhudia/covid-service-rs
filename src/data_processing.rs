@@ -68,14 +68,14 @@ pub fn merge_csv_gis_cases(
     for (id_key, mut csv_case) in csv_cases.drain() {
         if let Some(gis_case) = gis_cases.get_mut(&id_key) {
             let confirmed_cases_today =
-                gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed;
-            let deaths_today = gis_case.Deaths - csv_case.cases.last().unwrap().deaths;
+            force_to_zero_if_negative(gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed);
+            let deaths_today = force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
 
             let today_time_series_cases = TimeSeriesCase::new(
                 gis_case.Confirmed,
                 gis_case.Deaths,
-                force_to_zero_if_negative(confirmed_cases_today),
-                force_to_zero_if_negative(deaths_today),
+                confirmed_cases_today,
+                deaths_today,
                 today.clone(),
             );
             csv_case.cases.push(today_time_series_cases);
@@ -376,8 +376,8 @@ pub fn process_csv(
         let current_time_series_case = TimeSeriesCase::new(
             global_confirmed,
             global_deaths,
-            global_confirmed_today,
-            global_deaths_today,
+            force_to_zero_if_negative(global_confirmed_today),
+            force_to_zero_if_negative(global_deaths_today),
             today.to_string(),
         );
         time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
