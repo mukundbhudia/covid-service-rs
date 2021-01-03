@@ -20,7 +20,7 @@ use schema::{Case, CaseByLocation, GlobalCaseByLocation, GlobalDayCase, Region, 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let now: DateTime<Utc> = Utc::now();
-    let today_m_d_y = now.format("%m/%d/%C");
+    let today_m_d_y = now.format("%-m/%-d/%-y");
     let execution_time_start = Utc::now().time();
 
     initialise_logging();
