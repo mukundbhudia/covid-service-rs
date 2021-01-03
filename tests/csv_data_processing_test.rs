@@ -382,7 +382,7 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
             confirmed: 6,
             deaths: 3,
             confirmedCasesToday: 1,
-            deathsToday: 3,
+            deathsToday: 2,
             day: "1/25/20".to_string(),
         },
     ];
