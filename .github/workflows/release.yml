@@ -1,0 +1,79 @@
+# .github/workflows/release.yml
+
+on:
+  push:
+    branches: [master]
+    tags:
+      - "v*.*.*"
+  release:
+    types: [created]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          default: true
+
+      - name: Build binary
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target x86_64-unknown-linux-gnu
+          use-cross: false
+
+      - name: Optimize and package binary
+        run: |
+          cd target/x86_64-unknown-linux-gnu/release
+          strip covid-service-rs
+          chmod +x covid-service-rs
+          tar -c covid-service-rs | gzip > covid-service-rs.tar.gz
+      - name: Upload binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_name: covid-service-rs-${{ github.event.release.tag-name }}-linux-x86_64.tar.gz
+          asset_path: target/x86_64-unknown-linux-gnu/release/covid-service-rs.tar.gz
+          upload_url: ${{ github.event.release.upload_url }}
+
+  linux-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          default: true
+
+      - name: Build binary
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target aarch64-unknown-linux-gnu
+          use-cross: true
+
+      - name: Optimize and package binary
+        run: |
+          cd target/aarch64-unknown-linux-gnu/release
+          strip covid-service-rs
+          chmod +x covid-service-rs
+          tar -c covid-service-rs | gzip > covid-service-rs.tar.gz
+      - name: Upload binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_name: covid-service-rs-${{ github.event.release.tag-name }}-aarch64-unknown-linux-gnu.tar.gz
+          asset_path: target/aarch64-unknown-linux-gnu/release/covid-service-rs.tar.gz
+          upload_url: ${{ github.event.release.upload_url }}
