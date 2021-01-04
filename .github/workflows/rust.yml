@@ -1,4 +1,4 @@
-name: Rust
+name: Test and build
 
 on:
   push:
@@ -13,6 +13,11 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run lint
+        run: cargo fmt --all -- --check
 
     steps:
       - uses: actions/checkout@v2

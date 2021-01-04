@@ -1,4 +1,4 @@
-# .github/workflows/release.yml
+name: Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     tags:
       - "v*.*.*"
   release:
-    types: [created]
+    types: [created, published]
 
 env:
   CARGO_TERM_COLOR: always
@@ -55,6 +55,12 @@ jobs:
           profile: minimal
           toolchain: stable
           default: true
+
+      - name: Install cross (for cross-compilation support)
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cross
 
       - name: Build binary
         uses: actions-rs/cargo@v1
