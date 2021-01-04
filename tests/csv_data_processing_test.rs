@@ -598,7 +598,7 @@ fn over_new_year_process_1_country_4_days_global_csv() {
 }
 
 #[test]
-fn basic_process_2_countries_4_days_8_confirmed_7_deaths_global_csv() {
+fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
     let global_confirmed_csv =
         "Province/State,Country/Region,Lat,Long,1/22/20,1/23/20,1/24/20,1/25/20
 ,Afghanistan,33.93911,67.709953,0,5,5,6
@@ -722,6 +722,204 @@ fn basic_process_2_countries_4_days_8_confirmed_7_deaths_global_csv() {
             deaths: a.deaths + b.deaths,
             confirmedCasesToday: a.confirmedCasesToday + b.confirmedCasesToday,
             deathsToday: a.deathsToday + b.deathsToday,
+            day: a.day.clone(),
+        })
+        .collect::<Vec<TimeSeriesCase>>();
+    let expected_time_series_map = (first_day_csv_index..)
+        .zip(joined_expected_time_series_map)
+        .collect::<BTreeMap<usize, TimeSeriesCase>>();
+
+    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+        global_confirmed_csv,
+        global_deaths_csv,
+        Region::Global,
+        today,
+        Some(global_confirmed_and_deaths_count),
+    )
+    .unwrap();
+
+    assert_eq!(expected_global_cases, actual_global_cases);
+    assert_eq!(expected_time_series_map, actual_time_series_map);
+}
+
+#[test]
+fn basic_process_2_countries_1_province_4_days_14_confirmed_12_deaths_global_csv() {
+    let global_confirmed_csv =
+        "Province/State,Country/Region,Lat,Long,1/22/20,1/23/20,1/24/20,1/25/20
+,Afghanistan,33.93911,67.709953,0,5,5,6
+,Congo (Brazzaville),-0.228,15.8277,0,1,4,4
+Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,2,2"
+            .to_string();
+    let global_deaths_csv = "Province/State,Country/Region,Lat,Long,1/22/20,1/23/20,1/24/20,1/25/20
+,Afghanistan,33.93911,67.709953,0,0,1,1
+,Congo (Brazzaville),-0.228,15.8277,1,2,5,5
+Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
+        .to_string();
+
+    let global_confirmed_and_deaths_count = (14, 12);
+
+    let today = String::from("1/26/20");
+
+    let mut expected_afghanistan_time_series_cases = vec![
+        TimeSeriesCase {
+            confirmed: 0,
+            deaths: 0,
+            confirmedCasesToday: 0,
+            deathsToday: 0,
+            day: "1/22/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 5,
+            deaths: 0,
+            confirmedCasesToday: 5,
+            deathsToday: 0,
+            day: "1/23/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 5,
+            deaths: 1,
+            confirmedCasesToday: 0,
+            deathsToday: 1,
+            day: "1/24/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 6,
+            deaths: 1,
+            confirmedCasesToday: 1,
+            deathsToday: 0,
+            day: "1/25/20".to_string(),
+        },
+    ];
+
+    let mut expected_congo_brazzaville_time_series_cases = vec![
+        TimeSeriesCase {
+            confirmed: 0,
+            deaths: 1,
+            confirmedCasesToday: 0,
+            deathsToday: 1,
+            day: "1/22/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 1,
+            deaths: 2,
+            confirmedCasesToday: 1,
+            deathsToday: 1,
+            day: "1/23/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 4,
+            deaths: 5,
+            confirmedCasesToday: 3,
+            deathsToday: 3,
+            day: "1/24/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 4,
+            deaths: 5,
+            confirmedCasesToday: 0,
+            deathsToday: 0,
+            day: "1/25/20".to_string(),
+        },
+    ];
+
+    let mut expected_uk_falkland_islands_time_series_cases = vec![
+        TimeSeriesCase {
+            confirmed: 0,
+            deaths: 0,
+            confirmedCasesToday: 0,
+            deathsToday: 0,
+            day: "1/22/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 0,
+            deaths: 0,
+            confirmedCasesToday: 0,
+            deathsToday: 0,
+            day: "1/23/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 2,
+            deaths: 1,
+            confirmedCasesToday: 2,
+            deathsToday: 1,
+            day: "1/24/20".to_string(),
+        },
+        TimeSeriesCase {
+            confirmed: 2,
+            deaths: 2,
+            confirmedCasesToday: 0,
+            deathsToday: 1,
+            day: "1/25/20".to_string(),
+        },
+    ];
+
+    let mut expected_global_cases = HashMap::new();
+    expected_global_cases.insert(
+        "afghanistan".to_string(),
+        CsvCase {
+            Province_State: None,
+            Country_Region: "Afghanistan".to_string(),
+            Lat: 33.93911,
+            Long_: 67.709953,
+            cases: expected_afghanistan_time_series_cases.clone(),
+        },
+    );
+    expected_global_cases.insert(
+        "congo-brazzaville".to_string(),
+        CsvCase {
+            Province_State: None,
+            Country_Region: "Congo (Brazzaville)".to_string(),
+            Lat: -0.228,
+            Long_: 15.8277,
+            cases: expected_congo_brazzaville_time_series_cases.clone(),
+        },
+    );
+    expected_global_cases.insert(
+        "united-kingdom-falkland-islands-malvinas".to_string(),
+        CsvCase {
+            Province_State: Some("Falkland Islands (Malvinas)".to_string()),
+            Country_Region: "United Kingdom".to_string(),
+            Lat: -51.7963,
+            Long_: -59.5236,
+            cases: expected_uk_falkland_islands_time_series_cases.clone(),
+        },
+    );
+
+    // We add the current day's cases to the expected time series
+    expected_afghanistan_time_series_cases.push(TimeSeriesCase {
+        confirmed: 6,
+        deaths: 5,
+        confirmedCasesToday: 0,
+        deathsToday: 3,
+        day: today.clone(),
+    });
+    expected_congo_brazzaville_time_series_cases.push(TimeSeriesCase {
+        confirmed: 6,
+        deaths: 5,
+        confirmedCasesToday: 2,
+        deathsToday: 1,
+        day: today.clone(),
+    });
+    expected_uk_falkland_islands_time_series_cases.push(TimeSeriesCase {
+        confirmed: 2,
+        deaths: 2,
+        confirmedCasesToday: 0,
+        deathsToday: 0,
+        day: today.clone(),
+    });
+
+    let first_day_csv_index = 4;
+    let joined_expected_time_series_map = expected_afghanistan_time_series_cases
+        .into_iter()
+        .zip(expected_congo_brazzaville_time_series_cases.into_iter())
+        .zip(expected_uk_falkland_islands_time_series_cases.into_iter())
+        .map(|((a, b), c)| TimeSeriesCase {
+            confirmed: a.confirmed + b.confirmed + c.confirmed,
+            deaths: a.deaths + b.deaths + c.deaths,
+            confirmedCasesToday: a.confirmedCasesToday
+                + b.confirmedCasesToday
+                + c.confirmedCasesToday,
+            deathsToday: a.deathsToday + b.deathsToday + c.deathsToday,
             day: a.day.clone(),
         })
         .collect::<Vec<TimeSeriesCase>>();
