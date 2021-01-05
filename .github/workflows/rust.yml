@@ -2,21 +2,25 @@ name: Rust
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Run lint
+      - name: Lint code
         run: cargo fmt --all -- --check
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
 
     steps:
       - uses: actions/checkout@v2
