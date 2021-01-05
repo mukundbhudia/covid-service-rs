@@ -54,6 +54,7 @@ jobs:
           asset_name: covid-service-rs-linux-x86_64.tar.gz
           asset_path: target/x86_64-unknown-linux-gnu/release/covid-service-rs.tar.gz
           upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_content_type: application/gzip
 
   # linux-aarch64:
   #   runs-on: ubuntu-latest
