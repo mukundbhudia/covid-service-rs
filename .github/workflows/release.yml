@@ -32,7 +32,7 @@ jobs:
           cd target/x86_64-unknown-linux-gnu/release
           strip covid-service-rs
           chmod +x covid-service-rs
-          tar -c covid-service-rs | gzip > covid-service-rs.tar.gz
+          tar -c covid-service-rs | gzip > covid-service-rs-linux-x86_64.tar.gz
 
       - name: Create Release
         id: create_release
@@ -52,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_name: covid-service-rs-linux-x86_64.tar.gz
-          asset_path: target/x86_64-unknown-linux-gnu/release/covid-service-rs.tar.gz
+          asset_path: ./target/x86_64-unknown-linux-gnu/release/covid-service-rs-linux-x86_64.tar.gz
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_content_type: application/gzip
 
