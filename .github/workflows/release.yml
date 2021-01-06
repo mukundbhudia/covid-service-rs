@@ -50,6 +50,7 @@ jobs:
           ls target/x86_64-unknown-linux-gnu/release -lrt
           ls target -lrt
           ls -lrt
+          ls ~/ -lrt
           pwd
 
       - name: Upload binary asset
@@ -59,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_name: covid-service-rs-linux-x86_64.tar.gz
-          asset_path: target/x86_64-unknown-linux-gnu/release/covid-service-rs-linux-x86_64.tar.gz
+          asset_path: ./target/x86_64-unknown-linux-gnu/release/covid-service-rs-linux-x86_64.tar.gz
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_content_type: application/gzip
 
