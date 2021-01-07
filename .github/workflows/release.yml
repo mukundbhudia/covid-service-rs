@@ -50,17 +50,6 @@ jobs:
           chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
           zip -j ./covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1.0.0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     draft: false
-      #     prerelease: false
-
       - name: Upload binary asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1.0.1
@@ -72,67 +61,47 @@ jobs:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_content_type: application/zip
 
-  # linux-aarch64:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v1
+  linux-aarch64:
+    runs-on: ubuntu-latest
+    needs: create_release
+    steps:
+      - uses: actions/checkout@v1
 
-  #     - uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: minimal
-  #         toolchain: stable
-  #         default: true
-      # - uses: actions-rs/toolchain@v1
-      #   with:
-      #     toolchain: stable
-      #     target: aarch64-unknown-linux-gnu
-      #     override: true
-      # - uses: actions-rs/cargo@v1
-      #   with:
-      #     use-cross: true
-      #     command: build
-      #     args: --release --target aarch64-unknown-linux-gnu
+      - name: Install build tools
+        run: sudo apt update && sudo apt install -y build-essential libssl-dev pkg-config
 
-  #     - name: Install build tools
-  #       run: sudo apt update && sudo apt install -y build-essential libssl-dev pkg-config
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: aarch64-unknown-linux-gnu
+          override: true
 
-  #     - name: Install cross (for cross-compilation support)
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: install
-  #         args: cross
+      - name: Install cross (for cross-compilation support)
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cross
 
-  #     - name: Build binary
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: build
-  #         args: --release --target aarch64-unknown-linux-gnu
-  #         use-cross: true
+      - name: Build binary
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --target aarch64-unknown-linux-gnu
 
-  #     - name: Optimize and package binary
-  #       run: |
-  #         strip target/aarch64-unknown-linux-gnu/release/covid-service-rs
-  #         chmod +x target/aarch64-unknown-linux-gnu/release/covid-service-rs
-  #         zip -j ./covid-service-rs-linux-aarch64 target/aarch64-unknown-linux-gnu/release/covid-service-rs
+      - name: Optimize and package binary
+        run: |
+          strip target/aarch64-unknown-linux-gnu/release/covid-service-rs
+          chmod +x target/aarch64-unknown-linux-gnu/release/covid-service-rs
+          zip -j ./covid-service-rs-linux-aarch64 target/aarch64-unknown-linux-gnu/release/covid-service-rs
 
-  #     - name: Create Release
-  #       id: create_release
-  #       uses: actions/create-release@v1.0.0
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         tag_name: ${{ github.ref }}
-  #         release_name: Release ${{ github.ref }}
-  #         draft: false
-  #         prerelease: false
-
-  #     - name: Upload binary asset
-  #       id: upload-release-asset
-  #       uses: actions/upload-release-asset@v1.0.1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         asset_name: covid-service-rs-linux-aarch64.zip
-  #         asset_path: ./covid-service-rs-linux-aarch64.zip
-  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #         asset_content_type: application/zip
+      - name: Upload binary asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_name: covid-service-rs-linux-aarch64.zip
+          asset_path: ./covid-service-rs-linux-aarch64.zip
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_content_type: application/zip
