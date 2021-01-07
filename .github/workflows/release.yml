@@ -31,8 +31,7 @@ jobs:
         run: |
           strip target/x86_64-unknown-linux-gnu/release/covid-service-rs
           chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          zip -j ./covid-service-rs target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          cp ./covid-service-rs.zip /home/runner/covid-service-rs-linux-x86_64.zip
+          zip -j ./covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
 
       - name: Create Release
         id: create_release
@@ -59,7 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_name: covid-service-rs-linux-x86_64.zip
-          asset_path: /home/runner/covid-service-rs-linux-x86_64.zip
+          asset_path: ./covid-service-rs-linux-x86_64.zip
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_content_type: application/zip
 
