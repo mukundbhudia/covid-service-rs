@@ -97,7 +97,6 @@ jobs:
 
       - name: Optimize and package binary
         run: |
-          strip target/aarch64-unknown-linux-gnu/release/covid-service-rs
           chmod +x target/aarch64-unknown-linux-gnu/release/covid-service-rs
           zip -j ./covid-service-rs-linux-aarch64 target/aarch64-unknown-linux-gnu/release/covid-service-rs
 
