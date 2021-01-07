@@ -31,8 +31,8 @@ jobs:
         run: |
           strip target/x86_64-unknown-linux-gnu/release/covid-service-rs
           chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          zip covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          cp target/x86_64-unknown-linux-gnu/release/covid-service-rs.zip /home/runner/covid-service-rs-linux-x86_64.zip
+          zip -j ./covid-service-rs target/x86_64-unknown-linux-gnu/release/covid-service-rs
+          cp ./covid-service-rs.zip /home/runner/covid-service-rs-linux-x86_64.zip
 
       - name: Create Release
         id: create_release
