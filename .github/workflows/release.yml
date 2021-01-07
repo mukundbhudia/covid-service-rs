@@ -76,11 +76,17 @@ jobs:
           target: aarch64-unknown-linux-gnu
           override: true
 
+      # - name: Install cross (for cross-compilation support)
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: install
+      #     args: cross
+
       - name: Install cross (for cross-compilation support)
         uses: actions-rs/cargo@v1
         with:
           command: install
-          args: cross
+          args: --version 0.1.16 cross
 
       - name: Build binary
         uses: actions-rs/cargo@v1
