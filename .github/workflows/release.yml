@@ -9,8 +9,25 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  create_release:
+    runs-on: ubuntu-latest
+      outputs:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+      steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
   linux-x86_64:
     runs-on: ubuntu-latest
+    needs: create_release
     steps:
       - uses: actions/checkout@v1
 
@@ -33,23 +50,16 @@ jobs:
           chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
           zip -j ./covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Check binary dir
-        run: |
-          ls target/x86_64-unknown-linux-gnu/release -lrt
-          ls -lrt
-          ls ~/ -lrt
-          pwd
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1.0.0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     draft: false
+      #     prerelease: false
 
       - name: Upload binary asset
         id: upload-release-asset
@@ -59,7 +69,7 @@ jobs:
         with:
           asset_name: covid-service-rs-linux-x86_64.zip
           asset_path: ./covid-service-rs-linux-x86_64.zip
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_content_type: application/zip
 
   # linux-aarch64:
@@ -72,6 +82,16 @@ jobs:
   #         profile: minimal
   #         toolchain: stable
   #         default: true
+      # - uses: actions-rs/toolchain@v1
+      #   with:
+      #     toolchain: stable
+      #     target: aarch64-unknown-linux-gnu
+      #     override: true
+      # - uses: actions-rs/cargo@v1
+      #   with:
+      #     use-cross: true
+      #     command: build
+      #     args: --release --target aarch64-unknown-linux-gnu
 
   #     - name: Install build tools
   #       run: sudo apt update && sudo apt install -y build-essential libssl-dev pkg-config
@@ -91,15 +111,28 @@ jobs:
 
   #     - name: Optimize and package binary
   #       run: |
-  #         cd target/aarch64-unknown-linux-gnu/release
-  #         strip covid-service-rs
-  #         chmod +x covid-service-rs
-  #         tar -c covid-service-rs | gzip > covid-service-rs.tar.gz
-  #     - name: Upload binary
-  #       uses: actions/upload-release-asset@v1
+  #         strip target/aarch64-unknown-linux-gnu/release/covid-service-rs
+  #         chmod +x target/aarch64-unknown-linux-gnu/release/covid-service-rs
+  #         zip -j ./covid-service-rs-linux-aarch64 target/aarch64-unknown-linux-gnu/release/covid-service-rs
+
+  #     - name: Create Release
+  #       id: create_release
+  #       uses: actions/create-release@v1.0.0
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       with:
-  #         asset_name: covid-service-rs-${{ github.event.release.tag-name }}-aarch64-unknown-linux-gnu.tar.gz
-  #         asset_path: target/aarch64-unknown-linux-gnu/release/covid-service-rs.tar.gz
-  #         upload_url: ${{ github.event.release.upload_url }}
+  #         tag_name: ${{ github.ref }}
+  #         release_name: Release ${{ github.ref }}
+  #         draft: false
+  #         prerelease: false
+
+  #     - name: Upload binary asset
+  #       id: upload-release-asset
+  #       uses: actions/upload-release-asset@v1.0.1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         asset_name: covid-service-rs-linux-aarch64.zip
+  #         asset_path: ./covid-service-rs-linux-aarch64.zip
+  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #         asset_content_type: application/zip
