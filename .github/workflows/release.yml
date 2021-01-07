@@ -31,8 +31,8 @@ jobs:
         run: |
           strip target/x86_64-unknown-linux-gnu/release/covid-service-rs
           chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          tar -c target/x86_64-unknown-linux-gnu/release/covid-service-rs | gzip > target/x86_64-unknown-linux-gnu/release/covid-service-rs-linux-x86_64.tar.gz
-          cp target/x86_64-unknown-linux-gnu/release/covid-service-rs-linux-x86_64.tar.gz /home/runner/covid-service-rs-linux-x86_64.tar.gz
+          zip covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
+          cp target/x86_64-unknown-linux-gnu/release/covid-service-rs-linux-x86_64.zip /home/runner/covid-service-rs-linux-x86_64.zip
 
       - name: Create Release
         id: create_release
@@ -58,10 +58,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_name: covid-service-rs-linux-x86_64.tar.gz
-          asset_path: /home/covid-service-rs-linux-x86_64.tar.gz
+          asset_name: covid-service-rs-linux-x86_64.zip
+          asset_path: /home/runner/covid-service-rs-linux-x86_64.zip
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_content_type: application/x-gzip
+          asset_content_type: application/zip
 
   # linux-aarch64:
   #   runs-on: ubuntu-latest
