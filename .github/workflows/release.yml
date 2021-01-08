@@ -25,80 +25,59 @@ jobs:
           draft: false
           prerelease: false
 
-  linux-x86_64:
-    runs-on: ubuntu-latest
+  build:
     needs: create_release
+    name: Build ${{ matrix.config.target }} release assets
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # Linux
+          - { os: ubuntu-latest, toolchain: stable, target: x86_64-unknown-linux-gnu, cross: false }
+          - { os: ubuntu-latest, toolchain: stable, target: aarch64-unknown-linux-gnu, cross: true }
+          # - { os: ubuntu-latest, toolchain: stable, target: x86_64-unknown-linux-musl, cross: true }
+          # - { os: ubuntu-latest, toolchain: stable, target: arm-unknown-linux-gnueabi, cross: true }
+          # - { os: ubuntu-latest, toolchain: stable, target: armv7-unknown-linux-gnueabihf, cross: true }
+
+          # Macos
+          # - { os: macos-11.0, toolchain: stable, target: x86_64-apple-darwin, cross: false }
+          # - { os: macos-10.15, toolchain: stable, target: x86_64-apple-darwin, cross: false }
+
+          # Windows
+          # - { os: windows-2019, toolchain: stable-x86_64-pc-windows-gnu, target: x86_64-pc-windows-gnu, cross: false }
+          # - { os: windows-2019, toolchain: stable-x86_64-pc-windows-msvc, target: x86_64-pc-windows-msvc, cross: false }
+
     steps:
       - uses: actions/checkout@v1
 
       - uses: actions-rs/toolchain@v1
+        id: rust-toolchain
         with:
+          toolchain: ${{ matrix.config.toolchain }}
+          target: ${{ matrix.config.target }}
           profile: minimal
-          toolchain: stable
-          default: true
-
-      - name: Build binary
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --target x86_64-unknown-linux-gnu
-          use-cross: false
-
-      - name: Optimize and package binary
-        run: |
-          strip target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
-          zip -j ./covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
-
-      - name: Upload binary asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          asset_name: covid-service-rs-linux-x86_64.zip
-          asset_path: ./covid-service-rs-linux-x86_64.zip
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_content_type: application/zip
-
-  linux-aarch64:
-    runs-on: ubuntu-latest
-    needs: create_release
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Install build tools
-        run: sudo apt update && sudo apt install -y build-essential libssl-dev pkg-config
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: aarch64-unknown-linux-gnu
           override: true
-
-      # - name: Install cross (for cross-compilation support)
-      #   uses: actions-rs/cargo@v1
-      #   with:
-      #     command: install
-      #     args: cross
+          default: true
 
       - name: Install cross (for cross-compilation support)
         uses: actions-rs/cargo@v1
+        if: ${{ matrix.config.cross }}
         with:
           command: install
-          args: --version 0.1.16 cross
+          args: --version 0.1.16 cross  # using a downgraded version of cross (for OpenSSL support)
 
       - name: Build binary
         uses: actions-rs/cargo@v1
         with:
-          use-cross: true
           command: build
-          args: --release --target aarch64-unknown-linux-gnu
+          args: --release --target ${{ matrix.config.target }}
+          use-cross: ${{ matrix.config.cross }}
 
       - name: Optimize and package binary
         run: |
-          chmod +x target/aarch64-unknown-linux-gnu/release/covid-service-rs
-          zip -j ./covid-service-rs-linux-aarch64 target/aarch64-unknown-linux-gnu/release/covid-service-rs
+          chmod +x target/${{ matrix.config.target }}/release/covid-service-rs
+          zip -j ./covid-service-rs-${{ matrix.config.target }} target/${{ matrix.config.target }}/release/covid-service-rs
 
       - name: Upload binary asset
         id: upload-release-asset
@@ -106,7 +85,86 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_name: covid-service-rs-linux-aarch64.zip
-          asset_path: ./covid-service-rs-linux-aarch64.zip
+          asset_name: covid-service-rs-${{ matrix.config.target }}.zip
+          asset_path: ./covid-service-rs-${{ matrix.config.target }}.zip
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_content_type: application/zip
+
+  # linux-x86_64:
+  #   runs-on: ubuntu-latest
+  #   needs: create_release
+  #   steps:
+  #     - uses: actions/checkout@v1
+
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: stable
+  #         default: true
+
+  #     - name: Build binary
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --release --target x86_64-unknown-linux-gnu
+  #         use-cross: false
+
+  #     - name: Optimize and package binary
+  #       run: |
+  #         chmod +x target/x86_64-unknown-linux-gnu/release/covid-service-rs
+  #         zip -j ./covid-service-rs-linux-x86_64 target/x86_64-unknown-linux-gnu/release/covid-service-rs
+
+  #     - name: Upload binary asset
+  #       id: upload-release-asset
+  #       uses: actions/upload-release-asset@v1.0.1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         asset_name: covid-service-rs-linux-x86_64.zip
+  #         asset_path: ./covid-service-rs-linux-x86_64.zip
+  #         upload_url: ${{ needs.create_release.outputs.upload_url }}
+  #         asset_content_type: application/zip
+
+  # linux-aarch64:
+  #   runs-on: ubuntu-latest
+  #   needs: create_release
+  #   steps:
+  #     - uses: actions/checkout@v1
+
+  #     - name: Install build tools
+  #       run: sudo apt update && sudo apt install -y build-essential libssl-dev pkg-config
+
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+  #         target: aarch64-unknown-linux-gnu
+  #         override: true
+
+  #     - name: Install cross (for cross-compilation support)
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: install
+  #         args: --version 0.1.16 cross  # using a downgraded version of cross (for OpenSSL support)
+
+  #     - name: Build binary
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         use-cross: true
+  #         command: build
+  #         args: --release --target aarch64-unknown-linux-gnu
+
+  #     - name: Optimize and package binary
+  #       run: |
+  #         chmod +x target/aarch64-unknown-linux-gnu/release/covid-service-rs
+  #         zip -j ./covid-service-rs-linux-aarch64 target/aarch64-unknown-linux-gnu/release/covid-service-rs
+
+  #     - name: Upload binary asset
+  #       id: upload-release-asset
+  #       uses: actions/upload-release-asset@v1.0.1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         asset_name: covid-service-rs-linux-aarch64.zip
+  #         asset_path: ./covid-service-rs-linux-aarch64.zip
+  #         upload_url: ${{ needs.create_release.outputs.upload_url }}
+  #         asset_content_type: application/zip
