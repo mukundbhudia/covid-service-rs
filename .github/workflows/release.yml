@@ -41,7 +41,7 @@ jobs:
           # - { os: ubuntu-latest, toolchain: stable, target: armv7-unknown-linux-gnueabihf, cross: true }
 
           # Macos
-          - { os: macos-11.0, toolchain: stable, target: x86_64-apple-darwin, cross: false }
+          # - { os: macos-11.0, toolchain: stable, target: x86_64-apple-darwin, cross: false }
           - { os: macos-10.15, toolchain: stable, target: x86_64-apple-darwin, cross: false }
 
           # Windows
@@ -77,7 +77,7 @@ jobs:
       - name: Optimize and package binary
         run: |
           chmod +x target/${{ matrix.config.target }}/release/covid-service-rs
-          zip -j ./covid-service-rs-${{ matrix.config.target }} target/${{ matrix.config.target }}/release/covid-service-rs
+          zip -j ./covid-service-rs_${{ matrix.config.target }} target/${{ matrix.config.target }}/release/covid-service-rs
 
       - name: Upload binary asset
         id: upload-release-asset
@@ -85,7 +85,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_name: covid-service-rs-${{ matrix.config.target }}.zip
-          asset_path: ./covid-service-rs-${{ matrix.config.target }}.zip
+          asset_name: covid-service-rs_${{ matrix.config.target }}.zip
+          asset_path: ./covid-service-rs_${{ matrix.config.target }}.zip
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_content_type: application/zip
