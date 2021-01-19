@@ -116,7 +116,7 @@ pub fn merge_csv_gis_cases(
                     );
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
-                    // TODO: determine the earliest first confirmed case/death
+                // TODO: determine the earliest first confirmed case/death
                 } else {
                     countries_with_provinces.insert(
                         csv_case.Country_Region.clone(),
@@ -311,7 +311,8 @@ pub fn process_csv(
                 confirmed_today =
                     force_to_zero_if_negative(confirmed_cases - confirmed_cases_yesterday);
                 deaths_today = force_to_zero_if_negative(death_cases - death_cases_yesterday);
-            } else if i == first_day_csv_header_index { // First day of cases
+            } else if i == first_day_csv_header_index {
+                // First day of cases
                 confirmed_today = confirmed_cases;
                 deaths_today = death_cases;
             }
