@@ -116,6 +116,7 @@ pub fn merge_csv_gis_cases(
                     );
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
+                    // TODO: determine the earliest first confirmed case/death
                 } else {
                     countries_with_provinces.insert(
                         csv_case.Country_Region.clone(),
@@ -136,6 +137,8 @@ pub fn merge_csv_gis_cases(
                             province: None,
                             casesByDate: csv_case.cases.clone(),
                             provincesList: Vec::from([province_type]),
+                            dateOfFirstCase: csv_case.dateOfFirstCase.clone(),
+                            dateOfFirstDeath: csv_case.dateOfFirstDeath.clone(),
                         },
                     );
                 }
@@ -165,6 +168,8 @@ pub fn merge_csv_gis_cases(
                     province: province,
                     casesByDate: csv_case.cases,
                     provincesList: Vec::new(),
+                    dateOfFirstCase: csv_case.dateOfFirstCase,
+                    dateOfFirstDeath: csv_case.dateOfFirstDeath,
                 },
             );
         }
@@ -283,6 +288,8 @@ pub fn process_csv(
         let mut time_series: Vec<TimeSeriesCase> = Vec::new();
         let mut confirmed_today = 0;
         let mut deaths_today = 0;
+        let mut date_first_case: Option<String> = None;
+        let mut date_first_death: Option<String> = None;
 
         for i in first_day_csv_header_index..confirmed_record.len() {
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
@@ -304,12 +311,21 @@ pub fn process_csv(
                 confirmed_today =
                     force_to_zero_if_negative(confirmed_cases - confirmed_cases_yesterday);
                 deaths_today = force_to_zero_if_negative(death_cases - death_cases_yesterday);
-            } else if i == first_day_csv_header_index {
+            } else if i == first_day_csv_header_index { // First day of cases
                 confirmed_today = confirmed_cases;
                 deaths_today = death_cases;
             }
 
             let day = &csv_headers[i];
+
+            if date_first_case == None && confirmed_today > 0 {
+                date_first_case = Some(day.to_string());
+            }
+
+            if date_first_death == None && deaths_today > 0 {
+                date_first_death = Some(day.to_string());
+            }
+
             let time_series_case = TimeSeriesCase::new(
                 confirmed_cases,
                 death_cases,
@@ -362,6 +378,8 @@ pub fn process_csv(
                         .parse()
                         .unwrap_or_default(),
                     cases: time_series,
+                    dateOfFirstCase: date_first_case,
+                    dateOfFirstDeath: date_first_death,
                 },
             );
         }

@@ -40,6 +40,8 @@ pub struct CaseByLocation {
     pub casesByDate: Vec<TimeSeriesCase>,
     pub provincesList: Vec<Province>,
     pub hasProvince: bool,
+    pub dateOfFirstCase: Option<String>,
+    pub dateOfFirstDeath: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -121,6 +123,8 @@ pub struct CsvCase {
     pub Lat: f64,
     pub Long_: f64,
     pub cases: Vec<TimeSeriesCase>,
+    pub dateOfFirstCase: Option<String>,
+    pub dateOfFirstDeath: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
