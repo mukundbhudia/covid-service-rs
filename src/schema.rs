@@ -42,6 +42,8 @@ pub struct CaseByLocation {
     pub hasProvince: bool,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
+    pub highest_daily_confirmed: i64,
+    pub highest_daily_deaths: i64,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -125,6 +127,8 @@ pub struct CsvCase {
     pub cases: Vec<TimeSeriesCase>,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
+    pub highest_daily_confirmed: i64,
+    pub highest_daily_deaths: i64,
 }
 
 #[derive(Deserialize, Debug)]

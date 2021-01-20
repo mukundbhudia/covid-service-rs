@@ -116,6 +116,13 @@ pub fn merge_csv_gis_cases(
                     );
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
+                    if csv_case.highest_daily_confirmed > case_found.highest_daily_confirmed {
+                        case_found.highest_daily_confirmed = csv_case.highest_daily_confirmed
+                    }
+
+                    if csv_case.highest_daily_deaths > case_found.highest_daily_deaths {
+                        case_found.highest_daily_deaths = csv_case.highest_daily_deaths
+                    }
                 // TODO: determine the earliest first confirmed case/death
                 } else {
                     countries_with_provinces.insert(
@@ -139,6 +146,8 @@ pub fn merge_csv_gis_cases(
                             provincesList: Vec::from([province_type]),
                             dateOfFirstCase: csv_case.dateOfFirstCase.clone(),
                             dateOfFirstDeath: csv_case.dateOfFirstDeath.clone(),
+                            highest_daily_confirmed: csv_case.highest_daily_confirmed,
+                            highest_daily_deaths: csv_case.highest_daily_deaths,
                         },
                     );
                 }
@@ -170,6 +179,8 @@ pub fn merge_csv_gis_cases(
                     provincesList: Vec::new(),
                     dateOfFirstCase: csv_case.dateOfFirstCase,
                     dateOfFirstDeath: csv_case.dateOfFirstDeath,
+                    highest_daily_confirmed: csv_case.highest_daily_confirmed,
+                    highest_daily_deaths: csv_case.highest_daily_deaths,
                 },
             );
         }
@@ -290,6 +301,8 @@ pub fn process_csv(
         let mut deaths_today = 0;
         let mut date_first_case: Option<String> = None;
         let mut date_first_death: Option<String> = None;
+        let mut highest_daily_confirmed = 0;
+        let mut highest_daily_deaths = 0;
 
         for i in first_day_csv_header_index..confirmed_record.len() {
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
@@ -315,6 +328,8 @@ pub fn process_csv(
                 // First day of cases
                 confirmed_today = confirmed_cases;
                 deaths_today = death_cases;
+                highest_daily_confirmed = confirmed_cases;
+                highest_daily_deaths = death_cases;
             }
 
             let day = &csv_headers[i];
@@ -325,6 +340,14 @@ pub fn process_csv(
 
             if date_first_death.is_none() && deaths_today > 0 {
                 date_first_death = Some(day.to_string());
+            }
+
+            if confirmed_today > highest_daily_confirmed {
+                highest_daily_confirmed = confirmed_today;
+            }
+
+            if deaths_today > highest_daily_deaths {
+                highest_daily_deaths = deaths_today;
             }
 
             let time_series_case = TimeSeriesCase::new(
@@ -381,6 +404,8 @@ pub fn process_csv(
                     cases: time_series,
                     dateOfFirstCase: date_first_case,
                     dateOfFirstDeath: date_first_death,
+                    highest_daily_confirmed: highest_daily_confirmed,
+                    highest_daily_deaths: highest_daily_deaths,
                 },
             );
         }
