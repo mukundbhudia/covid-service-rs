@@ -278,7 +278,7 @@ pub fn process_csv(
         .iter()
         .map(|x| x.to_string())
         .collect::<Vec<String>>();
-
+    // println!("confirmed: {}, deaths: {}", confirmed_csv_reader.records().count(), deaths_csv_reader.records().count());
     for (confirmed_record, deaths_record) in confirmed_csv_reader
         .records()
         .zip(deaths_csv_reader.records())
@@ -319,11 +319,11 @@ pub fn process_csv(
 
             let day = &csv_headers[i];
 
-            if date_first_case == None && confirmed_today > 0 {
+            if date_first_case.is_none() && confirmed_today > 0 {
                 date_first_case = Some(day.to_string());
             }
 
-            if date_first_death == None && deaths_today > 0 {
+            if date_first_death.is_none() && deaths_today > 0 {
                 date_first_death = Some(day.to_string());
             }
 
