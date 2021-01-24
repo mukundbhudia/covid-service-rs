@@ -3,7 +3,7 @@ use std::error::Error;
 
 use crate::alpha3_country_codes::alpha_codes;
 use crate::schema::{
-    Case, CaseByLocation, CsvCase, GlobalCaseByDate, GlobalDayCase, Province, Region,
+    Case, CaseByLocation, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase, Province, Region,
     TimeSeriesCase,
 };
 
@@ -116,7 +116,19 @@ pub fn merge_csv_gis_cases(
                     );
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
-                // TODO: determine the earliest first confirmed case/death
+
+                    if csv_case.highest_daily_confirmed.count
+                        > case_found.highest_daily_confirmed.count
+                    {
+                        case_found.highest_daily_confirmed =
+                            csv_case.highest_daily_confirmed.clone();
+                    }
+
+                    if csv_case.highest_daily_deaths.count > case_found.highest_daily_deaths.count {
+                        case_found.highest_daily_deaths = csv_case.highest_daily_deaths.clone();
+                    }
+
+                // TODO: determine the date of the earliest first confirmed case/death
                 } else {
                     countries_with_provinces.insert(
                         csv_case.Country_Region.clone(),
@@ -139,6 +151,8 @@ pub fn merge_csv_gis_cases(
                             provincesList: Vec::from([province_type]),
                             dateOfFirstCase: csv_case.dateOfFirstCase.clone(),
                             dateOfFirstDeath: csv_case.dateOfFirstDeath.clone(),
+                            highest_daily_confirmed: csv_case.highest_daily_confirmed.clone(),
+                            highest_daily_deaths: csv_case.highest_daily_deaths.clone(),
                         },
                     );
                 }
@@ -170,6 +184,8 @@ pub fn merge_csv_gis_cases(
                     provincesList: Vec::new(),
                     dateOfFirstCase: csv_case.dateOfFirstCase,
                     dateOfFirstDeath: csv_case.dateOfFirstDeath,
+                    highest_daily_confirmed: csv_case.highest_daily_confirmed,
+                    highest_daily_deaths: csv_case.highest_daily_deaths,
                 },
             );
         }
@@ -251,7 +267,14 @@ pub fn process_csv(
     region: Region,
     today: String,
     global_current_cases: Option<(i64, i64)>,
-) -> Result<(HashMap<String, CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
+) -> Result<
+    (
+        HashMap<String, CsvCase>,
+        BTreeMap<usize, TimeSeriesCase>,
+        (Option<String>, Option<String>, HighestCase, HighestCase),
+    ),
+    Box<dyn Error>,
+> {
     let mut cases: HashMap<String, CsvCase> = HashMap::new();
     let mut countries_encountered: HashSet<String> = HashSet::new();
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
@@ -273,12 +296,23 @@ pub fn process_csv(
         first_day_csv_header_index = 11;
     }
 
+    let mut global_date_first_case: Option<String> = None;
+    let mut global_date_first_death: Option<String> = None;
+    let mut highest_global_daily_confirmed = HighestCase {
+        count: 0,
+        date: None,
+    };
+    let mut highest_global_daily_deaths = HighestCase {
+        count: 0,
+        date: None,
+    };
+
     let csv_headers = confirmed_csv_reader
         .headers()?
         .iter()
         .map(|x| x.to_string())
         .collect::<Vec<String>>();
-    // println!("confirmed: {}, deaths: {}", confirmed_csv_reader.records().count(), deaths_csv_reader.records().count());
+
     for (confirmed_record, deaths_record) in confirmed_csv_reader
         .records()
         .zip(deaths_csv_reader.records())
@@ -290,6 +324,14 @@ pub fn process_csv(
         let mut deaths_today = 0;
         let mut date_first_case: Option<String> = None;
         let mut date_first_death: Option<String> = None;
+        let mut highest_daily_confirmed = HighestCase {
+            count: 0,
+            date: None,
+        };
+        let mut highest_daily_deaths = HighestCase {
+            count: 0,
+            date: None,
+        };
 
         for i in first_day_csv_header_index..confirmed_record.len() {
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
@@ -307,6 +349,8 @@ pub fn process_csv(
                 .parse::<i64>()
                 .unwrap_or_default();
 
+            let day = &csv_headers[i];
+
             if i != first_day_csv_header_index {
                 confirmed_today =
                     force_to_zero_if_negative(confirmed_cases - confirmed_cases_yesterday);
@@ -315,9 +359,9 @@ pub fn process_csv(
                 // First day of cases
                 confirmed_today = confirmed_cases;
                 deaths_today = death_cases;
+                highest_daily_confirmed.count = confirmed_cases;
+                highest_daily_deaths.count = death_cases;
             }
-
-            let day = &csv_headers[i];
 
             if date_first_case.is_none() && confirmed_today > 0 {
                 date_first_case = Some(day.to_string());
@@ -325,6 +369,16 @@ pub fn process_csv(
 
             if date_first_death.is_none() && deaths_today > 0 {
                 date_first_death = Some(day.to_string());
+            }
+
+            if confirmed_today > highest_daily_confirmed.count {
+                highest_daily_confirmed.count = confirmed_today;
+                highest_daily_confirmed.date = Some(day.to_string());
+            }
+
+            if deaths_today > highest_daily_deaths.count {
+                highest_daily_deaths.count = deaths_today;
+                highest_daily_deaths.date = Some(day.to_string());
             }
 
             let time_series_case = TimeSeriesCase::new(
@@ -342,6 +396,15 @@ pub fn process_csv(
                     found_ts_case.deaths += death_cases;
                     found_ts_case.confirmedCasesToday += confirmed_today;
                     found_ts_case.deathsToday += deaths_today;
+                    if found_ts_case.confirmedCasesToday > highest_global_daily_confirmed.count {
+                        highest_global_daily_confirmed.count = found_ts_case.confirmedCasesToday;
+                        highest_global_daily_confirmed.date = Some(found_ts_case.day.to_string());
+                    }
+
+                    if found_ts_case.deathsToday > highest_global_daily_deaths.count {
+                        highest_global_daily_deaths.count = found_ts_case.deathsToday;
+                        highest_global_daily_deaths.date = Some(found_ts_case.day.to_string());
+                    }
                 } else {
                     time_series_cases_map.insert(i, time_series_case.clone());
                 }
@@ -381,12 +444,14 @@ pub fn process_csv(
                     cases: time_series,
                     dateOfFirstCase: date_first_case,
                     dateOfFirstDeath: date_first_death,
+                    highest_daily_confirmed: highest_daily_confirmed,
+                    highest_daily_deaths: highest_daily_deaths,
                 },
             );
         }
     }
 
-    // Add the most recent days
+    // Add the most recent days to global time series
     if let Some(global_current_cases) = global_current_cases {
         let (global_confirmed, global_deaths) = global_current_cases;
         let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
@@ -406,7 +471,29 @@ pub fn process_csv(
         );
         time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
     }
-    Ok((cases, time_series_cases_map))
+    if let Some(first_confirmed) = time_series_cases_map
+        .iter()
+        .find(|(_, x)| x.confirmedCasesToday > 0)
+    {
+        global_date_first_case = Some(first_confirmed.1.day.to_string());
+    }
+    if let Some(first_death) = time_series_cases_map
+        .iter()
+        .find(|(_, x)| x.deathsToday > 0)
+    {
+        global_date_first_death = Some(first_death.1.day.to_string())
+    }
+
+    Ok((
+        cases,
+        time_series_cases_map,
+        (
+            global_date_first_case,
+            global_date_first_death,
+            highest_global_daily_confirmed,
+            highest_global_daily_deaths,
+        ),
+    ))
 }
 
 pub fn process_global_cases_by_date(
