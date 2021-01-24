@@ -37,13 +37,13 @@ pub struct CaseByLocation {
     pub lastUpdate: Option<i64>,
     pub latitude: f64,
     pub longitude: f64,
+    pub dateOfFirstCase: Option<String>,
+    pub dateOfFirstDeath: Option<String>,
+    pub highest_daily_confirmed: HighestCase,
+    pub highest_daily_deaths: HighestCase,
     pub casesByDate: Vec<TimeSeriesCase>,
     pub provincesList: Vec<Province>,
     pub hasProvince: bool,
-    pub dateOfFirstCase: Option<String>,
-    pub dateOfFirstDeath: Option<String>,
-    pub highest_daily_confirmed: i64,
-    pub highest_daily_deaths: i64,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -127,8 +127,15 @@ pub struct CsvCase {
     pub cases: Vec<TimeSeriesCase>,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
-    pub highest_daily_confirmed: i64,
-    pub highest_daily_deaths: i64,
+    pub highest_daily_confirmed: HighestCase,
+    pub highest_daily_deaths: HighestCase,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[allow(non_snake_case)]
+pub struct HighestCase {
+    pub count: i64,
+    pub date: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]

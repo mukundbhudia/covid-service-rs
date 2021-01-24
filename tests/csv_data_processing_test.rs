@@ -1,7 +1,7 @@
 use chrono::prelude::*;
 use chrono::Utc;
 use covid_service_rs::data_processing;
-use covid_service_rs::schema::{CsvCase, Region, TimeSeriesCase};
+use covid_service_rs::schema::{CsvCase, HighestCase, Region, TimeSeriesCase};
 use std::collections::{BTreeMap, HashMap};
 
 #[test]
@@ -60,8 +60,14 @@ fn basic_process_1_country_4_days_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: None,
             dateOfFirstDeath: None,
-            highest_daily_confirmed: 0,
-            highest_daily_deaths: 0,
+            highest_daily_confirmed: HighestCase {
+                count: 0,
+                date: None,
+            },
+            highest_daily_deaths: HighestCase {
+                count: 0,
+                date: None,
+            },
         },
     );
 
@@ -148,8 +154,14 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: None,
-            highest_daily_confirmed: 5,
-            highest_daily_deaths: 0,
+            highest_daily_confirmed: HighestCase {
+                count: 5,
+                date: Some("1/23/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 0,
+                date: None,
+            },
         },
     );
 
@@ -236,8 +248,14 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: None,
             dateOfFirstDeath: Some("1/24/20".to_string()),
-            highest_daily_confirmed: 0,
-            highest_daily_deaths: 6,
+            highest_daily_confirmed: HighestCase {
+                count: 0,
+                date: None,
+            },
+            highest_daily_deaths: HighestCase {
+                count: 1,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
 
@@ -324,8 +342,14 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: Some("1/24/20".to_string()),
-            highest_daily_confirmed: 5,
-            highest_daily_deaths: 6,
+            highest_daily_confirmed: HighestCase {
+                count: 5,
+                date: Some("1/23/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 1,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
 
@@ -414,8 +438,14 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: Some("1/22/20".to_string()),
             dateOfFirstDeath: Some("1/22/20".to_string()),
-            highest_daily_confirmed: 3,
-            highest_daily_deaths: 2,
+            highest_daily_confirmed: HighestCase {
+                count: 3,
+                date: Some("1/23/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 2,
+                date: Some("1/25/20".to_string()),
+            },
         },
     );
 
@@ -504,8 +534,14 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: Some("1/24/20".to_string()),
-            highest_daily_confirmed: 5,
-            highest_daily_deaths: 0,
+            highest_daily_confirmed: HighestCase {
+                count: 5,
+                date: Some("1/23/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 1,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
 
@@ -593,8 +629,14 @@ fn over_new_year_process_1_country_4_days_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: None,
             dateOfFirstDeath: None,
-            highest_daily_confirmed: 0,
-            highest_daily_deaths: 0,
+            highest_daily_confirmed: HighestCase {
+                count: 0,
+                date: None,
+            },
+            highest_daily_deaths: HighestCase {
+                count: 0,
+                date: None,
+            },
         },
     );
 
@@ -714,8 +756,14 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: Some("1/24/20".to_string()),
-            highest_daily_confirmed: 5,
-            highest_daily_deaths: 3,
+            highest_daily_confirmed: HighestCase {
+                count: 5,
+                date: Some("1/23/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 1,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
     expected_global_cases.insert(
@@ -728,8 +776,14 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             cases: expected_congo_brazzaville_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: Some("1/22/20".to_string()),
-            highest_daily_confirmed: 3,
-            highest_daily_deaths: 3,
+            highest_daily_confirmed: HighestCase {
+                count: 3,
+                date: Some("1/24/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 3,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
 
@@ -900,8 +954,14 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             cases: expected_afghanistan_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: Some("1/24/20".to_string()),
-            highest_daily_confirmed: 5,
-            highest_daily_deaths: 3,
+            highest_daily_confirmed: HighestCase {
+                count: 5,
+                date: Some("1/23/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 1,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
     expected_global_cases.insert(
@@ -914,8 +974,14 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             cases: expected_congo_brazzaville_time_series_cases.clone(),
             dateOfFirstCase: Some("1/23/20".to_string()),
             dateOfFirstDeath: Some("1/22/20".to_string()),
-            highest_daily_confirmed: 3,
-            highest_daily_deaths: 3,
+            highest_daily_confirmed: HighestCase {
+                count: 3,
+                date: Some("1/24/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 3,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
     expected_global_cases.insert(
@@ -928,8 +994,14 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             cases: expected_uk_falkland_islands_time_series_cases.clone(),
             dateOfFirstCase: Some("1/24/20".to_string()),
             dateOfFirstDeath: Some("1/24/20".to_string()),
-            highest_daily_confirmed: 2,
-            highest_daily_deaths: 1,
+            highest_daily_confirmed: HighestCase {
+                count: 2,
+                date: Some("1/24/20".to_string()),
+            },
+            highest_daily_deaths: HighestCase {
+                count: 1,
+                date: Some("1/24/20".to_string()),
+            },
         },
     );
 
