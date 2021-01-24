@@ -85,7 +85,7 @@ fn basic_process_1_country_4_days_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -179,7 +179,7 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -273,7 +273,7 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -367,7 +367,7 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -463,7 +463,7 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -559,7 +559,7 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -654,7 +654,7 @@ fn over_new_year_process_1_country_4_days_global_csv() {
         .zip(expected_afghanistan_time_series_cases)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -819,7 +819,7 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
         .zip(joined_expected_time_series_map)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,
@@ -1047,7 +1047,7 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
         .zip(joined_expected_time_series_map)
         .collect::<BTreeMap<usize, TimeSeriesCase>>();
 
-    let (actual_global_cases, actual_time_series_map) = data_processing::process_csv(
+    let (actual_global_cases, actual_time_series_map, _) = data_processing::process_csv(
         global_confirmed_csv,
         global_deaths_csv,
         Region::Global,

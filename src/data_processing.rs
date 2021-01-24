@@ -267,7 +267,14 @@ pub fn process_csv(
     region: Region,
     today: String,
     global_current_cases: Option<(i64, i64)>,
-) -> Result<(HashMap<String, CsvCase>, BTreeMap<usize, TimeSeriesCase>), Box<dyn Error>> {
+) -> Result<
+    (
+        HashMap<String, CsvCase>,
+        BTreeMap<usize, TimeSeriesCase>,
+        (Option<String>, Option<String>, HighestCase, HighestCase),
+    ),
+    Box<dyn Error>,
+> {
     let mut cases: HashMap<String, CsvCase> = HashMap::new();
     let mut countries_encountered: HashSet<String> = HashSet::new();
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
@@ -288,6 +295,17 @@ pub fn process_csv(
         longitude_csv_header_index = 9;
         first_day_csv_header_index = 11;
     }
+
+    let mut global_date_first_case: Option<String> = None;
+    let mut global_date_first_death: Option<String> = None;
+    let mut highest_global_daily_confirmed = HighestCase {
+        count: 0,
+        date: None,
+    };
+    let mut highest_global_daily_deaths = HighestCase {
+        count: 0,
+        date: None,
+    };
 
     let csv_headers = confirmed_csv_reader
         .headers()?
@@ -378,6 +396,15 @@ pub fn process_csv(
                     found_ts_case.deaths += death_cases;
                     found_ts_case.confirmedCasesToday += confirmed_today;
                     found_ts_case.deathsToday += deaths_today;
+                    if found_ts_case.confirmedCasesToday > highest_global_daily_confirmed.count {
+                        highest_global_daily_confirmed.count = found_ts_case.confirmedCasesToday;
+                        highest_global_daily_confirmed.date = Some(found_ts_case.day.to_string());
+                    }
+
+                    if found_ts_case.deathsToday > highest_global_daily_deaths.count {
+                        highest_global_daily_deaths.count = found_ts_case.deathsToday;
+                        highest_global_daily_deaths.date = Some(found_ts_case.day.to_string());
+                    }
                 } else {
                     time_series_cases_map.insert(i, time_series_case.clone());
                 }
@@ -444,7 +471,29 @@ pub fn process_csv(
         );
         time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
     }
-    Ok((cases, time_series_cases_map))
+    if let Some(first_confirmed) = time_series_cases_map
+        .iter()
+        .find(|(_, x)| x.confirmedCasesToday > 0)
+    {
+        global_date_first_case = Some(first_confirmed.1.day.to_string());
+    }
+    if let Some(first_death) = time_series_cases_map
+        .iter()
+        .find(|(_, x)| x.deathsToday > 0)
+    {
+        global_date_first_death = Some(first_death.1.day.to_string())
+    }
+
+    Ok((
+        cases,
+        time_series_cases_map,
+        (
+            global_date_first_case,
+            global_date_first_death,
+            highest_global_daily_confirmed,
+            highest_global_daily_deaths,
+        ),
+    ))
 }
 
 pub fn process_global_cases_by_date(

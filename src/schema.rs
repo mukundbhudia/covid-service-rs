@@ -18,6 +18,10 @@ pub struct GlobalCaseByLocation {
     pub deathsToday: i64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
     pub globalCasesByDate: Vec<GlobalDayCase>,
+    pub dateOfFirstCase: Option<String>,
+    pub dateOfFirstDeath: Option<String>,
+    pub highest_daily_confirmed: HighestCase,
+    pub highest_daily_deaths: HighestCase,
     pub timeStamp: bson::DateTime,
 }
 
