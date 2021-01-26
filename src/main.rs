@@ -170,8 +170,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         globalCasesByDate: global_day_cases,
         dateOfFirstCase: date_of_first_confirmed,
         dateOfFirstDeath: date_of_first_death,
-        highest_daily_confirmed,
-        highest_daily_deaths,
+        highestDailyConfirmed: highest_daily_confirmed,
+        highestDailyDeaths: highest_daily_deaths,
         timeStamp: From::from(Utc::now()),
     };
 

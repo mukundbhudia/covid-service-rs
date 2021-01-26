@@ -20,8 +20,8 @@ pub struct GlobalCaseByLocation {
     pub globalCasesByDate: Vec<GlobalDayCase>,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
-    pub highest_daily_confirmed: HighestCase,
-    pub highest_daily_deaths: HighestCase,
+    pub highestDailyConfirmed: HighestCase,
+    pub highestDailyDeaths: HighestCase,
     pub timeStamp: bson::DateTime,
 }
 
@@ -43,8 +43,8 @@ pub struct CaseByLocation {
     pub longitude: f64,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
-    pub highest_daily_confirmed: HighestCase,
-    pub highest_daily_deaths: HighestCase,
+    pub highestDailyConfirmed: HighestCase,
+    pub highestDailyDeaths: HighestCase,
     pub casesByDate: Vec<TimeSeriesCase>,
     pub provincesList: Vec<Province>,
     pub hasProvince: bool,
@@ -131,8 +131,8 @@ pub struct CsvCase {
     pub cases: Vec<TimeSeriesCase>,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
-    pub highest_daily_confirmed: HighestCase,
-    pub highest_daily_deaths: HighestCase,
+    pub highestDailyConfirmed: HighestCase,
+    pub highestDailyDeaths: HighestCase,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]

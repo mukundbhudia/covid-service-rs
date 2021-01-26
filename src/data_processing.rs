@@ -117,15 +117,15 @@ pub fn merge_csv_gis_cases(
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
 
-                    if csv_case.highest_daily_confirmed.count
-                        > case_found.highest_daily_confirmed.count
+                    if csv_case.highestDailyConfirmed.count
+                        > case_found.highestDailyConfirmed.count
                     {
-                        case_found.highest_daily_confirmed =
-                            csv_case.highest_daily_confirmed.clone();
+                        case_found.highestDailyConfirmed =
+                            csv_case.highestDailyConfirmed.clone();
                     }
 
-                    if csv_case.highest_daily_deaths.count > case_found.highest_daily_deaths.count {
-                        case_found.highest_daily_deaths = csv_case.highest_daily_deaths.clone();
+                    if csv_case.highestDailyDeaths.count > case_found.highestDailyDeaths.count {
+                        case_found.highestDailyDeaths = csv_case.highestDailyDeaths.clone();
                     }
 
                 // TODO: determine the date of the earliest first confirmed case/death
@@ -151,8 +151,8 @@ pub fn merge_csv_gis_cases(
                             provincesList: Vec::from([province_type]),
                             dateOfFirstCase: csv_case.dateOfFirstCase.clone(),
                             dateOfFirstDeath: csv_case.dateOfFirstDeath.clone(),
-                            highest_daily_confirmed: csv_case.highest_daily_confirmed.clone(),
-                            highest_daily_deaths: csv_case.highest_daily_deaths.clone(),
+                            highestDailyConfirmed: csv_case.highestDailyConfirmed.clone(),
+                            highestDailyDeaths: csv_case.highestDailyDeaths.clone(),
                         },
                     );
                 }
@@ -184,8 +184,8 @@ pub fn merge_csv_gis_cases(
                     provincesList: Vec::new(),
                     dateOfFirstCase: csv_case.dateOfFirstCase,
                     dateOfFirstDeath: csv_case.dateOfFirstDeath,
-                    highest_daily_confirmed: csv_case.highest_daily_confirmed,
-                    highest_daily_deaths: csv_case.highest_daily_deaths,
+                    highestDailyConfirmed: csv_case.highestDailyConfirmed,
+                    highestDailyDeaths: csv_case.highestDailyDeaths,
                 },
             );
         }
@@ -444,8 +444,8 @@ pub fn process_csv(
                     cases: time_series,
                     dateOfFirstCase: date_first_case,
                     dateOfFirstDeath: date_first_death,
-                    highest_daily_confirmed: highest_daily_confirmed,
-                    highest_daily_deaths: highest_daily_deaths,
+                    highestDailyConfirmed: highest_daily_confirmed,
+                    highestDailyDeaths: highest_daily_deaths,
                 },
             );
         }
