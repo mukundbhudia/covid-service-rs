@@ -117,11 +117,9 @@ pub fn merge_csv_gis_cases(
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
 
-                    if csv_case.highestDailyConfirmed.count
-                        > case_found.highestDailyConfirmed.count
+                    if csv_case.highestDailyConfirmed.count > case_found.highestDailyConfirmed.count
                     {
-                        case_found.highestDailyConfirmed =
-                            csv_case.highestDailyConfirmed.clone();
+                        case_found.highestDailyConfirmed = csv_case.highestDailyConfirmed.clone();
                     }
 
                     if csv_case.highestDailyDeaths.count > case_found.highestDailyDeaths.count {
