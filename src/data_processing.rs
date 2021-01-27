@@ -6,6 +6,7 @@ use crate::schema::{
     Case, CaseByLocation, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase, Province, Region,
     TimeSeriesCase,
 };
+use chrono::NaiveDate;
 
 fn force_to_zero_if_negative(number: i64) -> i64 {
     match number.is_negative() {
@@ -54,6 +55,17 @@ pub fn combine_time_series_cases(
             day: x.day.clone(),
         })
         .collect()
+}
+
+pub fn convert_option_to_date(option_date: Option<String>) -> Option<NaiveDate> {
+    let result = match option_date {
+        Some(date_string) => match NaiveDate::parse_from_str(date_string.as_str(), "%-m/%-d/%-y") {
+            Ok(date) => Some(date),
+            Err(_) => None,
+        },
+        None => None,
+    };
+    result
 }
 
 pub fn merge_csv_gis_cases(
@@ -116,6 +128,25 @@ pub fn merge_csv_gis_cases(
                     );
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
+
+                    let csv_case_first_case =
+                        convert_option_to_date(csv_case.dateOfFirstCase.clone());
+
+                    let case_found_first_case =
+                        convert_option_to_date(case_found.dateOfFirstCase.clone());
+
+                    let csv_case_first_death =
+                        convert_option_to_date(csv_case.dateOfFirstDeath.clone());
+                    let case_found_first_death =
+                        convert_option_to_date(case_found.dateOfFirstDeath.clone());
+
+                    if csv_case_first_case > case_found_first_case {
+                        case_found.dateOfFirstCase = csv_case.dateOfFirstCase.clone();
+                    }
+
+                    if csv_case_first_death > case_found_first_death {
+                        case_found.dateOfFirstDeath = csv_case.dateOfFirstDeath.clone();
+                    }
 
                     if csv_case.highestDailyConfirmed.count > case_found.highestDailyConfirmed.count
                     {
