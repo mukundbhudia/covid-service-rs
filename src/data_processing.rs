@@ -116,16 +116,26 @@ pub fn merge_csv_gis_cases(
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
                 {
+                    let combined_ts_cases = combine_time_series_cases(
+                        case_found.casesByDate.clone(),
+                        csv_case.cases.clone(),
+                    );
+                    let max_daily_confirmed = combined_ts_cases
+                        .iter()
+                        .max_by_key(|x| x.confirmedCasesToday)
+                        .unwrap();
+                    let max_daily_deaths = combined_ts_cases
+                        .iter()
+                        .max_by_key(|x| x.deathsToday)
+                        .unwrap();
+
                     case_found.confirmed += gis_case.Confirmed;
                     case_found.recovered += gis_case.Recovered;
                     case_found.active += gis_case.Active;
                     case_found.deaths += gis_case.Deaths;
                     case_found.confirmedCasesToday += confirmed_cases_today;
                     case_found.deathsToday += deaths_today;
-                    case_found.casesByDate = combine_time_series_cases(
-                        case_found.casesByDate.clone(),
-                        csv_case.cases.clone(),
-                    );
+                    case_found.casesByDate = combined_ts_cases.clone();
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
 
@@ -148,14 +158,24 @@ pub fn merge_csv_gis_cases(
                         case_found.dateOfFirstDeath = csv_case.dateOfFirstDeath.clone();
                     }
 
-                    if csv_case.highestDailyConfirmed.count > case_found.highestDailyConfirmed.count
-                    {
-                        case_found.highestDailyConfirmed = csv_case.highestDailyConfirmed.clone();
-                    }
+                    case_found.highestDailyConfirmed = HighestCase {
+                        count: max_daily_confirmed.confirmedCasesToday,
+                        date: Some(max_daily_confirmed.day.clone()),
+                    };
 
-                    if csv_case.highestDailyDeaths.count > case_found.highestDailyDeaths.count {
-                        case_found.highestDailyDeaths = csv_case.highestDailyDeaths.clone();
-                    }
+                    case_found.highestDailyDeaths = HighestCase {
+                        count: max_daily_deaths.deathsToday,
+                        date: Some(max_daily_deaths.day.clone()),
+                    };
+
+                // if csv_case.highestDailyConfirmed.count > case_found.highestDailyConfirmed.count
+                // {
+                //     case_found.highestDailyConfirmed = csv_case.highestDailyConfirmed.clone();
+                // }
+
+                // if csv_case.highestDailyDeaths.count > case_found.highestDailyDeaths.count {
+                //     case_found.highestDailyDeaths = csv_case.highestDailyDeaths.clone();
+                // }
 
                 // TODO: determine the date of the earliest first confirmed case/death
                 } else {
