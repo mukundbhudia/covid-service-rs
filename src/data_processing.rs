@@ -140,11 +140,11 @@ pub fn merge_csv_gis_cases(
                     let case_found_first_death =
                         convert_option_to_date(case_found.dateOfFirstDeath.clone());
 
-                    if csv_case_first_case > case_found_first_case {
+                    if csv_case_first_case < case_found_first_case {
                         case_found.dateOfFirstCase = csv_case.dateOfFirstCase.clone();
                     }
 
-                    if csv_case_first_death > case_found_first_death {
+                    if csv_case_first_death < case_found_first_death {
                         case_found.dateOfFirstDeath = csv_case.dateOfFirstDeath.clone();
                     }
 
