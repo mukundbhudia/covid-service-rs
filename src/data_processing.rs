@@ -116,8 +116,8 @@ pub fn merge_csv_gis_cases(
                         .iter()
                         .max_by_key(|x| x.deathsToday)
                         .unwrap();
-                    let first_case = combined_ts_cases.iter().find(|x| x.confirmed > 0).unwrap();
-                    let first_death = combined_ts_cases.iter().find(|x| x.deaths > 0).unwrap();
+                    let first_case = combined_ts_cases.iter().find(|x| x.confirmed > 0);
+                    let first_death = combined_ts_cases.iter().find(|x| x.deaths > 0);
 
                     case_found.confirmed += gis_case.Confirmed;
                     case_found.recovered += gis_case.Recovered;
@@ -129,8 +129,15 @@ pub fn merge_csv_gis_cases(
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
 
-                    case_found.dateOfFirstCase = Some(first_case.day.clone());
-                    case_found.dateOfFirstDeath = Some(first_death.day.clone());
+                    case_found.dateOfFirstCase = match first_case {
+                        Some(ts_case) => Some(ts_case.day.clone()),
+                        None => None,
+                    };
+
+                    case_found.dateOfFirstDeath = match first_death {
+                        Some(ts_case) => Some(ts_case.day.clone()),
+                        None => None,
+                    };
 
                     case_found.highestDailyConfirmed = HighestCase {
                         count: max_daily_confirmed.confirmedCasesToday,
