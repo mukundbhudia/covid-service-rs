@@ -56,6 +56,33 @@ pub fn combine_time_series_cases(
         .collect()
 }
 
+fn get_highest_confirmed_and_deaths(
+    cases: Vec<TimeSeriesCase>,
+) -> (HighestCase, HighestCase, Option<String>, Option<String>) {
+    let max_daily_confirmed = cases.iter().max_by_key(|x| x.confirmedCasesToday).unwrap();
+    let max_daily_deaths = cases.iter().max_by_key(|x| x.deathsToday).unwrap();
+    let first_case = cases.iter().find(|x| x.confirmed > 0);
+    let first_death = cases.iter().find(|x| x.deaths > 0);
+    (
+        HighestCase {
+            count: max_daily_confirmed.confirmedCasesToday,
+            date: Some(max_daily_confirmed.day.clone()),
+        },
+        HighestCase {
+            count: max_daily_deaths.deathsToday,
+            date: Some(max_daily_deaths.day.clone()),
+        },
+        match first_case {
+            Some(ts_case) => Some(ts_case.day.clone()),
+            None => None,
+        },
+        match first_death {
+            Some(ts_case) => Some(ts_case.day.clone()),
+            None => None,
+        },
+    )
+}
+
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
@@ -81,6 +108,13 @@ pub fn merge_csv_gis_cases(
                 today.clone(),
             );
             csv_case.cases.push(today_time_series_cases);
+
+            let (
+                highest_daily_confirmed,
+                highest_daily_deaths,
+                date_of_first_case,
+                date_of_first_death,
+            ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
 
             let mut country_code = alpha_codes
                 .get(&csv_case.Country_Region)
@@ -108,16 +142,12 @@ pub fn merge_csv_gis_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
                     );
-                    let max_daily_confirmed = combined_ts_cases
-                        .iter()
-                        .max_by_key(|x| x.confirmedCasesToday)
-                        .unwrap();
-                    let max_daily_deaths = combined_ts_cases
-                        .iter()
-                        .max_by_key(|x| x.deathsToday)
-                        .unwrap();
-                    let first_case = combined_ts_cases.iter().find(|x| x.confirmed > 0);
-                    let first_death = combined_ts_cases.iter().find(|x| x.deaths > 0);
+                    let (
+                        highest_daily_confirmed,
+                        highest_daily_deaths,
+                        date_of_first_case,
+                        date_of_first_death,
+                    ) = get_highest_confirmed_and_deaths(combined_ts_cases.clone());
 
                     case_found.confirmed += gis_case.Confirmed;
                     case_found.recovered += gis_case.Recovered;
@@ -128,26 +158,10 @@ pub fn merge_csv_gis_cases(
                     case_found.casesByDate = combined_ts_cases.clone();
                     case_found.provincesList.push(province_type);
                     case_found.hasProvince = true;
-
-                    case_found.dateOfFirstCase = match first_case {
-                        Some(ts_case) => Some(ts_case.day.clone()),
-                        None => None,
-                    };
-
-                    case_found.dateOfFirstDeath = match first_death {
-                        Some(ts_case) => Some(ts_case.day.clone()),
-                        None => None,
-                    };
-
-                    case_found.highestDailyConfirmed = HighestCase {
-                        count: max_daily_confirmed.confirmedCasesToday,
-                        date: Some(max_daily_confirmed.day.clone()),
-                    };
-
-                    case_found.highestDailyDeaths = HighestCase {
-                        count: max_daily_deaths.deathsToday,
-                        date: Some(max_daily_deaths.day.clone()),
-                    };
+                    case_found.dateOfFirstCase = date_of_first_case;
+                    case_found.dateOfFirstDeath = date_of_first_death;
+                    case_found.highestDailyConfirmed = highest_daily_confirmed;
+                    case_found.highestDailyDeaths = highest_daily_deaths;
                 } else {
                     countries_with_provinces.insert(
                         csv_case.Country_Region.clone(),
@@ -168,10 +182,10 @@ pub fn merge_csv_gis_cases(
                             province: None,
                             casesByDate: csv_case.cases.clone(),
                             provincesList: Vec::from([province_type]),
-                            dateOfFirstCase: csv_case.dateOfFirstCase.clone(),
-                            dateOfFirstDeath: csv_case.dateOfFirstDeath.clone(),
-                            highestDailyConfirmed: csv_case.highestDailyConfirmed.clone(),
-                            highestDailyDeaths: csv_case.highestDailyDeaths.clone(),
+                            dateOfFirstCase: date_of_first_case.clone(),
+                            dateOfFirstDeath: date_of_first_death.clone(),
+                            highestDailyConfirmed: highest_daily_confirmed.clone(),
+                            highestDailyDeaths: highest_daily_deaths.clone(),
                         },
                     );
                 }
@@ -201,10 +215,10 @@ pub fn merge_csv_gis_cases(
                     province: province,
                     casesByDate: csv_case.cases,
                     provincesList: Vec::new(),
-                    dateOfFirstCase: csv_case.dateOfFirstCase,
-                    dateOfFirstDeath: csv_case.dateOfFirstDeath,
-                    highestDailyConfirmed: csv_case.highestDailyConfirmed,
-                    highestDailyDeaths: csv_case.highestDailyDeaths,
+                    dateOfFirstCase: date_of_first_case,
+                    dateOfFirstDeath: date_of_first_death,
+                    highestDailyConfirmed: highest_daily_confirmed,
+                    highestDailyDeaths: highest_daily_deaths,
                 },
             );
         }
