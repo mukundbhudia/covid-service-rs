@@ -133,6 +133,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
         "PRK".to_string(),
     );
     alpha3.insert("Korea, South".to_string(), "KOR".to_string());
+    alpha3.insert("Kosovo".to_string(), "KOS".to_string());
     alpha3.insert("Kuwait".to_string(), "KWT".to_string());
     alpha3.insert("Kyrgyzstan".to_string(), "KGZ".to_string());
     alpha3.insert("Laos".to_string(), "LAO".to_string());
@@ -157,10 +158,7 @@ pub fn alpha_codes() -> HashMap<String, String> {
     alpha3.insert("Mauritius".to_string(), "MUS".to_string());
     alpha3.insert("Mayotte".to_string(), "MYT".to_string());
     alpha3.insert("Mexico".to_string(), "MEX".to_string());
-    alpha3.insert(
-        "Micronesia (Federated States of)".to_string(),
-        "FSM".to_string(),
-    );
+    alpha3.insert("Micronesia".to_string(), "FSM".to_string());
     alpha3.insert("Moldova".to_string(), "MDA".to_string());
     alpha3.insert("Monaco".to_string(), "MCO".to_string());
     alpha3.insert("Mongolia".to_string(), "MNG".to_string());
