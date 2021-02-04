@@ -15,10 +15,13 @@ fn force_to_zero_if_negative(number: i64) -> i64 {
 }
 
 pub fn hyphenate_string(s: String) -> String {
-    s.replace(&['(', ')', ',', '\'', '\"', '.', ';', ':', '\''][..], "")
-        .to_lowercase()
-        .trim()
-        .replace(' ', "-")
+    s.replace(
+        &['(', ')', ',', '\'', '\"', '.', ';', ':', '\'', '*'][..],
+        "",
+    )
+    .to_lowercase()
+    .trim()
+    .replace(' ', "-")
 }
 
 pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
