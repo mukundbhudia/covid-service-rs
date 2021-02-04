@@ -74,6 +74,14 @@ fn id_key_gen_with_quote_mark() {
 }
 
 #[test]
+fn id_key_gen_with_asterisk() {
+    assert_eq!(
+        data_processing::generate_id_key(&None, &"Taiwan*".to_string()),
+        "taiwan".to_string()
+    );
+}
+
+#[test]
 fn id_key_gen_with_bracket() {
     assert_eq!(
         data_processing::generate_id_key(&None, &"Congo (Brazzaville)".to_string()),
