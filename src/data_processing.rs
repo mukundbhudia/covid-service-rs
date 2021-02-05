@@ -119,10 +119,10 @@ pub fn merge_csv_gis_cases(
                 date_of_first_death,
             ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
 
-            let mut country_code = alpha_codes
-                .get(&csv_case.Country_Region)
-                .unwrap_or(&String::new())
-                .to_string();
+            let mut country_code = match alpha_codes.get(&csv_case.Country_Region) {
+                Some(code) => code.iso_code.to_string(),
+                None => "".to_string(),
+            };
 
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &csv_case.Country_Region);
@@ -133,10 +133,10 @@ pub fn merge_csv_gis_cases(
                 };
 
                 if province_found == "Greenland" {
-                    country_code = alpha_codes
-                        .get(&province_found.to_string())
-                        .unwrap_or(&String::new())
-                        .to_string();
+                    country_code = match alpha_codes.get(&province_found.to_string()) {
+                        Some(code) => code.iso_code.to_string(),
+                        None => "".to_string(),
+                    };
                 }
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
