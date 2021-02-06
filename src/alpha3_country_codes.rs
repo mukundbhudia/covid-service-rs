@@ -21,7 +21,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Albania".to_string(),
         CountyStatistic {
@@ -40,7 +40,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Algeria".to_string(),
         CountyStatistic {
@@ -59,7 +59,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Andorra".to_string(),
         CountyStatistic {
@@ -78,7 +78,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Angola".to_string(),
         CountyStatistic {
@@ -97,7 +97,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Antigua and Barbuda".to_string(),
         CountyStatistic {
@@ -116,7 +116,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Argentina".to_string(),
         CountyStatistic {
@@ -135,7 +135,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Armenia".to_string(),
         CountyStatistic {
@@ -154,7 +154,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Australia".to_string(),
         CountyStatistic {
@@ -173,7 +173,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Austria".to_string(),
         CountyStatistic {
@@ -192,7 +192,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Azerbaijan".to_string(),
         CountyStatistic {
@@ -211,7 +211,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Bahamas".to_string(),
         CountyStatistic {
@@ -230,7 +230,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Bahrain".to_string(),
         CountyStatistic {
@@ -249,7 +249,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Bangladesh".to_string(),
         CountyStatistic {
@@ -268,7 +268,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Barbados".to_string(),
         CountyStatistic {
@@ -287,7 +287,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Belarus".to_string(),
         CountyStatistic {
@@ -306,7 +306,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Belgium".to_string(),
         CountyStatistic {
@@ -325,7 +325,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Belize".to_string(),
         CountyStatistic {
@@ -344,7 +344,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Benin".to_string(),
         CountyStatistic {
@@ -363,7 +363,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Bhutan".to_string(),
         CountyStatistic {
@@ -382,7 +382,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Bolivia".to_string(),
         CountyStatistic {
@@ -401,7 +401,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Bosnia and Herzegovina".to_string(),
         CountyStatistic {
@@ -420,7 +420,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Botswana".to_string(),
         CountyStatistic {
@@ -439,7 +439,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Brazil".to_string(),
         CountyStatistic {
@@ -458,7 +458,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Brunei".to_string(),
         CountyStatistic {
@@ -477,7 +477,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Bulgaria".to_string(),
         CountyStatistic {
@@ -496,7 +496,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Burkina Faso".to_string(),
         CountyStatistic {
@@ -515,7 +515,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Burundi".to_string(),
         CountyStatistic {
@@ -534,7 +534,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Cabo Verde".to_string(),
         CountyStatistic {
@@ -553,7 +553,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Cambodia".to_string(),
         CountyStatistic {
@@ -572,7 +572,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Cameroon".to_string(),
         CountyStatistic {
@@ -591,7 +591,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Canada".to_string(),
         CountyStatistic {
@@ -610,7 +610,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Central African Republic".to_string(),
         CountyStatistic {
@@ -629,7 +629,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Chad".to_string(),
         CountyStatistic {
@@ -648,7 +648,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Chile".to_string(),
         CountyStatistic {
@@ -667,7 +667,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "China".to_string(),
         CountyStatistic {
@@ -686,7 +686,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Colombia".to_string(),
         CountyStatistic {
@@ -705,7 +705,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Comoros".to_string(),
         CountyStatistic {
@@ -724,7 +724,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Democratic Republic of Congo".to_string(),
         CountyStatistic {
@@ -743,7 +743,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Congo".to_string(),
         CountyStatistic {
@@ -762,7 +762,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Costa Rica".to_string(),
         CountyStatistic {
@@ -781,7 +781,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Croatia".to_string(),
         CountyStatistic {
@@ -800,7 +800,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Cuba".to_string(),
         CountyStatistic {
@@ -819,7 +819,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Cyprus".to_string(),
         CountyStatistic {
@@ -838,7 +838,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Czechia".to_string(),
         CountyStatistic {
@@ -857,7 +857,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Cote d'Ivoire".to_string(),
         CountyStatistic {
@@ -876,7 +876,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Denmark".to_string(),
         CountyStatistic {
@@ -895,7 +895,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Djibouti".to_string(),
         CountyStatistic {
@@ -914,7 +914,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Dominica".to_string(),
         CountyStatistic {
@@ -933,7 +933,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Dominican Republic".to_string(),
         CountyStatistic {
@@ -952,7 +952,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Ecuador".to_string(),
         CountyStatistic {
@@ -971,7 +971,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Egypt".to_string(),
         CountyStatistic {
@@ -990,7 +990,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "El Salvador".to_string(),
         CountyStatistic {
@@ -1009,7 +1009,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Equatorial Guinea".to_string(),
         CountyStatistic {
@@ -1028,7 +1028,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Eritrea".to_string(),
         CountyStatistic {
@@ -1047,7 +1047,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Estonia".to_string(),
         CountyStatistic {
@@ -1066,7 +1066,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Eswatini".to_string(),
         CountyStatistic {
@@ -1085,7 +1085,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Ethiopia".to_string(),
         CountyStatistic {
@@ -1104,7 +1104,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Fiji".to_string(),
         CountyStatistic {
@@ -1123,7 +1123,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Finland".to_string(),
         CountyStatistic {
@@ -1142,7 +1142,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "France".to_string(),
         CountyStatistic {
@@ -1161,7 +1161,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Gabon".to_string(),
         CountyStatistic {
@@ -1180,7 +1180,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Gambia".to_string(),
         CountyStatistic {
@@ -1199,7 +1199,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Georgia".to_string(),
         CountyStatistic {
@@ -1218,7 +1218,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Germany".to_string(),
         CountyStatistic {
@@ -1237,7 +1237,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Ghana".to_string(),
         CountyStatistic {
@@ -1256,7 +1256,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Greece".to_string(),
         CountyStatistic {
@@ -1275,7 +1275,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Grenada".to_string(),
         CountyStatistic {
@@ -1294,7 +1294,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Guatemala".to_string(),
         CountyStatistic {
@@ -1313,7 +1313,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Guinea".to_string(),
         CountyStatistic {
@@ -1332,7 +1332,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Guinea-Bissau".to_string(),
         CountyStatistic {
@@ -1351,7 +1351,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Guyana".to_string(),
         CountyStatistic {
@@ -1370,7 +1370,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Haiti".to_string(),
         CountyStatistic {
@@ -1389,7 +1389,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Holy See".to_string(),
         CountyStatistic {
@@ -1408,7 +1408,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: None,
         },
     );
-  
+
     alpha3.insert(
         "Honduras".to_string(),
         CountyStatistic {
@@ -1427,7 +1427,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Hong Kong".to_string(),
         CountyStatistic {
@@ -1446,7 +1446,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Hungary".to_string(),
         CountyStatistic {
@@ -1465,7 +1465,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Iceland".to_string(),
         CountyStatistic {
@@ -1484,7 +1484,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "India".to_string(),
         CountyStatistic {
@@ -1503,7 +1503,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Indonesia".to_string(),
         CountyStatistic {
@@ -1522,7 +1522,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Iran".to_string(),
         CountyStatistic {
@@ -1541,7 +1541,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Iraq".to_string(),
         CountyStatistic {
@@ -1560,7 +1560,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Ireland".to_string(),
         CountyStatistic {
@@ -1579,7 +1579,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Israel".to_string(),
         CountyStatistic {
@@ -1598,7 +1598,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Italy".to_string(),
         CountyStatistic {
@@ -1617,7 +1617,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Jamaica".to_string(),
         CountyStatistic {
@@ -1636,7 +1636,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Japan".to_string(),
         CountyStatistic {
@@ -1655,7 +1655,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Jordan".to_string(),
         CountyStatistic {
@@ -1674,7 +1674,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Kazakhstan".to_string(),
         CountyStatistic {
@@ -1693,7 +1693,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Kenya".to_string(),
         CountyStatistic {
@@ -1712,7 +1712,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "South Korea".to_string(),
         CountyStatistic {
@@ -1731,7 +1731,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Kuwait".to_string(),
         CountyStatistic {
@@ -1750,7 +1750,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Kyrgyzstan".to_string(),
         CountyStatistic {
@@ -1769,7 +1769,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Laos".to_string(),
         CountyStatistic {
@@ -1788,7 +1788,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Latvia".to_string(),
         CountyStatistic {
@@ -1807,7 +1807,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Lebanon".to_string(),
         CountyStatistic {
@@ -1826,7 +1826,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Lesotho".to_string(),
         CountyStatistic {
@@ -1845,7 +1845,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Liberia".to_string(),
         CountyStatistic {
@@ -1864,7 +1864,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Libya".to_string(),
         CountyStatistic {
@@ -1883,7 +1883,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Liechtenstein".to_string(),
         CountyStatistic {
@@ -1902,7 +1902,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Lithuania".to_string(),
         CountyStatistic {
@@ -1921,7 +1921,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Luxembourg".to_string(),
         CountyStatistic {
@@ -1940,7 +1940,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Madagascar".to_string(),
         CountyStatistic {
@@ -1959,7 +1959,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Malawi".to_string(),
         CountyStatistic {
@@ -1978,7 +1978,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Malaysia".to_string(),
         CountyStatistic {
@@ -1997,7 +1997,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Maldives".to_string(),
         CountyStatistic {
@@ -2016,7 +2016,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Mali".to_string(),
         CountyStatistic {
@@ -2035,7 +2035,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Malta".to_string(),
         CountyStatistic {
@@ -2054,7 +2054,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Marshall Islands".to_string(),
         CountyStatistic {
@@ -2073,7 +2073,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Mauritania".to_string(),
         CountyStatistic {
@@ -2092,7 +2092,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Mauritius".to_string(),
         CountyStatistic {
@@ -2111,7 +2111,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Mexico".to_string(),
         CountyStatistic {
@@ -2130,7 +2130,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Micronesia".to_string(),
         CountyStatistic {
@@ -2149,7 +2149,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Moldova".to_string(),
         CountyStatistic {
@@ -2168,7 +2168,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Monaco".to_string(),
         CountyStatistic {
@@ -2187,7 +2187,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: None,
         },
     );
-  
+
     alpha3.insert(
         "Mongolia".to_string(),
         CountyStatistic {
@@ -2206,7 +2206,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Montenegro".to_string(),
         CountyStatistic {
@@ -2225,7 +2225,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Morocco".to_string(),
         CountyStatistic {
@@ -2244,7 +2244,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Mozambique".to_string(),
         CountyStatistic {
@@ -2263,7 +2263,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Myanmar".to_string(),
         CountyStatistic {
@@ -2282,7 +2282,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Namibia".to_string(),
         CountyStatistic {
@@ -2301,7 +2301,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Nepal".to_string(),
         CountyStatistic {
@@ -2320,7 +2320,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Netherlands".to_string(),
         CountyStatistic {
@@ -2339,7 +2339,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "New Zealand".to_string(),
         CountyStatistic {
@@ -2358,7 +2358,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Nicaragua".to_string(),
         CountyStatistic {
@@ -2377,7 +2377,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Niger".to_string(),
         CountyStatistic {
@@ -2396,7 +2396,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Nigeria".to_string(),
         CountyStatistic {
@@ -2415,7 +2415,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Norway".to_string(),
         CountyStatistic {
@@ -2434,7 +2434,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(1.0),
         },
     );
-  
+
     alpha3.insert(
         "Oman".to_string(),
         CountyStatistic {
@@ -2453,7 +2453,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Pakistan".to_string(),
         CountyStatistic {
@@ -2472,7 +2472,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Palestine".to_string(),
         CountyStatistic {
@@ -2491,7 +2491,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Panama".to_string(),
         CountyStatistic {
@@ -2510,7 +2510,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Papua New Guinea".to_string(),
         CountyStatistic {
@@ -2529,7 +2529,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Paraguay".to_string(),
         CountyStatistic {
@@ -2548,7 +2548,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Peru".to_string(),
         CountyStatistic {
@@ -2567,7 +2567,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Philippines".to_string(),
         CountyStatistic {
@@ -2586,7 +2586,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Poland".to_string(),
         CountyStatistic {
@@ -2605,7 +2605,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Portugal".to_string(),
         CountyStatistic {
@@ -2624,7 +2624,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Qatar".to_string(),
         CountyStatistic {
@@ -2643,7 +2643,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "North Macedonia".to_string(),
         CountyStatistic {
@@ -2662,7 +2662,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Romania".to_string(),
         CountyStatistic {
@@ -2681,7 +2681,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Russia".to_string(),
         CountyStatistic {
@@ -2700,7 +2700,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Rwanda".to_string(),
         CountyStatistic {
@@ -2719,7 +2719,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Saint Kitts and Nevis".to_string(),
         CountyStatistic {
@@ -2738,7 +2738,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Saint Lucia".to_string(),
         CountyStatistic {
@@ -2757,7 +2757,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Saint Vincent and the Grenadines".to_string(),
         CountyStatistic {
@@ -2776,7 +2776,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Samoa".to_string(),
         CountyStatistic {
@@ -2795,7 +2795,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "San Marino".to_string(),
         CountyStatistic {
@@ -2814,7 +2814,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: None,
         },
     );
-  
+
     alpha3.insert(
         "Sao Tome and Principe".to_string(),
         CountyStatistic {
@@ -2833,7 +2833,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Saudi Arabia".to_string(),
         CountyStatistic {
@@ -2852,7 +2852,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Senegal".to_string(),
         CountyStatistic {
@@ -2871,7 +2871,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Serbia".to_string(),
         CountyStatistic {
@@ -2890,7 +2890,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Seychelles".to_string(),
         CountyStatistic {
@@ -2909,7 +2909,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Sierra Leone".to_string(),
         CountyStatistic {
@@ -2928,7 +2928,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Singapore".to_string(),
         CountyStatistic {
@@ -2947,7 +2947,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Slovakia".to_string(),
         CountyStatistic {
@@ -2966,7 +2966,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Slovenia".to_string(),
         CountyStatistic {
@@ -2985,7 +2985,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Solomon Islands".to_string(),
         CountyStatistic {
@@ -3004,7 +3004,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Somalia".to_string(),
         CountyStatistic {
@@ -3023,7 +3023,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: None,
         },
     );
-  
+
     alpha3.insert(
         "South Africa".to_string(),
         CountyStatistic {
@@ -3042,7 +3042,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "South Sudan".to_string(),
         CountyStatistic {
@@ -3061,7 +3061,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.4),
         },
     );
-  
+
     alpha3.insert(
         "Spain".to_string(),
         CountyStatistic {
@@ -3080,7 +3080,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Sri Lanka".to_string(),
         CountyStatistic {
@@ -3099,7 +3099,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Sudan".to_string(),
         CountyStatistic {
@@ -3118,7 +3118,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Suriname".to_string(),
         CountyStatistic {
@@ -3137,7 +3137,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Sweden".to_string(),
         CountyStatistic {
@@ -3156,7 +3156,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Switzerland".to_string(),
         CountyStatistic {
@@ -3175,7 +3175,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Syria".to_string(),
         CountyStatistic {
@@ -3194,7 +3194,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Taiwan".to_string(),
         CountyStatistic {
@@ -3213,7 +3213,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: None,
         },
     );
-  
+
     alpha3.insert(
         "Tajikistan".to_string(),
         CountyStatistic {
@@ -3232,7 +3232,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Tanzania".to_string(),
         CountyStatistic {
@@ -3251,7 +3251,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Thailand".to_string(),
         CountyStatistic {
@@ -3270,7 +3270,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Timor-Leste".to_string(),
         CountyStatistic {
@@ -3289,7 +3289,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Togo".to_string(),
         CountyStatistic {
@@ -3308,7 +3308,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Trinidad and Tobago".to_string(),
         CountyStatistic {
@@ -3327,7 +3327,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Tunisia".to_string(),
         CountyStatistic {
@@ -3346,7 +3346,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Turkey".to_string(),
         CountyStatistic {
@@ -3365,7 +3365,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Uganda".to_string(),
         CountyStatistic {
@@ -3384,7 +3384,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Ukraine".to_string(),
         CountyStatistic {
@@ -3403,7 +3403,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "United Arab Emirates".to_string(),
         CountyStatistic {
@@ -3422,7 +3422,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "United Kingdom".to_string(),
         CountyStatistic {
@@ -3441,7 +3441,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "United States".to_string(),
         CountyStatistic {
@@ -3460,7 +3460,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.9),
         },
     );
-  
+
     alpha3.insert(
         "Uruguay".to_string(),
         CountyStatistic {
@@ -3479,7 +3479,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Uzbekistan".to_string(),
         CountyStatistic {
@@ -3498,7 +3498,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Vanuatu".to_string(),
         CountyStatistic {
@@ -3517,7 +3517,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Venezuela".to_string(),
         CountyStatistic {
@@ -3536,7 +3536,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.8),
         },
     );
-  
+
     alpha3.insert(
         "Vietnam".to_string(),
         CountyStatistic {
@@ -3555,7 +3555,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.7),
         },
     );
-  
+
     alpha3.insert(
         "Yemen".to_string(),
         CountyStatistic {
@@ -3574,7 +3574,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.5),
         },
     );
-  
+
     alpha3.insert(
         "Zambia".to_string(),
         CountyStatistic {
@@ -3593,7 +3593,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
             human_development_index: Some(0.6),
         },
     );
-  
+
     alpha3.insert(
         "Zimbabwe".to_string(),
         CountyStatistic {
