@@ -82,18 +82,18 @@ pub struct Province {
 #[allow(non_snake_case)]
 pub struct CountyStatistic {
     pub iso_code: String,
-    // pub location: String,
-    // pub continent: String,
-    // pub population: Option<f64>,
-    // pub population_density: Option<f64>,
-    // pub median_age: Option<f64>,
-    // pub aged_65_older: Option<f64>,
-    // pub aged_70_older: Option<f64>,
-    // pub gdp_per_capita: Option<f64>,
-    // pub diabetes_prevalence: Option<f64>,
-    // pub cardiovasc_death_rate: Option<f64>,
-    // pub life_expectancy: Option<f64>,
-    // pub human_development_index: Option<f64>,
+    pub country_name: String,
+    pub continent: String,
+    pub population: i64,
+    pub population_density: Option<f64>,
+    pub median_age: Option<f64>,
+    pub aged_65_older: Option<f64>,
+    pub aged_70_older: Option<f64>,
+    pub gdp_per_capita: Option<f64>,
+    pub diabetes_prevalence: Option<f64>,
+    pub cardiovasc_death_rate: Option<f64>,
+    pub life_expectancy: f64,
+    pub human_development_index: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
