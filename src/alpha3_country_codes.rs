@@ -298,13 +298,13 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         },
     );
     alpha3.insert(
-        "Congo (Kinshasa)".to_string(),
+        "Democratic Republic of Congo".to_string(),
         CountyStatistic {
             iso_code: "COD".to_string(),
         },
     );
     alpha3.insert(
-        "Congo (Brazzaville)".to_string(),
+        "Congo".to_string(),
         CountyStatistic {
             iso_code: "COG".to_string(),
         },
@@ -712,7 +712,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         },
     );
     alpha3.insert(
-        "Korea, South".to_string(),
+        "South Korea".to_string(),
         CountyStatistic {
             iso_code: "KOR".to_string(),
         },
@@ -916,7 +916,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         },
     );
     alpha3.insert(
-        "Burma".to_string(),
+        "Myanmar".to_string(),
         CountyStatistic {
             iso_code: "MMR".to_string(),
         },
@@ -1306,7 +1306,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         },
     );
     alpha3.insert(
-        "Taiwan*".to_string(),
+        "Taiwan".to_string(),
         CountyStatistic {
             iso_code: "TWN".to_string(),
         },
@@ -1420,7 +1420,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         },
     );
     alpha3.insert(
-        "US".to_string(),
+        "United States".to_string(),
         CountyStatistic {
             iso_code: "USA".to_string(),
         },

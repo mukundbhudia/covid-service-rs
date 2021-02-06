@@ -119,13 +119,23 @@ pub fn merge_csv_gis_cases(
                 date_of_first_death,
             ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
 
-            let mut country_code = match alpha_codes.get(&csv_case.Country_Region) {
+            let country_name = match csv_case.Country_Region.as_str() {
+                "Burma" => "Myanmar".to_string(),
+                "Congo (Brazzaville)" => "Congo".to_string(),
+                "Congo (Kinshasa)" => "Democratic Republic of Congo".to_string(),
+                "Korea, South" => "South Korea".to_string(),
+                "Taiwan*" => "Taiwan".to_string(),
+                "US" => "United States".to_string(),
+                _ => csv_case.Country_Region,
+            };
+
+            let mut country_code = match alpha_codes.get(&country_name) {
                 Some(code) => code.iso_code.to_string(),
                 None => "".to_string(),
             };
 
             let province = csv_case.Province_State.clone();
-            let id_key = generate_id_key(&province, &csv_case.Country_Region);
+            let id_key = generate_id_key(&province, &country_name);
             if let Some(province_found) = &csv_case.Province_State {
                 let province_type = Province {
                     idKey: id_key.clone(),
@@ -139,8 +149,7 @@ pub fn merge_csv_gis_cases(
                     };
                 }
 
-                if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
-                {
+                if let Some(case_found) = countries_with_provinces.get_mut(&country_name) {
                     let combined_ts_cases = combine_time_series_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
@@ -167,14 +176,14 @@ pub fn merge_csv_gis_cases(
                     case_found.highestDailyDeaths = highest_daily_deaths;
                 } else {
                     countries_with_provinces.insert(
-                        csv_case.Country_Region.clone(),
+                        country_name.clone(),
                         CaseByLocation {
-                            idKey: generate_id_key(&None, &csv_case.Country_Region),
+                            idKey: generate_id_key(&None, &country_name),
                             countryCode: country_code.clone(),
                             active: gis_case.Active,
                             confirmed: gis_case.Confirmed,
                             recovered: gis_case.Recovered,
-                            country: csv_case.Country_Region.clone(),
+                            country: country_name.clone(),
                             deaths: gis_case.Deaths,
                             confirmedCasesToday: confirmed_cases_today,
                             deathsToday: deaths_today,
@@ -195,7 +204,7 @@ pub fn merge_csv_gis_cases(
             }
 
             let has_province = match &csv_case.Province_State {
-                None => countries_with_provinces.contains_key(&csv_case.Country_Region),
+                None => countries_with_provinces.contains_key(&country_name),
                 Some(_) => false,
             };
 
@@ -207,7 +216,7 @@ pub fn merge_csv_gis_cases(
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
                     recovered: gis_case.Recovered,
-                    country: csv_case.Country_Region,
+                    country: country_name,
                     deaths: gis_case.Deaths,
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
