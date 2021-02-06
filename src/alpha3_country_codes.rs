@@ -1018,7 +1018,7 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         },
     );
     alpha3.insert(
-        "Palestine, State of".to_string(),
+        "Palestine".to_string(),
         CountyStatistic {
             iso_code: "PSE".to_string(),
         },
