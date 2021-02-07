@@ -1733,6 +1733,25 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
     );
 
     alpha3.insert(
+        "Kosovo".to_string(),
+        CountyStatistic {
+            iso_code: "KOS".to_string(),
+            country_name: "Kosovo".to_string(),
+            continent: "Europe".to_string(),
+            population: 1932774,
+            population_density: Some(168.155),
+            median_age: None,
+            aged_65_older: None,
+            aged_70_older: None,
+            gdp_per_capita: Some(9795.834),
+            diabetes_prevalence: None,
+            cardiovasc_death_rate: None,
+            life_expectancy: 0.0,
+            human_development_index: None,
+        },
+    );
+
+    alpha3.insert(
         "Kuwait".to_string(),
         CountyStatistic {
             iso_code: "KWT".to_string(),
@@ -4105,24 +4124,6 @@ pub fn alpha_codes() -> HashMap<String, CountyStatistic> {
         "Korea (the Democratic People's Republic of)".to_string(),
         CountyStatistic {
             iso_code: "PRK".to_string(),
-            country_name: "".to_string(),
-            continent: "".to_string(),
-            population: 0,
-            population_density: None,
-            median_age: None,
-            aged_65_older: None,
-            aged_70_older: None,
-            gdp_per_capita: None,
-            diabetes_prevalence: None,
-            cardiovasc_death_rate: None,
-            life_expectancy: 0.0,
-            human_development_index: None,
-        },
-    );
-    alpha3.insert(
-        "Kosovo".to_string(),
-        CountyStatistic {
-            iso_code: "KOS".to_string(),
             country_name: "".to_string(),
             continent: "".to_string(),
             population: 0,
