@@ -129,10 +129,24 @@ pub fn merge_csv_gis_cases(
                 _ => csv_case.Country_Region,
             };
 
-            let mut country_code = match alpha_codes.get(&country_name) {
-                Some(code) => code.iso_code.to_string(),
-                None => "".to_string(),
+            let (mut country_code, population) = match alpha_codes.get(&country_name) {
+                Some(code) => (code.iso_code.to_string(), Some(code.population)),
+                None => ("".to_string(), None),
             };
+
+            let confirmed_per_capita = match population {
+                Some(pop) => Some(gis_case.Confirmed as f64 / pop as f64),
+                None => None,
+            };
+
+            let deaths_per_capita = match population {
+                Some(pop) => Some(gis_case.Deaths as f64 / pop as f64),
+                None => None,
+            };
+            // println!(
+            //     "c: {}, case: {}, pop: {:?}, case/pop: {:?}",
+            //     country_name, gis_case.Confirmed, population, confirmed_per_capita
+            // );
 
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &country_name);
@@ -182,9 +196,11 @@ pub fn merge_csv_gis_cases(
                             countryCode: country_code.clone(),
                             active: gis_case.Active,
                             confirmed: gis_case.Confirmed,
+                            confirmedPerCapita: confirmed_per_capita,
                             recovered: gis_case.Recovered,
                             country: country_name.clone(),
                             deaths: gis_case.Deaths,
+                            deathsPerCapita: deaths_per_capita,
                             confirmedCasesToday: confirmed_cases_today,
                             deathsToday: deaths_today,
                             lastUpdate: gis_case.Last_Update,
@@ -215,9 +231,11 @@ pub fn merge_csv_gis_cases(
                     countryCode: country_code,
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
+                    confirmedPerCapita: confirmed_per_capita,
                     recovered: gis_case.Recovered,
                     country: country_name,
                     deaths: gis_case.Deaths,
+                    deathsPerCapita: deaths_per_capita,
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
                     lastUpdate: gis_case.Last_Update,
