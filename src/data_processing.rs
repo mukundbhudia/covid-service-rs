@@ -143,10 +143,6 @@ pub fn merge_csv_gis_cases(
                 Some(pop) => Some(gis_case.Deaths as f64 / pop as f64),
                 None => None,
             };
-            // println!(
-            //     "c: {}, case: {}, pop: {:?}, case/pop: {:?}",
-            //     country_name, gis_case.Confirmed, population, confirmed_per_capita
-            // );
 
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &country_name);
@@ -188,7 +184,6 @@ pub fn merge_csv_gis_cases(
                     case_found.dateOfFirstDeath = date_of_first_death;
                     case_found.highestDailyConfirmed = highest_daily_confirmed;
                     case_found.highestDailyDeaths = highest_daily_deaths;
-                    // TODO: combine per capita data
                 } else {
                     countries_with_provinces.insert(
                         country_name.clone(),
@@ -231,21 +226,30 @@ pub fn merge_csv_gis_cases(
                 CaseByLocation {
                     idKey: id_key,
                     countryCode: country_code,
-                    population,
+                    population: match province {
+                        Some(_) => None,
+                        None => population,
+                    },
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
-                    confirmedPerCapita: confirmed_per_capita,
+                    confirmedPerCapita: match province {
+                        Some(_) => None,
+                        None => confirmed_per_capita,
+                    },
                     recovered: gis_case.Recovered,
                     country: country_name,
                     deaths: gis_case.Deaths,
-                    deathsPerCapita: deaths_per_capita,
+                    deathsPerCapita: match province {
+                        Some(_) => None,
+                        None => deaths_per_capita,
+                    },
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
                     lastUpdate: gis_case.Last_Update,
                     latitude: csv_case.Lat,
                     longitude: csv_case.Long_,
                     hasProvince: has_province,
-                    province: province,
+                    province,
                     casesByDate: csv_case.cases,
                     provincesList: Vec::new(),
                     dateOfFirstCase: date_of_first_case,
