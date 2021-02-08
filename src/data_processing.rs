@@ -188,12 +188,14 @@ pub fn merge_csv_gis_cases(
                     case_found.dateOfFirstDeath = date_of_first_death;
                     case_found.highestDailyConfirmed = highest_daily_confirmed;
                     case_found.highestDailyDeaths = highest_daily_deaths;
+                    // TODO: combine per capita data
                 } else {
                     countries_with_provinces.insert(
                         country_name.clone(),
                         CaseByLocation {
                             idKey: generate_id_key(&None, &country_name),
                             countryCode: country_code.clone(),
+                            population,
                             active: gis_case.Active,
                             confirmed: gis_case.Confirmed,
                             confirmedPerCapita: confirmed_per_capita,
@@ -229,6 +231,7 @@ pub fn merge_csv_gis_cases(
                 CaseByLocation {
                     idKey: id_key,
                     countryCode: country_code,
+                    population,
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
                     confirmedPerCapita: confirmed_per_capita,

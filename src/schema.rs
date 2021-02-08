@@ -32,6 +32,7 @@ pub struct CaseByLocation {
     pub country: String,
     pub province: Option<String>,
     pub countryCode: String,
+    pub population: Option<i64>,
     pub confirmed: i64,
     pub confirmedPerCapita: Option<f64>,
     pub deaths: i64,
