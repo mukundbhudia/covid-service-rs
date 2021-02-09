@@ -129,9 +129,48 @@ pub fn merge_csv_gis_cases(
                 _ => csv_case.Country_Region,
             };
 
-            let (mut country_code, population) = match alpha_codes.get(&country_name) {
-                Some(code) => (code.iso_code.to_string(), Some(code.population)),
-                None => ("".to_string(), None),
+            let (
+                mut country_code,
+                population,
+                continent,
+                population_density,
+                median_age,
+                aged_65_older,
+                aged_70_older,
+                gdp_per_capita,
+                diabetes_prevalence,
+                cardiovasc_death_rate,
+                life_expectancy,
+                human_development_index,
+            ) = match alpha_codes.get(&country_name) {
+                Some(code) => (
+                    code.iso_code.to_string(),
+                    Some(code.population),
+                    Some(code.continent.to_string()),
+                    code.population_density,
+                    code.median_age,
+                    code.aged_65_older,
+                    code.aged_70_older,
+                    code.gdp_per_capita,
+                    code.diabetes_prevalence,
+                    code.cardiovasc_death_rate,
+                    Some(code.life_expectancy),
+                    code.human_development_index,
+                ),
+                None => (
+                    "".to_string(),
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ),
             };
 
             let confirmed_per_capita = match population {
@@ -211,6 +250,16 @@ pub fn merge_csv_gis_cases(
                             dateOfFirstDeath: date_of_first_death.clone(),
                             highestDailyConfirmed: highest_daily_confirmed.clone(),
                             highestDailyDeaths: highest_daily_deaths.clone(),
+                            continent: continent.clone(),
+                            populationDensity: population_density,
+                            medianAge: median_age,
+                            aged65older: aged_65_older,
+                            aged70older: aged_70_older,
+                            gdpPerCapita: gdp_per_capita,
+                            diabetesPrevalence: diabetes_prevalence,
+                            cardiovascDeathRate: cardiovasc_death_rate,
+                            lifeExpectancy: life_expectancy,
+                            humanDevelopmentIndex: human_development_index,
                         },
                     );
                 }
@@ -243,6 +292,37 @@ pub fn merge_csv_gis_cases(
                         Some(_) => None,
                         None => deaths_per_capita,
                     },
+                    populationDensity: match province {
+                        Some(_) => None,
+                        None => population_density,
+                    },
+                    medianAge: match province {
+                        Some(_) => None,
+                        None => median_age,
+                    },
+                    aged65older: match province {
+                        Some(_) => None,
+                        None => aged_65_older,
+                    },
+                    aged70older: match province {
+                        Some(_) => None,
+                        None => aged_70_older,
+                    },
+                    gdpPerCapita: gdp_per_capita,
+                    diabetesPrevalence: match province {
+                        Some(_) => None,
+                        None => diabetes_prevalence,
+                    },
+                    cardiovascDeathRate: match province {
+                        Some(_) => None,
+                        None => cardiovasc_death_rate,
+                    },
+                    lifeExpectancy: match province {
+                        Some(_) => None,
+                        None => life_expectancy,
+                    },
+                    humanDevelopmentIndex: human_development_index,
+                    continent,
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
                     lastUpdate: gis_case.Last_Update,

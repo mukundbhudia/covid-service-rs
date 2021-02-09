@@ -51,6 +51,16 @@ pub struct CaseByLocation {
     pub casesByDate: Vec<TimeSeriesCase>,
     pub provincesList: Vec<Province>,
     pub hasProvince: bool,
+    pub continent: Option<String>,
+    pub populationDensity: Option<f64>,
+    pub medianAge: Option<f64>,
+    pub aged65older: Option<f64>,
+    pub aged70older: Option<f64>,
+    pub gdpPerCapita: Option<f64>,
+    pub diabetesPrevalence: Option<f64>,
+    pub cardiovascDeathRate: Option<f64>,
+    pub lifeExpectancy: Option<f64>,
+    pub humanDevelopmentIndex: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
