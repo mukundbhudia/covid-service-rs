@@ -86,6 +86,18 @@ fn get_highest_confirmed_and_deaths(
     )
 }
 
+fn patch_country_names(country_name: String) -> String {
+    match country_name.as_str() {
+        "Burma" => "Myanmar".to_string(),
+        "Congo (Brazzaville)" => "Congo".to_string(),
+        "Congo (Kinshasa)" => "Democratic Republic of Congo".to_string(),
+        "Korea, South" => "South Korea".to_string(),
+        "Taiwan*" => "Taiwan".to_string(),
+        "US" => "United States".to_string(),
+        _ => country_name,
+    }
+}
+
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
@@ -119,15 +131,7 @@ pub fn merge_csv_gis_cases(
                 date_of_first_death,
             ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
 
-            let country_name = match csv_case.Country_Region.as_str() {
-                "Burma" => "Myanmar".to_string(),
-                "Congo (Brazzaville)" => "Congo".to_string(),
-                "Congo (Kinshasa)" => "Democratic Republic of Congo".to_string(),
-                "Korea, South" => "South Korea".to_string(),
-                "Taiwan*" => "Taiwan".to_string(),
-                "US" => "United States".to_string(),
-                _ => csv_case.Country_Region,
-            };
+            let country_name = patch_country_names(csv_case.Country_Region);
 
             let (
                 mut country_code,
@@ -574,6 +578,7 @@ pub fn process_csv(
             false => Some(confirmed_record[province_csv_header_index].to_string()),
         };
         let country = confirmed_record[country_csv_header_index].to_string();
+        let country = patch_country_names(country);
         countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
 
