@@ -131,8 +131,6 @@ pub fn merge_csv_gis_cases(
                 date_of_first_death,
             ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
 
-            let country_name = patch_country_names(csv_case.Country_Region);
-
             let (
                 mut country_code,
                 population,
@@ -146,7 +144,7 @@ pub fn merge_csv_gis_cases(
                 cardiovasc_death_rate,
                 life_expectancy,
                 human_development_index,
-            ) = match alpha_codes.get(&country_name) {
+            ) = match alpha_codes.get(&csv_case.Country_Region) {
                 Some(code) => (
                     code.iso_code.to_string(),
                     Some(code.population),
@@ -188,7 +186,7 @@ pub fn merge_csv_gis_cases(
             };
 
             let province = csv_case.Province_State.clone();
-            let id_key = generate_id_key(&province, &country_name);
+            let id_key = generate_id_key(&province, &csv_case.Country_Region);
             if let Some(province_found) = &csv_case.Province_State {
                 let province_type = Province {
                     idKey: id_key.clone(),
@@ -202,7 +200,7 @@ pub fn merge_csv_gis_cases(
                     };
                 }
 
-                if let Some(case_found) = countries_with_provinces.get_mut(&country_name) {
+                if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region) {
                     let combined_ts_cases = combine_time_series_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
@@ -229,16 +227,16 @@ pub fn merge_csv_gis_cases(
                     case_found.highestDailyDeaths = highest_daily_deaths;
                 } else {
                     countries_with_provinces.insert(
-                        country_name.clone(),
+                        csv_case.Country_Region.clone(),
                         CaseByLocation {
-                            idKey: generate_id_key(&None, &country_name),
+                            idKey: generate_id_key(&None, &csv_case.Country_Region),
                             countryCode: country_code.clone(),
                             population,
                             active: gis_case.Active,
                             confirmed: gis_case.Confirmed,
                             confirmedPerCapita: confirmed_per_capita,
                             recovered: gis_case.Recovered,
-                            country: country_name.clone(),
+                            country: csv_case.Country_Region.clone(),
                             deaths: gis_case.Deaths,
                             deathsPerCapita: deaths_per_capita,
                             confirmedCasesToday: confirmed_cases_today,
@@ -270,7 +268,7 @@ pub fn merge_csv_gis_cases(
             }
 
             let has_province = match &csv_case.Province_State {
-                None => countries_with_provinces.contains_key(&country_name),
+                None => countries_with_provinces.contains_key(&csv_case.Country_Region),
                 Some(_) => false,
             };
 
@@ -290,7 +288,7 @@ pub fn merge_csv_gis_cases(
                         None => confirmed_per_capita,
                     },
                     recovered: gis_case.Recovered,
-                    country: country_name,
+                    country: csv_case.Country_Region,
                     deaths: gis_case.Deaths,
                     deathsPerCapita: match province {
                         Some(_) => None,
@@ -351,10 +349,11 @@ pub fn merge_csv_gis_cases(
 pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, Case> {
     let mut cases_by_country_map: HashMap<String, Case> = HashMap::new();
     for case_by_country in cases_by_country {
+        let country_name = patch_country_names(case_by_country.Country_Region.to_string());
+
         // These countries are fragmented, they are as one in CSVs but are
         // split by provinces in GIS cases. We join them up in this function
-
-        let province_state = match case_by_country.Country_Region.as_str() {
+        let province_state = match country_name.as_str() {
             "Spain" => &None,
             "Brazil" => &None,
             "Belgium" => &None,
@@ -373,17 +372,14 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
             _ => &case_by_country.Province_State,
         };
 
-        let mut id_key = generate_id_key(&province_state, &case_by_country.Country_Region);
-        let mainland_id_key = generate_id_key(
-            &Some("mainland".to_string()),
-            &case_by_country.Country_Region,
-        );
+        let mut id_key = generate_id_key(&province_state, &country_name);
+        let mainland_id_key = generate_id_key(&Some("mainland".to_string()), &country_name);
 
         if let Some(province_name) = &case_by_country.Province_State {
             // UK is fragmented into different states in the GIS cases from its
             // mainland appearance in the CSV file. Below we assert them
             // to be part of the mainland
-            if case_by_country.Country_Region.as_str() == "United Kingdom" {
+            if country_name.as_str() == "United Kingdom" {
                 let province_name = province_name.as_str();
                 id_key = match province_name {
                     "England" => mainland_id_key,
@@ -395,7 +391,7 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
                 }
             }
         } else {
-            id_key = match case_by_country.Country_Region.as_str() {
+            id_key = match country_name.as_str() {
                 "France" => mainland_id_key,
                 "Denmark" => mainland_id_key,
                 "Netherlands" => mainland_id_key,
