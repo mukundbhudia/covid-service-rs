@@ -16,6 +16,8 @@ pub struct GlobalCaseByLocation {
     pub deaths: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
+    pub confirmedPerCapita: f64,
+    pub deathsPerCapita: f64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
     pub globalCasesByDate: Vec<GlobalDayCase>,
     pub dateOfFirstCase: Option<String>,
@@ -109,13 +111,15 @@ pub struct CountyStatistic {
     pub human_development_index: Option<f64>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[allow(non_snake_case)]
 pub struct TimeSeriesCase {
     pub confirmed: i64,
     pub deaths: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
+    pub confirmedPerCapita: Option<f64>,
+    pub deathsPerCapita: Option<f64>,
     pub day: String,
 }
 
@@ -126,14 +130,18 @@ impl TimeSeriesCase {
         deaths: i64,
         confirmedCasesToday: i64,
         deathsToday: i64,
+        confirmedPerCapita: Option<f64>,
+        deathsPerCapita: Option<f64>,
         day: String,
     ) -> TimeSeriesCase {
         TimeSeriesCase {
-            confirmed: confirmed,
-            deaths: deaths,
-            confirmedCasesToday: confirmedCasesToday,
-            deathsToday: deathsToday,
-            day: day,
+            confirmed,
+            deaths,
+            confirmedCasesToday,
+            deathsToday,
+            confirmedPerCapita,
+            deathsPerCapita,
+            day,
         }
     }
 }

@@ -54,6 +54,14 @@ pub fn combine_time_series_cases(
             deaths: x.deaths + y.deaths,
             confirmedCasesToday: x.confirmedCasesToday + y.confirmedCasesToday,
             deathsToday: x.deathsToday + y.deathsToday,
+            confirmedPerCapita: Some(
+                // TODO: better error handling for per capita
+                x.confirmedPerCapita.unwrap_or_default() + y.confirmedPerCapita.unwrap_or_default(),
+            ),
+            deathsPerCapita: Some(
+                // TODO: better error handling for per capita
+                x.deathsPerCapita.unwrap_or_default() + y.deathsPerCapita.unwrap_or_default(),
+            ),
             day: x.day.clone(),
         })
         .collect()
@@ -115,22 +123,6 @@ pub fn merge_csv_gis_cases(
             let deaths_today =
                 force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
 
-            let today_time_series_cases = TimeSeriesCase::new(
-                gis_case.Confirmed,
-                gis_case.Deaths,
-                confirmed_cases_today,
-                deaths_today,
-                today.clone(),
-            );
-            csv_case.cases.push(today_time_series_cases);
-
-            let (
-                highest_daily_confirmed,
-                highest_daily_deaths,
-                date_of_first_case,
-                date_of_first_death,
-            ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
-
             let (
                 mut country_code,
                 population,
@@ -185,6 +177,24 @@ pub fn merge_csv_gis_cases(
                 None => None,
             };
 
+            let today_time_series_cases = TimeSeriesCase::new(
+                gis_case.Confirmed,
+                gis_case.Deaths,
+                confirmed_cases_today,
+                deaths_today,
+                confirmed_per_capita,
+                deaths_per_capita,
+                today.clone(),
+            );
+            csv_case.cases.push(today_time_series_cases);
+
+            let (
+                highest_daily_confirmed,
+                highest_daily_deaths,
+                date_of_first_case,
+                date_of_first_death,
+            ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
+
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &csv_case.Country_Region);
             if let Some(province_found) = &csv_case.Province_State {
@@ -200,7 +210,8 @@ pub fn merge_csv_gis_cases(
                     };
                 }
 
-                if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region) {
+                if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
+                {
                     let combined_ts_cases = combine_time_series_cases(
                         case_found.casesByDate.clone(),
                         csv_case.cases.clone(),
@@ -421,7 +432,14 @@ pub fn process_csv(
     (
         HashMap<String, CsvCase>,
         BTreeMap<usize, TimeSeriesCase>,
-        (Option<String>, Option<String>, HighestCase, HighestCase),
+        (
+            Option<String>,
+            Option<String>,
+            HighestCase,
+            HighestCase,
+            f64,
+            f64,
+        ),
     ),
     Box<dyn Error>,
 > {
@@ -430,6 +448,7 @@ pub fn process_csv(
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
+    let alpha_codes = alpha_codes();
 
     let mut country_csv_header_index = 1;
     let mut province_csv_header_index = 0;
@@ -456,6 +475,8 @@ pub fn process_csv(
         count: 0,
         date: None,
     };
+    let mut global_confirmed_per_capita = 0.0;
+    let mut global_deaths_per_capita = 0.0;
 
     let csv_headers = confirmed_csv_reader
         .headers()?
@@ -481,6 +502,13 @@ pub fn process_csv(
         let mut highest_daily_deaths = HighestCase {
             count: 0,
             date: None,
+        };
+
+        let country = confirmed_record[country_csv_header_index].to_string();
+        let country = patch_country_names(country);
+        let population = match alpha_codes.get(&country) {
+            Some(code) => Some(code.population),
+            None => None,
         };
 
         for i in first_day_csv_header_index..confirmed_record.len() {
@@ -531,11 +559,23 @@ pub fn process_csv(
                 highest_daily_deaths.date = Some(day.to_string());
             }
 
+            let confirmed_per_capita = match population {
+                Some(pop) => Some(confirmed_cases as f64 / pop as f64),
+                None => None,
+            };
+
+            let deaths_per_capita = match population {
+                Some(pop) => Some(death_cases as f64 / pop as f64),
+                None => None,
+            };
+
             let time_series_case = TimeSeriesCase::new(
                 confirmed_cases,
                 death_cases,
                 confirmed_today,
                 deaths_today,
+                confirmed_per_capita,
+                deaths_per_capita,
                 day.to_string(),
             );
 
@@ -573,8 +613,7 @@ pub fn process_csv(
             }
             false => Some(confirmed_record[province_csv_header_index].to_string()),
         };
-        let country = confirmed_record[country_csv_header_index].to_string();
-        let country = patch_country_names(country);
+
         countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
 
@@ -606,18 +645,21 @@ pub fn process_csv(
     if let Some(global_current_cases) = global_current_cases {
         let (global_confirmed, global_deaths) = global_current_cases;
         let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
-        let global_confirmed_today = global_confirmed
-            - time_series_cases_map
-                .get(&last_day_index)
-                .unwrap()
-                .confirmed;
-        let global_deaths_today =
-            global_deaths - time_series_cases_map.get(&last_day_index).unwrap().deaths;
+        let yesterday_time_series_case = time_series_cases_map.get(&last_day_index).unwrap();
+        let global_confirmed_today = yesterday_time_series_case.confirmed;
+        let global_deaths_today = global_deaths - yesterday_time_series_case.deaths;
+        let global_population = alpha_codes
+            .values()
+            .fold(0, |pop, county_stat| pop + county_stat.population);
+        global_confirmed_per_capita = global_confirmed as f64 / global_population as f64;
+        global_deaths_per_capita = global_deaths as f64 / global_population as f64;
         let current_time_series_case = TimeSeriesCase::new(
             global_confirmed,
             global_deaths,
             force_to_zero_if_negative(global_confirmed_today),
             force_to_zero_if_negative(global_deaths_today),
+            Some(global_confirmed_per_capita),
+            Some(global_deaths_per_capita),
             today.to_string(),
         );
         time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
@@ -643,6 +685,8 @@ pub fn process_csv(
             global_date_first_death,
             highest_global_daily_confirmed,
             highest_global_daily_deaths,
+            global_confirmed_per_capita,
+            global_deaths_per_capita,
         ),
     ))
 }
