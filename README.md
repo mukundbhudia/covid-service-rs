@@ -73,4 +73,5 @@ The intended mongo database should comprise of two collections:
 ## Resources & Thanks
 
 - To [Johns Hopkins CSSE](https://github.com/CSSEGISandData/COVID-19) for the hard work providing and collating the data.
+- To [Our World in Data](https://github.com/owid/covid-19-data/tree/master/public/data) for their hard work in providing rich, clear and accurate data available on COVID-19.
 - To the wonderful Rust community for their [excellent book](https://doc.rust-lang.org/book/).
