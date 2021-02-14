@@ -24,6 +24,8 @@ fn basic_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.0),
+            deathsPerCapita: Some(0.0),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -31,6 +33,8 @@ fn basic_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.0),
+            deathsPerCapita: Some(0.0),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -38,6 +42,8 @@ fn basic_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.0),
+            deathsPerCapita: Some(0.0),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -45,6 +51,8 @@ fn basic_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.0),
+            deathsPerCapita: Some(0.0),
             day: "1/25/20".to_string(),
         },
     ];
@@ -77,6 +85,8 @@ fn basic_process_1_country_4_days_global_csv() {
         deaths: 0,
         confirmedCasesToday: 0,
         deathsToday: 0,
+        confirmedPerCapita: Some(0.0),
+        deathsPerCapita: Some(0.0),
         day: today.clone(),
     });
 
@@ -118,6 +128,8 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.0),
+            deathsPerCapita: Some(0.0),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -125,6 +137,8 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
             deaths: 0,
             confirmedCasesToday: 5,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.00000012844112724968166),
+            deathsPerCapita: Some(0.0),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -132,6 +146,8 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.00000012844112724968166),
+            deathsPerCapita: Some(0.0),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -139,6 +155,8 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
             deaths: 0,
             confirmedCasesToday: 1,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.000000154129352699618),
+            deathsPerCapita: Some(0.0),
             day: "1/25/20".to_string(),
         },
     ];
@@ -171,6 +189,8 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
         deaths: 0,
         confirmedCasesToday: 2,
         deathsToday: 0,
+        confirmedPerCapita: Some(0.000000001031720433799949),
+        deathsPerCapita: Some(0.0),
         day: today.clone(),
     });
 
@@ -212,6 +232,8 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -219,6 +241,8 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -226,6 +250,8 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -233,6 +259,8 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -265,6 +293,8 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
         deaths: 7,
         confirmedCasesToday: 0,
         deathsToday: 6,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
 
@@ -306,6 +336,8 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -313,6 +345,8 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
             deaths: 0,
             confirmedCasesToday: 5,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -320,6 +354,8 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -327,6 +363,8 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 1,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -359,6 +397,8 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
         deaths: 7,
         confirmedCasesToday: 2,
         deathsToday: 6,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
 
@@ -402,6 +442,8 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
             deaths: 1,
             confirmedCasesToday: 2,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -409,6 +451,8 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
             deaths: 1,
             confirmedCasesToday: 3,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -416,6 +460,8 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -423,6 +469,8 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
             deaths: 3,
             confirmedCasesToday: 1,
             deathsToday: 2,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -455,6 +503,8 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
         deaths: 4,
         confirmedCasesToday: 1,
         deathsToday: 1,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
 
@@ -498,6 +548,8 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -505,6 +557,8 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 5,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -512,6 +566,8 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
             deaths: 1,
             confirmedCasesToday: 3,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -519,6 +575,8 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
             deaths: 1,
             confirmedCasesToday: 1,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -551,6 +609,8 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
         deaths: 0,
         confirmedCasesToday: 0,
         deathsToday: 0,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
 
@@ -593,6 +653,8 @@ fn over_new_year_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "12/29/20".to_string(),
         },
         TimeSeriesCase {
@@ -600,6 +662,8 @@ fn over_new_year_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "12/30/20".to_string(),
         },
         TimeSeriesCase {
@@ -607,6 +671,8 @@ fn over_new_year_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "12/31/20".to_string(),
         },
         TimeSeriesCase {
@@ -614,6 +680,8 @@ fn over_new_year_process_1_country_4_days_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/1/21".to_string(),
         },
     ];
@@ -646,6 +714,8 @@ fn over_new_year_process_1_country_4_days_global_csv() {
         deaths: 0,
         confirmedCasesToday: 0,
         deathsToday: 0,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: "1/2/21".to_string(),
     });
 
@@ -689,6 +759,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -696,6 +768,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 0,
             confirmedCasesToday: 5,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -703,6 +777,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -710,6 +786,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 1,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -720,6 +798,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -727,6 +807,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 2,
             confirmedCasesToday: 1,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -734,6 +816,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 5,
             confirmedCasesToday: 3,
             deathsToday: 3,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -741,6 +825,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: 5,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -793,6 +879,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
         deaths: 5,
         confirmedCasesToday: 0,
         deathsToday: 3,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
     expected_congo_brazzaville_time_series_cases.push(TimeSeriesCase {
@@ -800,6 +888,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
         deaths: 5,
         confirmedCasesToday: 2,
         deathsToday: 1,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
 
@@ -812,6 +902,8 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: a.deaths + b.deaths,
             confirmedCasesToday: a.confirmedCasesToday + b.confirmedCasesToday,
             deathsToday: a.deathsToday + b.deathsToday,
+            confirmedPerCapita: Some(a.confirmedPerCapita.unwrap() + b.confirmedPerCapita.unwrap()),
+            deathsPerCapita: Some(a.deathsPerCapita.unwrap() + b.deathsPerCapita.unwrap()),
             day: a.day.clone(),
         })
         .collect::<Vec<TimeSeriesCase>>();
@@ -856,6 +948,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -863,6 +957,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 0,
             confirmedCasesToday: 5,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -870,6 +966,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -877,6 +975,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 1,
             confirmedCasesToday: 1,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -887,6 +987,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 1,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -894,6 +996,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 2,
             confirmedCasesToday: 1,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -901,6 +1005,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 5,
             confirmedCasesToday: 3,
             deathsToday: 3,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -908,6 +1014,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 5,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -918,6 +1026,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/22/20".to_string(),
         },
         TimeSeriesCase {
@@ -925,6 +1035,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 0,
             confirmedCasesToday: 0,
             deathsToday: 0,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/23/20".to_string(),
         },
         TimeSeriesCase {
@@ -932,6 +1044,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 1,
             confirmedCasesToday: 2,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/24/20".to_string(),
         },
         TimeSeriesCase {
@@ -939,6 +1053,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
             deaths: 2,
             confirmedCasesToday: 0,
             deathsToday: 1,
+            confirmedPerCapita: Some(0.04),
+            deathsPerCapita: Some(0.05),
             day: "1/25/20".to_string(),
         },
     ];
@@ -1011,6 +1127,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
         deaths: 5,
         confirmedCasesToday: 0,
         deathsToday: 3,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
     expected_congo_brazzaville_time_series_cases.push(TimeSeriesCase {
@@ -1018,6 +1136,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
         deaths: 5,
         confirmedCasesToday: 2,
         deathsToday: 1,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
     expected_uk_falkland_islands_time_series_cases.push(TimeSeriesCase {
@@ -1025,6 +1145,8 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
         deaths: 2,
         confirmedCasesToday: 0,
         deathsToday: 0,
+        confirmedPerCapita: Some(0.04),
+        deathsPerCapita: Some(0.05),
         day: today.clone(),
     });
 
@@ -1040,6 +1162,16 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
                 + b.confirmedCasesToday
                 + c.confirmedCasesToday,
             deathsToday: a.deathsToday + b.deathsToday + c.deathsToday,
+            confirmedPerCapita: Some(
+                a.confirmedPerCapita.unwrap()
+                    + b.confirmedPerCapita.unwrap()
+                    + c.confirmedPerCapita.unwrap(),
+            ),
+            deathsPerCapita: Some(
+                a.deathsPerCapita.unwrap()
+                    + b.deathsPerCapita.unwrap()
+                    + c.deathsPerCapita.unwrap(),
+            ),
             day: a.day.clone(),
         })
         .collect::<Vec<TimeSeriesCase>>();
