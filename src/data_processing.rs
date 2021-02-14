@@ -646,7 +646,7 @@ pub fn process_csv(
         let (global_confirmed, global_deaths) = global_current_cases;
         let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
         let yesterday_time_series_case = time_series_cases_map.get(&last_day_index).unwrap();
-        let global_confirmed_today = yesterday_time_series_case.confirmed;
+        let global_confirmed_today = global_confirmed - yesterday_time_series_case.confirmed;
         let global_deaths_today = global_deaths - yesterday_time_series_case.deaths;
         let global_population = alpha_codes
             .values()
