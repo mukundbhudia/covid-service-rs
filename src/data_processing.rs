@@ -56,11 +56,11 @@ pub fn combine_time_series_cases(
             deathsToday: x.deathsToday + y.deathsToday,
             confirmedPerCapita: Some(
                 // TODO: better error handling for per capita
-                x.confirmedPerCapita.unwrap_or_default() + y.confirmedPerCapita.unwrap_or_default(),
+                x.confirmedPerCapita.unwrap_or_default(),
             ),
             deathsPerCapita: Some(
                 // TODO: better error handling for per capita
-                x.deathsPerCapita.unwrap_or_default() + y.deathsPerCapita.unwrap_or_default(),
+                x.deathsPerCapita.unwrap_or_default(),
             ),
             day: x.day.clone(),
         })
@@ -439,6 +439,7 @@ pub fn process_csv(
             HighestCase,
             f64,
             f64,
+            i64
         ),
     ),
     Box<dyn Error>,
@@ -465,6 +466,9 @@ pub fn process_csv(
         first_day_csv_header_index = 11;
     }
 
+    let global_population = alpha_codes
+        .values()
+        .fold(0, |pop, county_stat| pop + county_stat.population);
     let mut global_date_first_case: Option<String> = None;
     let mut global_date_first_death: Option<String> = None;
     let mut highest_global_daily_confirmed = HighestCase {
@@ -648,9 +652,6 @@ pub fn process_csv(
         let yesterday_time_series_case = time_series_cases_map.get(&last_day_index).unwrap();
         let global_confirmed_today = global_confirmed - yesterday_time_series_case.confirmed;
         let global_deaths_today = global_deaths - yesterday_time_series_case.deaths;
-        let global_population = alpha_codes
-            .values()
-            .fold(0, |pop, county_stat| pop + county_stat.population);
         global_confirmed_per_capita = global_confirmed as f64 / global_population as f64;
         global_deaths_per_capita = global_deaths as f64 / global_population as f64;
         let current_time_series_case = TimeSeriesCase::new(
@@ -687,6 +688,7 @@ pub fn process_csv(
             highest_global_daily_deaths,
             global_confirmed_per_capita,
             global_deaths_per_capita,
+            global_population,
         ),
     ))
 }

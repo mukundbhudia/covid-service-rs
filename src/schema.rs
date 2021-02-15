@@ -18,6 +18,7 @@ pub struct GlobalCaseByLocation {
     pub deathsToday: i64,
     pub confirmedPerCapita: f64,
     pub deathsPerCapita: f64,
+    pub globalPopulation: i64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
     pub globalCasesByDate: Vec<GlobalDayCase>,
     pub dateOfFirstCase: Option<String>,
