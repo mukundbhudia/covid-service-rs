@@ -83,7 +83,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         global_confirmed, global_recovered, global_deaths,
     );
 
-    let (mut processed_csv, global_time_series_map, first_and_highest_dates) = process_csv(
+    let (mut processed_csv, global_time_series_map, global_csv_stats) = process_csv(
         confirmed_global_cases,
         deaths_global_cases,
         Region::Global,
@@ -95,7 +95,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         date_of_first_death,
         highest_daily_confirmed,
         highest_daily_deaths,
-    ) = first_and_highest_dates;
+        global_confirmed_per_capita,
+        global_deaths_per_capita,
+        global_population,
+    ) = global_csv_stats;
     let (us_processed_csv, _, _) = process_csv(
         confirmed_us_cases,
         deaths_us_cases,
@@ -166,6 +169,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         deaths: global_deaths,
         confirmedCasesToday: global_confirmed_today,
         deathsToday: global_deaths_today,
+        confirmedPerCapita: global_confirmed_per_capita,
+        deathsPerCapita: global_deaths_per_capita,
+        globalPopulation: global_population,
         timeSeriesTotalCasesByDate: global_time_series,
         globalCasesByDate: global_day_cases,
         dateOfFirstCase: date_of_first_confirmed,

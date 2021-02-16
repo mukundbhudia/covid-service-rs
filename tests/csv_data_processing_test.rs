@@ -767,10 +767,10 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
         },
     );
     expected_global_cases.insert(
-        "congo-brazzaville".to_string(),
+        "congo".to_string(),
         CsvCase {
             Province_State: None,
-            Country_Region: "Congo (Brazzaville)".to_string(),
+            Country_Region: "Congo".to_string(),
             Lat: -0.228,
             Long_: 15.8277,
             cases: expected_congo_brazzaville_time_series_cases.clone(),
@@ -965,10 +965,10 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
         },
     );
     expected_global_cases.insert(
-        "congo-brazzaville".to_string(),
+        "congo".to_string(),
         CsvCase {
             Province_State: None,
-            Country_Region: "Congo (Brazzaville)".to_string(),
+            Country_Region: "Congo".to_string(),
             Lat: -0.228,
             Long_: 15.8277,
             cases: expected_congo_brazzaville_time_series_cases.clone(),

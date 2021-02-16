@@ -16,6 +16,9 @@ pub struct GlobalCaseByLocation {
     pub deaths: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
+    pub confirmedPerCapita: f64,
+    pub deathsPerCapita: f64,
+    pub globalPopulation: i64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
     pub globalCasesByDate: Vec<GlobalDayCase>,
     pub dateOfFirstCase: Option<String>,
@@ -32,12 +35,15 @@ pub struct CaseByLocation {
     pub country: String,
     pub province: Option<String>,
     pub countryCode: String,
+    pub population: Option<i64>,
     pub confirmed: i64,
     pub deaths: i64,
     pub recovered: i64,
     pub active: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
+    pub confirmedPerCapita: Option<f64>,
+    pub deathsPerCapita: Option<f64>,
     pub lastUpdate: Option<i64>,
     pub latitude: f64,
     pub longitude: f64,
@@ -48,6 +54,16 @@ pub struct CaseByLocation {
     pub casesByDate: Vec<TimeSeriesCase>,
     pub provincesList: Vec<Province>,
     pub hasProvince: bool,
+    pub continent: Option<String>,
+    pub populationDensity: Option<f64>,
+    pub medianAge: Option<f64>,
+    pub aged65older: Option<f64>,
+    pub aged70older: Option<f64>,
+    pub gdpPerCapita: Option<f64>,
+    pub diabetesPrevalence: Option<f64>,
+    pub cardiovascDeathRate: Option<f64>,
+    pub lifeExpectancy: Option<f64>,
+    pub humanDevelopmentIndex: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -78,7 +94,25 @@ pub struct Province {
     pub province: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[allow(non_snake_case)]
+pub struct CountyStatistic {
+    pub iso_code: String,
+    pub country_name: String,
+    pub continent: String,
+    pub population: i64,
+    pub population_density: Option<f64>,
+    pub median_age: Option<f64>,
+    pub aged_65_older: Option<f64>,
+    pub aged_70_older: Option<f64>,
+    pub gdp_per_capita: Option<f64>,
+    pub diabetes_prevalence: Option<f64>,
+    pub cardiovasc_death_rate: Option<f64>,
+    pub life_expectancy: f64,
+    pub human_development_index: Option<f64>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[allow(non_snake_case)]
 pub struct TimeSeriesCase {
     pub confirmed: i64,
@@ -98,11 +132,11 @@ impl TimeSeriesCase {
         day: String,
     ) -> TimeSeriesCase {
         TimeSeriesCase {
-            confirmed: confirmed,
-            deaths: deaths,
-            confirmedCasesToday: confirmedCasesToday,
-            deathsToday: deathsToday,
-            day: day,
+            confirmed,
+            deaths,
+            confirmedCasesToday,
+            deathsToday,
+            day,
         }
     }
 }

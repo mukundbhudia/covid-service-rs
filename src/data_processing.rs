@@ -86,6 +86,18 @@ fn get_highest_confirmed_and_deaths(
     )
 }
 
+fn patch_country_names(country_name: String) -> String {
+    match country_name.as_str() {
+        "Burma" => "Myanmar".to_string(),
+        "Congo (Brazzaville)" => "Congo".to_string(),
+        "Congo (Kinshasa)" => "Democratic Republic of Congo".to_string(),
+        "Korea, South" => "South Korea".to_string(),
+        "Taiwan*" => "Taiwan".to_string(),
+        "US" => "United States".to_string(),
+        _ => country_name,
+    }
+}
+
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
@@ -103,6 +115,60 @@ pub fn merge_csv_gis_cases(
             let deaths_today =
                 force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
 
+            let (
+                mut country_code,
+                population,
+                continent,
+                population_density,
+                median_age,
+                aged_65_older,
+                aged_70_older,
+                gdp_per_capita,
+                diabetes_prevalence,
+                cardiovasc_death_rate,
+                life_expectancy,
+                human_development_index,
+            ) = match alpha_codes.get(&csv_case.Country_Region) {
+                Some(code) => (
+                    code.iso_code.to_string(),
+                    Some(code.population),
+                    Some(code.continent.to_string()),
+                    code.population_density,
+                    code.median_age,
+                    code.aged_65_older,
+                    code.aged_70_older,
+                    code.gdp_per_capita,
+                    code.diabetes_prevalence,
+                    code.cardiovasc_death_rate,
+                    Some(code.life_expectancy),
+                    code.human_development_index,
+                ),
+                None => (
+                    "".to_string(),
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ),
+            };
+
+            let confirmed_per_capita = match population {
+                Some(pop) => Some(gis_case.Confirmed as f64 / pop as f64),
+                None => None,
+            };
+
+            let deaths_per_capita = match population {
+                Some(pop) => Some(gis_case.Deaths as f64 / pop as f64),
+                None => None,
+            };
+
             let today_time_series_cases = TimeSeriesCase::new(
                 gis_case.Confirmed,
                 gis_case.Deaths,
@@ -119,11 +185,6 @@ pub fn merge_csv_gis_cases(
                 date_of_first_death,
             ) = get_highest_confirmed_and_deaths(csv_case.cases.clone());
 
-            let mut country_code = alpha_codes
-                .get(&csv_case.Country_Region)
-                .unwrap_or(&String::new())
-                .to_string();
-
             let province = csv_case.Province_State.clone();
             let id_key = generate_id_key(&province, &csv_case.Country_Region);
             if let Some(province_found) = &csv_case.Province_State {
@@ -133,10 +194,10 @@ pub fn merge_csv_gis_cases(
                 };
 
                 if province_found == "Greenland" {
-                    country_code = alpha_codes
-                        .get(&province_found.to_string())
-                        .unwrap_or(&String::new())
-                        .to_string();
+                    country_code = match alpha_codes.get(&province_found.to_string()) {
+                        Some(code) => code.iso_code.to_string(),
+                        None => "".to_string(),
+                    };
                 }
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
@@ -171,11 +232,14 @@ pub fn merge_csv_gis_cases(
                         CaseByLocation {
                             idKey: generate_id_key(&None, &csv_case.Country_Region),
                             countryCode: country_code.clone(),
+                            population,
                             active: gis_case.Active,
                             confirmed: gis_case.Confirmed,
+                            confirmedPerCapita: confirmed_per_capita,
                             recovered: gis_case.Recovered,
                             country: csv_case.Country_Region.clone(),
                             deaths: gis_case.Deaths,
+                            deathsPerCapita: deaths_per_capita,
                             confirmedCasesToday: confirmed_cases_today,
                             deathsToday: deaths_today,
                             lastUpdate: gis_case.Last_Update,
@@ -189,6 +253,16 @@ pub fn merge_csv_gis_cases(
                             dateOfFirstDeath: date_of_first_death.clone(),
                             highestDailyConfirmed: highest_daily_confirmed.clone(),
                             highestDailyDeaths: highest_daily_deaths.clone(),
+                            continent: continent.clone(),
+                            populationDensity: population_density,
+                            medianAge: median_age,
+                            aged65older: aged_65_older,
+                            aged70older: aged_70_older,
+                            gdpPerCapita: gdp_per_capita,
+                            diabetesPrevalence: diabetes_prevalence,
+                            cardiovascDeathRate: cardiovasc_death_rate,
+                            lifeExpectancy: life_expectancy,
+                            humanDevelopmentIndex: human_development_index,
                         },
                     );
                 }
@@ -204,18 +278,61 @@ pub fn merge_csv_gis_cases(
                 CaseByLocation {
                     idKey: id_key,
                     countryCode: country_code,
+                    population: match province {
+                        Some(_) => None,
+                        None => population,
+                    },
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
+                    confirmedPerCapita: match province {
+                        Some(_) => None,
+                        None => confirmed_per_capita,
+                    },
                     recovered: gis_case.Recovered,
                     country: csv_case.Country_Region,
                     deaths: gis_case.Deaths,
+                    deathsPerCapita: match province {
+                        Some(_) => None,
+                        None => deaths_per_capita,
+                    },
+                    populationDensity: match province {
+                        Some(_) => None,
+                        None => population_density,
+                    },
+                    medianAge: match province {
+                        Some(_) => None,
+                        None => median_age,
+                    },
+                    aged65older: match province {
+                        Some(_) => None,
+                        None => aged_65_older,
+                    },
+                    aged70older: match province {
+                        Some(_) => None,
+                        None => aged_70_older,
+                    },
+                    gdpPerCapita: gdp_per_capita,
+                    diabetesPrevalence: match province {
+                        Some(_) => None,
+                        None => diabetes_prevalence,
+                    },
+                    cardiovascDeathRate: match province {
+                        Some(_) => None,
+                        None => cardiovasc_death_rate,
+                    },
+                    lifeExpectancy: match province {
+                        Some(_) => None,
+                        None => life_expectancy,
+                    },
+                    humanDevelopmentIndex: human_development_index,
+                    continent,
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
                     lastUpdate: gis_case.Last_Update,
                     latitude: csv_case.Lat,
                     longitude: csv_case.Long_,
                     hasProvince: has_province,
-                    province: province,
+                    province,
                     casesByDate: csv_case.cases,
                     provincesList: Vec::new(),
                     dateOfFirstCase: date_of_first_case,
@@ -233,10 +350,11 @@ pub fn merge_csv_gis_cases(
 pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, Case> {
     let mut cases_by_country_map: HashMap<String, Case> = HashMap::new();
     for case_by_country in cases_by_country {
+        let country_name = patch_country_names(case_by_country.Country_Region.to_string());
+
         // These countries are fragmented, they are as one in CSVs but are
         // split by provinces in GIS cases. We join them up in this function
-
-        let province_state = match case_by_country.Country_Region.as_str() {
+        let province_state = match country_name.as_str() {
             "Spain" => &None,
             "Brazil" => &None,
             "Belgium" => &None,
@@ -255,17 +373,14 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
             _ => &case_by_country.Province_State,
         };
 
-        let mut id_key = generate_id_key(&province_state, &case_by_country.Country_Region);
-        let mainland_id_key = generate_id_key(
-            &Some("mainland".to_string()),
-            &case_by_country.Country_Region,
-        );
+        let mut id_key = generate_id_key(&province_state, &country_name);
+        let mainland_id_key = generate_id_key(&Some("mainland".to_string()), &country_name);
 
         if let Some(province_name) = &case_by_country.Province_State {
             // UK is fragmented into different states in the GIS cases from its
             // mainland appearance in the CSV file. Below we assert them
             // to be part of the mainland
-            if case_by_country.Country_Region.as_str() == "United Kingdom" {
+            if country_name.as_str() == "United Kingdom" {
                 let province_name = province_name.as_str();
                 id_key = match province_name {
                     "England" => mainland_id_key,
@@ -277,7 +392,7 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
                 }
             }
         } else {
-            id_key = match case_by_country.Country_Region.as_str() {
+            id_key = match country_name.as_str() {
                 "France" => mainland_id_key,
                 "Denmark" => mainland_id_key,
                 "Netherlands" => mainland_id_key,
@@ -307,7 +422,15 @@ pub fn process_csv(
     (
         HashMap<String, CsvCase>,
         BTreeMap<usize, TimeSeriesCase>,
-        (Option<String>, Option<String>, HighestCase, HighestCase),
+        (
+            Option<String>,
+            Option<String>,
+            HighestCase,
+            HighestCase,
+            f64,
+            f64,
+            i64,
+        ),
     ),
     Box<dyn Error>,
 > {
@@ -316,6 +439,7 @@ pub fn process_csv(
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
+    let alpha_codes = alpha_codes();
 
     let mut country_csv_header_index = 1;
     let mut province_csv_header_index = 0;
@@ -332,6 +456,9 @@ pub fn process_csv(
         first_day_csv_header_index = 11;
     }
 
+    let global_population = alpha_codes
+        .values()
+        .fold(0, |pop, county_stat| pop + county_stat.population);
     let mut global_date_first_case: Option<String> = None;
     let mut global_date_first_death: Option<String> = None;
     let mut highest_global_daily_confirmed = HighestCase {
@@ -342,6 +469,8 @@ pub fn process_csv(
         count: 0,
         date: None,
     };
+    let mut global_confirmed_per_capita = 0.0;
+    let mut global_deaths_per_capita = 0.0;
 
     let csv_headers = confirmed_csv_reader
         .headers()?
@@ -368,6 +497,9 @@ pub fn process_csv(
             count: 0,
             date: None,
         };
+
+        let country = confirmed_record[country_csv_header_index].to_string();
+        let country = patch_country_names(country);
 
         for i in first_day_csv_header_index..confirmed_record.len() {
             let confirmed_cases = confirmed_record[i].parse::<i64>().unwrap_or_default();
@@ -459,7 +591,7 @@ pub fn process_csv(
             }
             false => Some(confirmed_record[province_csv_header_index].to_string()),
         };
-        let country = confirmed_record[country_csv_header_index].to_string();
+
         countries_encountered.insert(country.clone());
         let id_key = generate_id_key(&province, &country);
 
@@ -491,13 +623,11 @@ pub fn process_csv(
     if let Some(global_current_cases) = global_current_cases {
         let (global_confirmed, global_deaths) = global_current_cases;
         let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
-        let global_confirmed_today = global_confirmed
-            - time_series_cases_map
-                .get(&last_day_index)
-                .unwrap()
-                .confirmed;
-        let global_deaths_today =
-            global_deaths - time_series_cases_map.get(&last_day_index).unwrap().deaths;
+        let yesterday_time_series_case = time_series_cases_map.get(&last_day_index).unwrap();
+        let global_confirmed_today = global_confirmed - yesterday_time_series_case.confirmed;
+        let global_deaths_today = global_deaths - yesterday_time_series_case.deaths;
+        global_confirmed_per_capita = global_confirmed as f64 / global_population as f64;
+        global_deaths_per_capita = global_deaths as f64 / global_population as f64;
         let current_time_series_case = TimeSeriesCase::new(
             global_confirmed,
             global_deaths,
@@ -528,6 +658,9 @@ pub fn process_csv(
             global_date_first_death,
             highest_global_daily_confirmed,
             highest_global_daily_deaths,
+            global_confirmed_per_capita,
+            global_deaths_per_capita,
+            global_population,
         ),
     ))
 }
