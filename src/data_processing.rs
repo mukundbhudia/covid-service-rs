@@ -112,6 +112,10 @@ pub fn merge_csv_gis_cases(
             let confirmed_cases_today = force_to_zero_if_negative(
                 gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
             );
+            let last_updated = match gis_case.Last_Update {
+                Some(time_stamp) => time_stamp,
+                None => 0,
+            };
             let deaths_today =
                 force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
 
@@ -242,7 +246,7 @@ pub fn merge_csv_gis_cases(
                             deathsPerCapita: deaths_per_capita,
                             confirmedCasesToday: confirmed_cases_today,
                             deathsToday: deaths_today,
-                            lastUpdate: gis_case.Last_Update,
+                            lastUpdate: last_updated,
                             latitude: csv_case.Lat,
                             longitude: csv_case.Long_,
                             hasProvince: false,
@@ -328,7 +332,7 @@ pub fn merge_csv_gis_cases(
                     continent,
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
-                    lastUpdate: gis_case.Last_Update,
+                    lastUpdate: last_updated,
                     latitude: csv_case.Lat,
                     longitude: csv_case.Long_,
                     hasProvince: has_province,

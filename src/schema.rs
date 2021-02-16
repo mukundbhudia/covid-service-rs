@@ -44,7 +44,7 @@ pub struct CaseByLocation {
     pub deathsToday: i64,
     pub confirmedPerCapita: Option<f64>,
     pub deathsPerCapita: Option<f64>,
-    pub lastUpdate: Option<i64>,
+    pub lastUpdate: i64,
     pub latitude: f64,
     pub longitude: f64,
     pub dateOfFirstCase: Option<String>,
