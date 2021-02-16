@@ -143,15 +143,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let global_time_series = global_time_series_map
         .values()
         .cloned()
-        .map(|x| TimeSeriesCase {
-            confirmed: x.confirmed,
-            deaths: x.deaths,
-            confirmedCasesToday: x.confirmedCasesToday,
-            deathsToday: x.deathsToday,
-            confirmedPerCapita: Some(x.confirmed as f64 / global_population as f64),
-            deathsPerCapita: Some(x.deaths as f64 / global_population as f64),
-            day: x.day,
-        })
         .collect::<Vec<TimeSeriesCase>>();
 
     let global_confirmed_yesterday = global_time_series

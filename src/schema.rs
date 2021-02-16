@@ -119,8 +119,6 @@ pub struct TimeSeriesCase {
     pub deaths: i64,
     pub confirmedCasesToday: i64,
     pub deathsToday: i64,
-    pub confirmedPerCapita: Option<f64>,
-    pub deathsPerCapita: Option<f64>,
     pub day: String,
 }
 
@@ -131,8 +129,6 @@ impl TimeSeriesCase {
         deaths: i64,
         confirmedCasesToday: i64,
         deathsToday: i64,
-        confirmedPerCapita: Option<f64>,
-        deathsPerCapita: Option<f64>,
         day: String,
     ) -> TimeSeriesCase {
         TimeSeriesCase {
@@ -140,8 +136,6 @@ impl TimeSeriesCase {
             deaths,
             confirmedCasesToday,
             deathsToday,
-            confirmedPerCapita,
-            deathsPerCapita,
             day,
         }
     }
