@@ -4,7 +4,6 @@ use log::{debug, error, info, warn};
 use mongodb::{bson, Client};
 use std::error::Error;
 
-pub mod alpha3_country_codes;
 pub mod data_processing;
 pub mod data_sources;
 pub mod logging;
@@ -128,8 +127,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .map(|x| x.attributes)
         .collect::<Vec<Case>>();
     let cases_by_country = process_cases_by_country(cases_by_country);
-    let cases_by_location_map =
-        merge_csv_gis_cases(processed_csv, cases_by_country, today_m_d_y.to_string());
+    let cases_by_location_map = merge_csv_gis_cases(
+        processed_csv,
+        cases_by_country,
+        owid_data,
+        today_m_d_y.to_string(),
+    );
 
     let global_day_cases =
         process_global_cases_by_date(&cases_by_location_map, &global_time_series_map);

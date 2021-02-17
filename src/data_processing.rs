@@ -1,7 +1,6 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 
-use crate::alpha3_country_codes::alpha_codes;
 use crate::schema::{
     Case, CaseByLocation, CountyStatistic, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase,
     Province, Region, TimeSeriesCase,
@@ -107,11 +106,11 @@ fn patch_country_names(country_name: String) -> String {
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
+    owid_data: HashMap<String, CountyStatistic>,
     today: String,
 ) -> HashMap<String, CaseByLocation> {
     let mut cases_by_location: HashMap<String, CaseByLocation> = HashMap::new();
     let mut countries_with_provinces: HashMap<String, CaseByLocation> = HashMap::new();
-    let alpha_codes = alpha_codes();
 
     for (id_key, mut csv_case) in csv_cases.drain() {
         if let Some(gis_case) = gis_cases.get_mut(&id_key) {
@@ -138,7 +137,7 @@ pub fn merge_csv_gis_cases(
                 cardiovasc_death_rate,
                 life_expectancy,
                 human_development_index,
-            ) = match alpha_codes.get(&csv_case.Country_Region) {
+            ) = match owid_data.get(&csv_case.Country_Region) {
                 Some(code) => (
                     code.iso_code.to_string(),
                     Some(code.population),
@@ -204,7 +203,7 @@ pub fn merge_csv_gis_cases(
                 };
 
                 if province_found == "Greenland" {
-                    country_code = match alpha_codes.get(&province_found.to_string()) {
+                    country_code = match owid_data.get(&province_found.to_string()) {
                         Some(code) => code.iso_code.to_string(),
                         None => "".to_string(),
                     };
@@ -422,9 +421,11 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
     cases_by_country_map
 }
 
-pub fn process_owid_csv(owid_data: String) -> Result<(Vec<CountyStatistic>, i64), Box<dyn Error>> {
+pub fn process_owid_csv(
+    owid_data: String,
+) -> Result<(HashMap<String, CountyStatistic>, i64), Box<dyn Error>> {
     let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
-    let mut result: Vec<CountyStatistic> = Vec::new();
+    let mut county_and_statistic: HashMap<String, CountyStatistic> = HashMap::new();
     let mut global_population = 0;
 
     for owid_record in owid_csv_reader.records() {
@@ -439,7 +440,7 @@ pub fn process_owid_csv(owid_data: String) -> Result<(Vec<CountyStatistic>, i64)
             let population = owid_record[44].parse::<f64>().unwrap_or_default().round() as i64;
             let country_statistic = CountyStatistic {
                 iso_code,
-                country_name: country_name,
+                country_name: country_name.clone(),
                 continent: owid_record[1].to_string(),
                 population: population,
                 population_density: match owid_record[45].is_empty() {
@@ -473,17 +474,15 @@ pub fn process_owid_csv(owid_data: String) -> Result<(Vec<CountyStatistic>, i64)
                 life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
                 human_development_index: match owid_record[58].is_empty() {
                     true => None,
-                    false => Some(owid_record[57].parse::<f64>().unwrap_or_default()),
+                    false => Some(owid_record[58].parse::<f64>().unwrap_or_default()),
                 },
             };
             global_population += population;
-            result.push(country_statistic);
+            county_and_statistic.insert(country_name, country_statistic);
         }
     }
 
-    // println!("{:?}", result);
-
-    Ok((result, global_population))
+    Ok((county_and_statistic, global_population))
 }
 
 pub fn process_csv(
