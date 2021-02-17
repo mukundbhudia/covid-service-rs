@@ -3,8 +3,8 @@ use std::error::Error;
 
 use crate::alpha3_country_codes::alpha_codes;
 use crate::schema::{
-    Case, CaseByLocation, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase, Province, Region,
-    TimeSeriesCase,
+    Case, CaseByLocation, CountyStatistic, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase,
+    Province, Region, TimeSeriesCase,
 };
 
 fn force_to_zero_if_negative(number: i64) -> i64 {
@@ -89,11 +89,17 @@ fn get_highest_confirmed_and_deaths(
 fn patch_country_names(country_name: String) -> String {
     match country_name.as_str() {
         "Burma" => "Myanmar".to_string(),
+        "Cape Verde" => "Cabo Verde".to_string(),
+        "Faeroe Islands" => "Faroe Islands".to_string(),
         "Congo (Brazzaville)" => "Congo".to_string(),
         "Congo (Kinshasa)" => "Democratic Republic of Congo".to_string(),
         "Korea, South" => "South Korea".to_string(),
+        "Micronesia (country)" => "Micronesia".to_string(),
+        "Saint Helena" => "Saint Helena, Ascension and Tristan da Cunha".to_string(),
         "Taiwan*" => "Taiwan".to_string(),
+        "Timor" => "Timor-Leste".to_string(),
         "US" => "United States".to_string(),
+        "Vatican" => "Holy See".to_string(),
         _ => country_name,
     }
 }
@@ -414,6 +420,71 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
         }
     }
     cases_by_country_map
+}
+
+pub fn process_owid_csv(owid_data: String) -> Result<Vec<CountyStatistic>, Box<dyn Error>> {
+    let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
+    let mut result: Vec<CountyStatistic> = Vec::new();
+    let mut global_population = 0;
+
+    for owid_record in owid_csv_reader.records() {
+        let owid_record = owid_record?;
+        let iso_code = match owid_record[0].to_string().as_str() {
+            "OWID_KOS" => "KOS".to_string(),
+            _ => owid_record[0].to_string(),
+        };
+        if iso_code.len() <= 3 {
+            // Typical country code sizes only
+            let country_name = patch_country_names(owid_record[2].to_string());
+            let population = owid_record[44].parse::<f64>().unwrap_or_default().round() as i64;
+            let country_statistic = CountyStatistic {
+                iso_code,
+                country_name: country_name,
+                continent: owid_record[1].to_string(),
+                population: population,
+                population_density: match owid_record[45].is_empty() {
+                    true => None,
+                    false => Some(owid_record[45].parse::<f64>().unwrap_or_default()),
+                },
+                median_age: match owid_record[46].is_empty() {
+                    true => None,
+                    false => Some(owid_record[46].parse::<f64>().unwrap_or_default()),
+                },
+                aged_65_older: match owid_record[47].is_empty() {
+                    true => None,
+                    false => Some(owid_record[47].parse::<f64>().unwrap_or_default()),
+                },
+                aged_70_older: match owid_record[48].is_empty() {
+                    true => None,
+                    false => Some(owid_record[48].parse::<f64>().unwrap_or_default()),
+                },
+                gdp_per_capita: match owid_record[49].is_empty() {
+                    true => None,
+                    false => Some(owid_record[49].parse::<f64>().unwrap_or_default()),
+                },
+                diabetes_prevalence: match owid_record[52].is_empty() {
+                    true => None,
+                    false => Some(owid_record[52].parse::<f64>().unwrap_or_default()),
+                },
+                cardiovasc_death_rate: match owid_record[51].is_empty() {
+                    true => None,
+                    false => Some(owid_record[51].parse::<f64>().unwrap_or_default()),
+                },
+                life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
+                human_development_index: match owid_record[58].is_empty() {
+                    true => None,
+                    false => Some(owid_record[57].parse::<f64>().unwrap_or_default()),
+                },
+            };
+            global_population += population;
+            result.push(country_statistic);
+        }
+    }
+
+    // println!("{:?}", result);
+    println!("global pop: {}", global_population);
+
+    Ok(result)
 }
 
 pub fn process_csv(

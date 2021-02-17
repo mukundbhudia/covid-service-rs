@@ -12,6 +12,7 @@ pub mod schema;
 
 use data_processing::{
     merge_csv_gis_cases, process_cases_by_country, process_csv, process_global_cases_by_date,
+    process_owid_csv,
 };
 use data_sources::get_data_from_sources;
 use logging::initialise_logging;
@@ -70,11 +71,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
         deaths_global_cases,
         confirmed_us_cases,
         deaths_us_cases,
+        owid_data,
         global_confirmed,
         global_recovered,
         global_deaths,
     ) = get_data_from_sources().await?;
-
+    let owid_data = process_owid_csv(owid_data);
+    // println!("{:?}", owid_data);
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
 

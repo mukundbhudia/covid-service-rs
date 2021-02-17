@@ -10,6 +10,7 @@ fn get_sources() -> (
     String,
     String,
     String,
+    String,
 ) {
     let gis_service = String::from("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query");
     let cases_by_country_query_params = String::from("?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=");
@@ -22,6 +23,8 @@ fn get_sources() -> (
 
     let confirmed_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv");
     let deaths_us_csv_request_url = String::from("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv");
+
+    let owid_latest_csv_request_url = String::from("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/latest/owid-covid-latest.csv");
 
     let cases_by_country_url = format!("{}{}", gis_service, cases_by_country_query_params);
     let total_confirmed_url = format!("{}{}", gis_service, total_confirmed_cases_query_params);
@@ -37,12 +40,14 @@ fn get_sources() -> (
         total_confirmed_url,
         total_recovered_url,
         total_deaths_url,
+        owid_latest_csv_request_url,
     )
 }
 
 pub async fn get_data_from_sources() -> Result<
     (
         Vec<CasesAttributes>,
+        String,
         String,
         String,
         String,
@@ -62,6 +67,7 @@ pub async fn get_data_from_sources() -> Result<
         total_confirmed_url,
         total_recovered_url,
         total_deaths_url,
+        owid_latest_csv_request_url,
     ) = get_sources();
 
     let get_cases_by_country_task = tokio::spawn(async move {
@@ -88,6 +94,11 @@ pub async fn get_data_from_sources() -> Result<
     let get_death_us_csv_cases_task = tokio::spawn(async move {
         let deaths_us_csv_response = reqwest::get(&deaths_us_csv_request_url).await.unwrap();
         deaths_us_csv_response.text().await.unwrap()
+    });
+
+    let get_owid_csv_data_task = tokio::spawn(async move {
+        let owid_csv_data_response = reqwest::get(&owid_latest_csv_request_url).await.unwrap();
+        owid_csv_data_response.text().await.unwrap()
     });
 
     let get_global_confirmed_task = tokio::spawn(async move {
@@ -117,6 +128,7 @@ pub async fn get_data_from_sources() -> Result<
         global_confirmed,
         global_recovered,
         global_deaths,
+        owid_data,
     ) = tokio::try_join!(
         get_cases_by_country_task,
         get_confirmed_global_csv_cases_task,
@@ -126,6 +138,7 @@ pub async fn get_data_from_sources() -> Result<
         get_global_confirmed_task,
         get_global_recovered_task,
         get_global_deaths_task,
+        get_owid_csv_data_task,
     )
     .unwrap();
 
@@ -135,6 +148,7 @@ pub async fn get_data_from_sources() -> Result<
         deaths_global_cases,
         confirmed_us_cases,
         deaths_us_cases,
+        owid_data,
         global_confirmed,
         global_recovered,
         global_deaths,
