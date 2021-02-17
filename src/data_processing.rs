@@ -422,7 +422,7 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
     cases_by_country_map
 }
 
-pub fn process_owid_csv(owid_data: String) -> Result<Vec<CountyStatistic>, Box<dyn Error>> {
+pub fn process_owid_csv(owid_data: String) -> Result<(Vec<CountyStatistic>, i64), Box<dyn Error>> {
     let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
     let mut result: Vec<CountyStatistic> = Vec::new();
     let mut global_population = 0;
@@ -482,9 +482,8 @@ pub fn process_owid_csv(owid_data: String) -> Result<Vec<CountyStatistic>, Box<d
     }
 
     // println!("{:?}", result);
-    println!("global pop: {}", global_population);
 
-    Ok(result)
+    Ok((result, global_population))
 }
 
 pub fn process_csv(
@@ -492,7 +491,7 @@ pub fn process_csv(
     deaths: String,
     region: Region,
     today: String,
-    global_current_cases: Option<(i64, i64)>,
+    global_current_cases: Option<(i64, i64, i64)>,
 ) -> Result<
     (
         HashMap<String, CsvCase>,
@@ -504,7 +503,6 @@ pub fn process_csv(
             HighestCase,
             f64,
             f64,
-            i64,
         ),
     ),
     Box<dyn Error>,
@@ -514,7 +512,6 @@ pub fn process_csv(
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
-    let alpha_codes = alpha_codes();
 
     let mut country_csv_header_index = 1;
     let mut province_csv_header_index = 0;
@@ -531,9 +528,6 @@ pub fn process_csv(
         first_day_csv_header_index = 11;
     }
 
-    let global_population = alpha_codes
-        .values()
-        .fold(0, |pop, county_stat| pop + county_stat.population);
     let mut global_date_first_case: Option<String> = None;
     let mut global_date_first_death: Option<String> = None;
     let mut highest_global_daily_confirmed = HighestCase {
@@ -696,7 +690,7 @@ pub fn process_csv(
 
     // Add the most recent days to global time series
     if let Some(global_current_cases) = global_current_cases {
-        let (global_confirmed, global_deaths) = global_current_cases;
+        let (global_confirmed, global_deaths, global_population) = global_current_cases;
         let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
         let yesterday_time_series_case = time_series_cases_map.get(&last_day_index).unwrap();
         let global_confirmed_today = global_confirmed - yesterday_time_series_case.confirmed;
@@ -735,7 +729,6 @@ pub fn process_csv(
             highest_global_daily_deaths,
             global_confirmed_per_capita,
             global_deaths_per_capita,
-            global_population,
         ),
     ))
 }

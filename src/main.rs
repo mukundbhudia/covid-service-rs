@@ -76,7 +76,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         global_recovered,
         global_deaths,
     ) = get_data_from_sources().await?;
-    let owid_data = process_owid_csv(owid_data);
+    let (owid_data, global_population) = process_owid_csv(owid_data)?;
     // println!("{:?}", owid_data);
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
@@ -91,7 +91,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         deaths_global_cases,
         Region::Global,
         today_m_d_y.to_string(),
-        Some((global_confirmed, global_deaths)),
+        Some((global_confirmed, global_deaths, global_population)),
     )?;
     let (
         date_of_first_confirmed,
@@ -100,7 +100,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         highest_daily_deaths,
         global_confirmed_per_capita,
         global_deaths_per_capita,
-        global_population,
     ) = global_csv_stats;
     let (us_processed_csv, _, _) = process_csv(
         confirmed_us_cases,

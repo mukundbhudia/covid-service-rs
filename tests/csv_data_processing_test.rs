@@ -14,7 +14,7 @@ fn basic_process_1_country_4_days_global_csv() {
 ,Afghanistan,33.93911,67.709953,0,0,0,0"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (0, 0);
+    let global_confirmed_and_deaths_count = (0, 0, 0);
 
     let today = String::from("1/26/20");
 
@@ -108,7 +108,7 @@ fn basic_process_1_country_4_days_8_confirmed_global_csv() {
 ,Afghanistan,33.93911,67.709953,0,0,0,0"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (8, 0);
+    let global_confirmed_and_deaths_count = (8, 0, 0);
 
     let today = String::from("1/26/20");
 
@@ -202,7 +202,7 @@ fn basic_process_1_country_4_days_7_deaths_global_csv() {
 ,Afghanistan,33.93911,67.709953,0,0,1,1"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (0, 7);
+    let global_confirmed_and_deaths_count = (0, 7, 0);
 
     let today = String::from("1/26/20");
 
@@ -296,7 +296,7 @@ fn basic_process_1_country_4_days_8_confirmed_7_deaths_global_csv() {
 ,Afghanistan,33.93911,67.709953,0,0,1,1"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (8, 7);
+    let global_confirmed_and_deaths_count = (8, 7, 0);
 
     let today = String::from("1/26/20");
 
@@ -392,7 +392,7 @@ fn non_zero_first_day_case_1_country_4_days_global_csv() {
 ,Afghanistan,33.93911,67.709953,1,1,1,3"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (7, 4);
+    let global_confirmed_and_deaths_count = (7, 4, 0);
 
     let today = String::from("1/26/20");
 
@@ -488,7 +488,7 @@ fn no_negative_confirmed_today_process_1_country_4_days_global_csv() {
 ,Afghanistan,33.93911,67.709953,0,0,1,1"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (6, 0);
+    let global_confirmed_and_deaths_count = (6, 0, 0);
 
     let today = String::from("1/26/20");
 
@@ -583,7 +583,7 @@ fn over_new_year_process_1_country_4_days_global_csv() {
 ,Afghanistan,33.93911,67.709953,0,0,0,0"
             .to_string();
 
-    let global_confirmed_and_deaths_count = (0, 0);
+    let global_confirmed_and_deaths_count = (0, 0, 0);
     //Using the same time `.format()` as in main
     let today = Utc.ymd(2021, 1, 2).format("%-m/%-d/%-y").to_string();
 
@@ -679,7 +679,7 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
 ,Congo (Brazzaville),-0.228,15.8277,1,2,5,5"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (12, 10);
+    let global_confirmed_and_deaths_count = (12, 10, 0);
 
     let today = String::from("1/26/20");
 
@@ -846,7 +846,7 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,2,2"
 Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
         .to_string();
 
-    let global_confirmed_and_deaths_count = (14, 12);
+    let global_confirmed_and_deaths_count = (14, 12, 0);
 
     let today = String::from("1/26/20");
 
