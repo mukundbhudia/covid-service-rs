@@ -14,4 +14,4 @@ csv = "1.1"
 log = "0.4"
 log4rs = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
-mongodb = "1.1"
+mongodb = "1.2"
