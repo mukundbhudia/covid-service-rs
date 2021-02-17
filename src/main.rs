@@ -114,9 +114,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     info!("Days since first cases: {}", global_time_series_map.len());
 
     info!(
-        "{:?} Global and {:?} US CSV cases",
+        "{} Global and {} US CSV cases. Global population: {}.",
         processed_csv.len(),
-        us_processed_csv.len()
+        us_processed_csv.len(),
+        global_population,
     );
 
     processed_csv.extend(us_processed_csv);
