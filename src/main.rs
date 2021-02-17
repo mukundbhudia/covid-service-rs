@@ -76,7 +76,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         global_deaths,
     ) = get_data_from_sources().await?;
     let (owid_data, global_population) = process_owid_csv(owid_data)?;
-    // println!("{:?}", owid_data);
+
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
 

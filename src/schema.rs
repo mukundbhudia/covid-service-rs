@@ -64,6 +64,15 @@ pub struct CaseByLocation {
     pub cardiovascDeathRate: Option<f64>,
     pub lifeExpectancy: Option<f64>,
     pub humanDevelopmentIndex: Option<f64>,
+    pub total_tests: Option<i64>,
+    pub total_tests_per_thousand: Option<f64>,
+    pub total_vaccinations: Option<i64>,
+    pub people_vaccinated: Option<i64>,
+    pub people_fully_vaccinated: Option<i64>,
+    pub total_vaccinations_per_hundred: Option<f64>,
+    pub people_vaccinated_per_hundred: Option<f64>,
+    pub people_fully_vaccinated_per_hundred: Option<f64>,
+    pub extreme_poverty: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -110,6 +119,15 @@ pub struct CountyStatistic {
     pub cardiovasc_death_rate: Option<f64>,
     pub life_expectancy: f64,
     pub human_development_index: Option<f64>,
+    pub total_tests: Option<i64>,
+    pub total_tests_per_thousand: Option<f64>,
+    pub total_vaccinations: Option<i64>,
+    pub people_vaccinated: Option<i64>,
+    pub people_fully_vaccinated: Option<i64>,
+    pub total_vaccinations_per_hundred: Option<f64>,
+    pub people_vaccinated_per_hundred: Option<f64>,
+    pub people_fully_vaccinated_per_hundred: Option<f64>,
+    pub extreme_poverty: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
