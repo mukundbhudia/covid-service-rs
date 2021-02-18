@@ -1,10 +1,9 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 
-use crate::alpha3_country_codes::alpha_codes;
 use crate::schema::{
-    Case, CaseByLocation, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase, Province, Region,
-    TimeSeriesCase,
+    Case, CaseByLocation, CountyStatistic, CsvCase, GlobalCaseByDate, GlobalDayCase, HighestCase,
+    Province, Region, TimeSeriesCase,
 };
 
 fn force_to_zero_if_negative(number: i64) -> i64 {
@@ -89,11 +88,17 @@ fn get_highest_confirmed_and_deaths(
 fn patch_country_names(country_name: String) -> String {
     match country_name.as_str() {
         "Burma" => "Myanmar".to_string(),
+        "Cape Verde" => "Cabo Verde".to_string(),
+        "Faeroe Islands" => "Faroe Islands".to_string(),
         "Congo (Brazzaville)" => "Congo".to_string(),
         "Congo (Kinshasa)" => "Democratic Republic of Congo".to_string(),
         "Korea, South" => "South Korea".to_string(),
+        "Micronesia (country)" => "Micronesia".to_string(),
+        "Saint Helena" => "Saint Helena, Ascension and Tristan da Cunha".to_string(),
         "Taiwan*" => "Taiwan".to_string(),
+        "Timor" => "Timor-Leste".to_string(),
         "US" => "United States".to_string(),
+        "Vatican" => "Holy See".to_string(),
         _ => country_name,
     }
 }
@@ -101,11 +106,11 @@ fn patch_country_names(country_name: String) -> String {
 pub fn merge_csv_gis_cases(
     mut csv_cases: HashMap<String, CsvCase>,
     mut gis_cases: HashMap<String, Case>,
+    owid_data: HashMap<String, CountyStatistic>,
     today: String,
 ) -> HashMap<String, CaseByLocation> {
     let mut cases_by_location: HashMap<String, CaseByLocation> = HashMap::new();
     let mut countries_with_provinces: HashMap<String, CaseByLocation> = HashMap::new();
-    let alpha_codes = alpha_codes();
 
     for (id_key, mut csv_case) in csv_cases.drain() {
         if let Some(gis_case) = gis_cases.get_mut(&id_key) {
@@ -119,59 +124,20 @@ pub fn merge_csv_gis_cases(
             let deaths_today =
                 force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
 
-            let (
-                mut country_code,
-                population,
-                continent,
-                population_density,
-                median_age,
-                aged_65_older,
-                aged_70_older,
-                gdp_per_capita,
-                diabetes_prevalence,
-                cardiovasc_death_rate,
-                life_expectancy,
-                human_development_index,
-            ) = match alpha_codes.get(&csv_case.Country_Region) {
-                Some(code) => (
-                    code.iso_code.to_string(),
-                    Some(code.population),
-                    Some(code.continent.to_string()),
-                    code.population_density,
-                    code.median_age,
-                    code.aged_65_older,
-                    code.aged_70_older,
-                    code.gdp_per_capita,
-                    code.diabetes_prevalence,
-                    code.cardiovasc_death_rate,
-                    Some(code.life_expectancy),
-                    code.human_development_index,
-                ),
-                None => (
-                    "".to_string(),
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                    None,
-                ),
-            };
+            let blank_stat = CountyStatistic::default();
+            let country_statistic = owid_data
+                .get(&csv_case.Country_Region)
+                .unwrap_or(&blank_stat);
 
-            let confirmed_per_capita = match population {
-                Some(pop) => Some(gis_case.Confirmed as f64 / pop as f64),
-                None => None,
+            let confirmed_per_capita = match country_statistic.population {
+                0 => None,
+                _ => Some(gis_case.Confirmed as f64 / country_statistic.population as f64),
             };
-
-            let deaths_per_capita = match population {
-                Some(pop) => Some(gis_case.Deaths as f64 / pop as f64),
-                None => None,
+            let deaths_per_capita = match country_statistic.population {
+                0 => None,
+                _ => Some(gis_case.Deaths as f64 / country_statistic.population as f64),
             };
+            let mut country_code = country_statistic.iso_code.to_string();
 
             let today_time_series_cases = TimeSeriesCase::new(
                 gis_case.Confirmed,
@@ -198,10 +164,7 @@ pub fn merge_csv_gis_cases(
                 };
 
                 if province_found == "Greenland" {
-                    country_code = match alpha_codes.get(&province_found.to_string()) {
-                        Some(code) => code.iso_code.to_string(),
-                        None => "".to_string(),
-                    };
+                    country_code = "GRL".to_string();
                 }
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
@@ -236,7 +199,7 @@ pub fn merge_csv_gis_cases(
                         CaseByLocation {
                             idKey: generate_id_key(&None, &csv_case.Country_Region),
                             countryCode: country_code.clone(),
-                            population,
+                            population: Some(country_statistic.population),
                             active: gis_case.Active,
                             confirmed: gis_case.Confirmed,
                             confirmedPerCapita: confirmed_per_capita,
@@ -257,16 +220,28 @@ pub fn merge_csv_gis_cases(
                             dateOfFirstDeath: date_of_first_death.clone(),
                             highestDailyConfirmed: highest_daily_confirmed.clone(),
                             highestDailyDeaths: highest_daily_deaths.clone(),
-                            continent: continent.clone(),
-                            populationDensity: population_density,
-                            medianAge: median_age,
-                            aged65older: aged_65_older,
-                            aged70older: aged_70_older,
-                            gdpPerCapita: gdp_per_capita,
-                            diabetesPrevalence: diabetes_prevalence,
-                            cardiovascDeathRate: cardiovasc_death_rate,
-                            lifeExpectancy: life_expectancy,
-                            humanDevelopmentIndex: human_development_index,
+                            continent: Some(country_statistic.continent.clone()),
+                            populationDensity: country_statistic.population_density,
+                            medianAge: country_statistic.median_age,
+                            aged65older: country_statistic.aged_65_older,
+                            aged70older: country_statistic.aged_70_older,
+                            gdpPerCapita: country_statistic.gdp_per_capita,
+                            diabetesPrevalence: country_statistic.diabetes_prevalence,
+                            cardiovascDeathRate: country_statistic.cardiovasc_death_rate,
+                            lifeExpectancy: Some(country_statistic.life_expectancy),
+                            humanDevelopmentIndex: country_statistic.human_development_index,
+                            totalTests: country_statistic.total_tests,
+                            totalTestsPerThousand: country_statistic.total_tests_per_thousand,
+                            totalVaccinations: country_statistic.total_vaccinations,
+                            peopleVaccinated: country_statistic.people_vaccinated,
+                            peopleFullyVaccinated: country_statistic.people_fully_vaccinated,
+                            totalVaccinationsPerHundred: country_statistic
+                                .total_vaccinations_per_hundred,
+                            peopleVaccinatedPerHundred: country_statistic
+                                .people_vaccinated_per_hundred,
+                            peopleFullyVaccinatedPerHundred: country_statistic
+                                .people_fully_vaccinated_per_hundred,
+                            extremePoverty: country_statistic.extreme_poverty,
                         },
                     );
                 }
@@ -281,10 +256,10 @@ pub fn merge_csv_gis_cases(
                 id_key.clone(),
                 CaseByLocation {
                     idKey: id_key,
-                    countryCode: country_code,
+                    countryCode: country_code.to_string(),
                     population: match province {
                         Some(_) => None,
-                        None => population,
+                        None => Some(country_statistic.population),
                     },
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
@@ -301,35 +276,68 @@ pub fn merge_csv_gis_cases(
                     },
                     populationDensity: match province {
                         Some(_) => None,
-                        None => population_density,
+                        None => country_statistic.population_density,
                     },
                     medianAge: match province {
                         Some(_) => None,
-                        None => median_age,
+                        None => country_statistic.median_age,
                     },
                     aged65older: match province {
                         Some(_) => None,
-                        None => aged_65_older,
+                        None => country_statistic.aged_65_older,
                     },
                     aged70older: match province {
                         Some(_) => None,
-                        None => aged_70_older,
+                        None => country_statistic.aged_70_older,
                     },
-                    gdpPerCapita: gdp_per_capita,
+                    gdpPerCapita: country_statistic.gdp_per_capita,
                     diabetesPrevalence: match province {
                         Some(_) => None,
-                        None => diabetes_prevalence,
+                        None => country_statistic.diabetes_prevalence,
                     },
                     cardiovascDeathRate: match province {
                         Some(_) => None,
-                        None => cardiovasc_death_rate,
+                        None => country_statistic.cardiovasc_death_rate,
                     },
                     lifeExpectancy: match province {
                         Some(_) => None,
-                        None => life_expectancy,
+                        None => Some(country_statistic.life_expectancy),
                     },
-                    humanDevelopmentIndex: human_development_index,
-                    continent,
+                    humanDevelopmentIndex: country_statistic.human_development_index,
+                    totalTests: match province {
+                        Some(_) => None,
+                        None => country_statistic.total_tests,
+                    },
+                    totalTestsPerThousand: match province {
+                        Some(_) => None,
+                        None => country_statistic.total_tests_per_thousand,
+                    },
+                    totalVaccinations: match province {
+                        Some(_) => None,
+                        None => country_statistic.total_vaccinations,
+                    },
+                    peopleVaccinated: match province {
+                        Some(_) => None,
+                        None => country_statistic.people_vaccinated,
+                    },
+                    peopleFullyVaccinated: match province {
+                        Some(_) => None,
+                        None => country_statistic.people_fully_vaccinated,
+                    },
+                    totalVaccinationsPerHundred: match province {
+                        Some(_) => None,
+                        None => country_statistic.total_vaccinations_per_hundred,
+                    },
+                    peopleVaccinatedPerHundred: match province {
+                        Some(_) => None,
+                        None => country_statistic.people_vaccinated_per_hundred,
+                    },
+                    peopleFullyVaccinatedPerHundred: match province {
+                        Some(_) => None,
+                        None => country_statistic.people_fully_vaccinated_per_hundred,
+                    },
+                    extremePoverty: country_statistic.extreme_poverty,
+                    continent: Some(country_statistic.continent.clone()),
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
                     lastUpdate: last_updated,
@@ -416,12 +424,96 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
     cases_by_country_map
 }
 
+pub fn process_owid_csv(
+    owid_data: String,
+) -> Result<(HashMap<String, CountyStatistic>, CountyStatistic), Box<dyn Error>> {
+    let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
+    let mut county_and_statistic: HashMap<String, CountyStatistic> = HashMap::new();
+    let mut global_owid_stats = CountyStatistic::default();
+
+    for owid_record in owid_csv_reader.records() {
+        let owid_record = owid_record?;
+        let iso_code = match owid_record[0].to_string().as_str() {
+            "OWID_KOS" => "KOS".to_string(),
+            _ => owid_record[0].to_string(),
+        };
+        let country_name = patch_country_names(owid_record[2].to_string());
+        let population = owid_record[44].parse::<f64>().unwrap_or_default().round() as i64;
+        let country_statistic = CountyStatistic {
+            iso_code: iso_code.clone(),
+            country_name: country_name.clone(),
+            continent: owid_record[1].to_string(),
+            population: population,
+            population_density: match owid_record[45].is_empty() {
+                true => None,
+                false => Some(owid_record[45].parse::<f64>().unwrap_or_default()),
+            },
+            median_age: match owid_record[46].is_empty() {
+                true => None,
+                false => Some(owid_record[46].parse::<f64>().unwrap_or_default()),
+            },
+            aged_65_older: match owid_record[47].is_empty() {
+                true => None,
+                false => Some(owid_record[47].parse::<f64>().unwrap_or_default()),
+            },
+            aged_70_older: match owid_record[48].is_empty() {
+                true => None,
+                false => Some(owid_record[48].parse::<f64>().unwrap_or_default()),
+            },
+            gdp_per_capita: match owid_record[49].is_empty() {
+                true => None,
+                false => Some(owid_record[49].parse::<f64>().unwrap_or_default()),
+            },
+            diabetes_prevalence: match owid_record[52].is_empty() {
+                true => None,
+                false => Some(owid_record[52].parse::<f64>().unwrap_or_default()),
+            },
+            cardiovasc_death_rate: match owid_record[51].is_empty() {
+                true => None,
+                false => Some(owid_record[51].parse::<f64>().unwrap_or_default()),
+            },
+            life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
+            human_development_index: match owid_record[58].is_empty() {
+                true => None,
+                false => Some(owid_record[58].parse::<f64>().unwrap_or_default()),
+            },
+            total_tests: Some(owid_record[26].parse::<f64>().unwrap_or_default().round() as i64),
+            total_tests_per_thousand: Some(owid_record[27].parse::<f64>().unwrap_or_default()),
+            total_vaccinations: Some(
+                owid_record[34].parse::<f64>().unwrap_or_default().round() as i64
+            ),
+            people_vaccinated: Some(
+                owid_record[35].parse::<f64>().unwrap_or_default().round() as i64
+            ),
+            people_fully_vaccinated: Some(
+                owid_record[36].parse::<f64>().unwrap_or_default().round() as i64,
+            ),
+            total_vaccinations_per_hundred: Some(
+                owid_record[39].parse::<f64>().unwrap_or_default(),
+            ),
+            people_vaccinated_per_hundred: Some(owid_record[40].parse::<f64>().unwrap_or_default()),
+            people_fully_vaccinated_per_hundred: Some(
+                owid_record[41].parse::<f64>().unwrap_or_default(),
+            ),
+            extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
+        };
+        if iso_code.len() <= 3 {
+            // Typical country code sizes only
+            county_and_statistic.insert(country_name, country_statistic);
+        } else if iso_code == "OWID_WRL" {
+            global_owid_stats = country_statistic;
+        }
+    }
+
+    Ok((county_and_statistic, global_owid_stats))
+}
+
 pub fn process_csv(
     confirmed: String,
     deaths: String,
     region: Region,
     today: String,
-    global_current_cases: Option<(i64, i64)>,
+    global_current_cases: Option<(i64, i64, i64)>,
 ) -> Result<
     (
         HashMap<String, CsvCase>,
@@ -433,7 +525,6 @@ pub fn process_csv(
             HighestCase,
             f64,
             f64,
-            i64,
         ),
     ),
     Box<dyn Error>,
@@ -443,7 +534,6 @@ pub fn process_csv(
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
     let mut confirmed_csv_reader = csv::Reader::from_reader(confirmed.as_bytes());
     let mut deaths_csv_reader = csv::Reader::from_reader(deaths.as_bytes());
-    let alpha_codes = alpha_codes();
 
     let mut country_csv_header_index = 1;
     let mut province_csv_header_index = 0;
@@ -460,9 +550,6 @@ pub fn process_csv(
         first_day_csv_header_index = 11;
     }
 
-    let global_population = alpha_codes
-        .values()
-        .fold(0, |pop, county_stat| pop + county_stat.population);
     let mut global_date_first_case: Option<String> = None;
     let mut global_date_first_death: Option<String> = None;
     let mut highest_global_daily_confirmed = HighestCase {
@@ -625,7 +712,7 @@ pub fn process_csv(
 
     // Add the most recent days to global time series
     if let Some(global_current_cases) = global_current_cases {
-        let (global_confirmed, global_deaths) = global_current_cases;
+        let (global_confirmed, global_deaths, global_population) = global_current_cases;
         let last_day_index = time_series_cases_map.len() + first_day_csv_header_index - 1;
         let yesterday_time_series_case = time_series_cases_map.get(&last_day_index).unwrap();
         let global_confirmed_today = global_confirmed - yesterday_time_series_case.confirmed;
@@ -664,7 +751,6 @@ pub fn process_csv(
             highest_global_daily_deaths,
             global_confirmed_per_capita,
             global_deaths_per_capita,
-            global_population,
         ),
     ))
 }
