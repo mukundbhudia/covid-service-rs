@@ -155,10 +155,14 @@ pub fn merge_csv_gis_cases(
                 }
             }; // TODO: unwrap_or()
 
-            let confirmed_per_capita =
-                Some(gis_case.Confirmed as f64 / country_statistic.population as f64);
-            let deaths_per_capita =
-                Some(gis_case.Deaths as f64 / country_statistic.population as f64);
+            let confirmed_per_capita = match country_statistic.population {
+                0 => None,
+                _ => Some(gis_case.Confirmed as f64 / country_statistic.population as f64),
+            };
+            let deaths_per_capita = match country_statistic.population {
+                0 => None,
+                _ => Some(gis_case.Deaths as f64 / country_statistic.population as f64),
+            };
             let mut country_code = country_statistic.iso_code.to_string();
 
             let today_time_series_cases = TimeSeriesCase::new(
