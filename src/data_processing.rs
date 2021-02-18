@@ -190,10 +190,7 @@ pub fn merge_csv_gis_cases(
                 };
 
                 if province_found == "Greenland" {
-                    country_code = match owid_data.get(&province_found.to_string()) {
-                        Some(code) => code.iso_code.to_string(),
-                        None => "".to_string(),
-                    };
+                    country_code = "GRL".to_string();
                 }
 
                 if let Some(case_found) = countries_with_provinces.get_mut(&csv_case.Country_Region)
