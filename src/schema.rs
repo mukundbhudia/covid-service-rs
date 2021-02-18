@@ -25,6 +25,24 @@ pub struct GlobalCaseByLocation {
     pub dateOfFirstDeath: Option<String>,
     pub highestDailyConfirmed: HighestCase,
     pub highestDailyDeaths: HighestCase,
+    pub populationDensity: Option<f64>,
+    pub medianAge: Option<f64>,
+    pub aged65older: Option<f64>,
+    pub aged70older: Option<f64>,
+    pub gdpPerCapita: Option<f64>,
+    pub diabetesPrevalence: Option<f64>,
+    pub cardiovascDeathRate: Option<f64>,
+    pub lifeExpectancy: Option<f64>,
+    pub humanDevelopmentIndex: Option<f64>,
+    pub totalTests: Option<i64>,
+    pub totalTestsPerThousand: Option<f64>,
+    pub totalVaccinations: Option<i64>,
+    pub peopleVaccinated: Option<i64>,
+    pub peopleFullyVaccinated: Option<i64>,
+    pub totalVaccinationsPerHundred: Option<f64>,
+    pub peopleVaccinatedPerHundred: Option<f64>,
+    pub peopleFullyVaccinatedPerHundred: Option<f64>,
+    pub extremePoverty: Option<f64>,
     pub timeStamp: bson::DateTime,
 }
 
@@ -64,15 +82,15 @@ pub struct CaseByLocation {
     pub cardiovascDeathRate: Option<f64>,
     pub lifeExpectancy: Option<f64>,
     pub humanDevelopmentIndex: Option<f64>,
-    pub total_tests: Option<i64>,
-    pub total_tests_per_thousand: Option<f64>,
-    pub total_vaccinations: Option<i64>,
-    pub people_vaccinated: Option<i64>,
-    pub people_fully_vaccinated: Option<i64>,
-    pub total_vaccinations_per_hundred: Option<f64>,
-    pub people_vaccinated_per_hundred: Option<f64>,
-    pub people_fully_vaccinated_per_hundred: Option<f64>,
-    pub extreme_poverty: Option<f64>,
+    pub totalTests: Option<i64>,
+    pub totalTestsPerThousand: Option<f64>,
+    pub totalVaccinations: Option<i64>,
+    pub peopleVaccinated: Option<i64>,
+    pub peopleFullyVaccinated: Option<i64>,
+    pub totalVaccinationsPerHundred: Option<f64>,
+    pub peopleVaccinatedPerHundred: Option<f64>,
+    pub peopleFullyVaccinatedPerHundred: Option<f64>,
+    pub extremePoverty: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -106,6 +124,7 @@ pub struct Province {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct CountyStatistic {
+    // TODO: implement default
     pub iso_code: String,
     pub country_name: String,
     pub continent: String,

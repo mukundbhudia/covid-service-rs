@@ -75,8 +75,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         global_recovered,
         global_deaths,
     ) = get_data_from_sources().await?;
-    let (owid_data, global_population) = process_owid_csv(owid_data)?;
+    let (owid_data, global_owid_stats) = process_owid_csv(owid_data)?;
 
+    let global_population = global_owid_stats.population;
     let net_req_time_stop = Utc::now().time();
     let core_processing_time_start = Utc::now().time();
 
@@ -178,6 +179,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
         confirmedPerCapita: global_confirmed_per_capita,
         deathsPerCapita: global_deaths_per_capita,
         globalPopulation: global_population,
+        populationDensity: global_owid_stats.population_density,
+        medianAge: global_owid_stats.median_age,
+        aged65older: global_owid_stats.aged_65_older,
+        aged70older: global_owid_stats.aged_70_older,
+        gdpPerCapita: global_owid_stats.gdp_per_capita,
+        diabetesPrevalence: global_owid_stats.diabetes_prevalence,
+        cardiovascDeathRate: global_owid_stats.cardiovasc_death_rate,
+        lifeExpectancy: Some(global_owid_stats.life_expectancy),
+        humanDevelopmentIndex: global_owid_stats.human_development_index,
+        totalTests: global_owid_stats.total_tests,
+        totalTestsPerThousand: global_owid_stats.total_tests_per_thousand,
+        totalVaccinations: global_owid_stats.total_vaccinations,
+        peopleVaccinated: global_owid_stats.people_vaccinated,
+        peopleFullyVaccinated: global_owid_stats.people_fully_vaccinated,
+        totalVaccinationsPerHundred: global_owid_stats.total_vaccinations_per_hundred,
+        peopleVaccinatedPerHundred: global_owid_stats.people_vaccinated_per_hundred,
+        peopleFullyVaccinatedPerHundred: global_owid_stats.people_fully_vaccinated_per_hundred,
+        extremePoverty: global_owid_stats.extreme_poverty,
         timeSeriesTotalCasesByDate: global_time_series,
         globalCasesByDate: global_day_cases,
         dateOfFirstCase: date_of_first_confirmed,

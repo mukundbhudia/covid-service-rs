@@ -150,7 +150,7 @@ pub fn merge_csv_gis_cases(
             let country_statistic = match owid_data.get(&csv_case.Country_Region) {
                 Some(stat) => stat,
                 None => {
-                    println!("Not in OWID data{}", csv_case.Country_Region);    // TODO: remove later
+                    println!("Not in OWID data{}", csv_case.Country_Region); // TODO: remove later
                     &blank_stat
                 }
             }; // TODO: unwrap_or()
@@ -259,18 +259,18 @@ pub fn merge_csv_gis_cases(
                             cardiovascDeathRate: country_statistic.cardiovasc_death_rate,
                             lifeExpectancy: Some(country_statistic.life_expectancy),
                             humanDevelopmentIndex: country_statistic.human_development_index,
-                            total_tests: country_statistic.total_tests,
-                            total_tests_per_thousand: country_statistic.total_tests_per_thousand,
-                            total_vaccinations: country_statistic.total_vaccinations,
-                            people_vaccinated: country_statistic.people_vaccinated,
-                            people_fully_vaccinated: country_statistic.people_fully_vaccinated,
-                            total_vaccinations_per_hundred: country_statistic
+                            totalTests: country_statistic.total_tests,
+                            totalTestsPerThousand: country_statistic.total_tests_per_thousand,
+                            totalVaccinations: country_statistic.total_vaccinations,
+                            peopleVaccinated: country_statistic.people_vaccinated,
+                            peopleFullyVaccinated: country_statistic.people_fully_vaccinated,
+                            totalVaccinationsPerHundred: country_statistic
                                 .total_vaccinations_per_hundred,
-                            people_vaccinated_per_hundred: country_statistic
+                            peopleVaccinatedPerHundred: country_statistic
                                 .people_vaccinated_per_hundred,
-                            people_fully_vaccinated_per_hundred: country_statistic
+                            peopleFullyVaccinatedPerHundred: country_statistic
                                 .people_fully_vaccinated_per_hundred,
-                            extreme_poverty: country_statistic.extreme_poverty,
+                            extremePoverty: country_statistic.extreme_poverty,
                         },
                     );
                 }
@@ -333,39 +333,39 @@ pub fn merge_csv_gis_cases(
                         None => Some(country_statistic.life_expectancy),
                     },
                     humanDevelopmentIndex: country_statistic.human_development_index,
-                    total_tests: match province {
+                    totalTests: match province {
                         Some(_) => None,
                         None => country_statistic.total_tests,
                     },
-                    total_tests_per_thousand: match province {
+                    totalTestsPerThousand: match province {
                         Some(_) => None,
                         None => country_statistic.total_tests_per_thousand,
                     },
-                    total_vaccinations: match province {
+                    totalVaccinations: match province {
                         Some(_) => None,
                         None => country_statistic.total_vaccinations,
                     },
-                    people_vaccinated: match province {
+                    peopleVaccinated: match province {
                         Some(_) => None,
                         None => country_statistic.people_vaccinated,
                     },
-                    people_fully_vaccinated: match province {
+                    peopleFullyVaccinated: match province {
                         Some(_) => None,
                         None => country_statistic.people_fully_vaccinated,
                     },
-                    total_vaccinations_per_hundred: match province {
+                    totalVaccinationsPerHundred: match province {
                         Some(_) => None,
                         None => country_statistic.total_vaccinations_per_hundred,
                     },
-                    people_vaccinated_per_hundred: match province {
+                    peopleVaccinatedPerHundred: match province {
                         Some(_) => None,
                         None => country_statistic.people_vaccinated_per_hundred,
                     },
-                    people_fully_vaccinated_per_hundred: match province {
+                    peopleFullyVaccinatedPerHundred: match province {
                         Some(_) => None,
                         None => country_statistic.people_fully_vaccinated_per_hundred,
                     },
-                    extreme_poverty: country_statistic.extreme_poverty,
+                    extremePoverty: country_statistic.extreme_poverty,
                     continent: Some(country_statistic.continent.clone()),
                     confirmedCasesToday: confirmed_cases_today,
                     deathsToday: deaths_today,
@@ -455,10 +455,10 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
 
 pub fn process_owid_csv(
     owid_data: String,
-) -> Result<(HashMap<String, CountyStatistic>, i64), Box<dyn Error>> {
+) -> Result<(HashMap<String, CountyStatistic>, CountyStatistic), Box<dyn Error>> {
     let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
     let mut county_and_statistic: HashMap<String, CountyStatistic> = HashMap::new();
-    let mut global_population = 0;
+    let mut global_owid_stats: Option<CountyStatistic> = None;
 
     for owid_record in owid_csv_reader.records() {
         let owid_record = owid_record?;
@@ -466,76 +466,75 @@ pub fn process_owid_csv(
             "OWID_KOS" => "KOS".to_string(),
             _ => owid_record[0].to_string(),
         };
+        let country_name = patch_country_names(owid_record[2].to_string());
+        let population = owid_record[44].parse::<f64>().unwrap_or_default().round() as i64;
+        let country_statistic = CountyStatistic {
+            iso_code: iso_code.clone(),
+            country_name: country_name.clone(),
+            continent: owid_record[1].to_string(),
+            population: population,
+            population_density: match owid_record[45].is_empty() {
+                true => None,
+                false => Some(owid_record[45].parse::<f64>().unwrap_or_default()),
+            },
+            median_age: match owid_record[46].is_empty() {
+                true => None,
+                false => Some(owid_record[46].parse::<f64>().unwrap_or_default()),
+            },
+            aged_65_older: match owid_record[47].is_empty() {
+                true => None,
+                false => Some(owid_record[47].parse::<f64>().unwrap_or_default()),
+            },
+            aged_70_older: match owid_record[48].is_empty() {
+                true => None,
+                false => Some(owid_record[48].parse::<f64>().unwrap_or_default()),
+            },
+            gdp_per_capita: match owid_record[49].is_empty() {
+                true => None,
+                false => Some(owid_record[49].parse::<f64>().unwrap_or_default()),
+            },
+            diabetes_prevalence: match owid_record[52].is_empty() {
+                true => None,
+                false => Some(owid_record[52].parse::<f64>().unwrap_or_default()),
+            },
+            cardiovasc_death_rate: match owid_record[51].is_empty() {
+                true => None,
+                false => Some(owid_record[51].parse::<f64>().unwrap_or_default()),
+            },
+            life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
+            human_development_index: match owid_record[58].is_empty() {
+                true => None,
+                false => Some(owid_record[58].parse::<f64>().unwrap_or_default()),
+            },
+            total_tests: Some(owid_record[26].parse::<f64>().unwrap_or_default().round() as i64),
+            total_tests_per_thousand: Some(owid_record[27].parse::<f64>().unwrap_or_default()),
+            total_vaccinations: Some(
+                owid_record[34].parse::<f64>().unwrap_or_default().round() as i64
+            ),
+            people_vaccinated: Some(
+                owid_record[35].parse::<f64>().unwrap_or_default().round() as i64
+            ),
+            people_fully_vaccinated: Some(
+                owid_record[36].parse::<f64>().unwrap_or_default().round() as i64,
+            ),
+            total_vaccinations_per_hundred: Some(
+                owid_record[39].parse::<f64>().unwrap_or_default(),
+            ),
+            people_vaccinated_per_hundred: Some(owid_record[40].parse::<f64>().unwrap_or_default()),
+            people_fully_vaccinated_per_hundred: Some(
+                owid_record[41].parse::<f64>().unwrap_or_default(),
+            ),
+            extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
+        };
         if iso_code.len() <= 3 {
             // Typical country code sizes only
-            let country_name = patch_country_names(owid_record[2].to_string());
-            let population = owid_record[44].parse::<f64>().unwrap_or_default().round() as i64;
-            let country_statistic = CountyStatistic {
-                iso_code,
-                country_name: country_name.clone(),
-                continent: owid_record[1].to_string(),
-                population: population,
-                population_density: match owid_record[45].is_empty() {
-                    true => None,
-                    false => Some(owid_record[45].parse::<f64>().unwrap_or_default()),
-                },
-                median_age: match owid_record[46].is_empty() {
-                    true => None,
-                    false => Some(owid_record[46].parse::<f64>().unwrap_or_default()),
-                },
-                aged_65_older: match owid_record[47].is_empty() {
-                    true => None,
-                    false => Some(owid_record[47].parse::<f64>().unwrap_or_default()),
-                },
-                aged_70_older: match owid_record[48].is_empty() {
-                    true => None,
-                    false => Some(owid_record[48].parse::<f64>().unwrap_or_default()),
-                },
-                gdp_per_capita: match owid_record[49].is_empty() {
-                    true => None,
-                    false => Some(owid_record[49].parse::<f64>().unwrap_or_default()),
-                },
-                diabetes_prevalence: match owid_record[52].is_empty() {
-                    true => None,
-                    false => Some(owid_record[52].parse::<f64>().unwrap_or_default()),
-                },
-                cardiovasc_death_rate: match owid_record[51].is_empty() {
-                    true => None,
-                    false => Some(owid_record[51].parse::<f64>().unwrap_or_default()),
-                },
-                life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
-                human_development_index: match owid_record[58].is_empty() {
-                    true => None,
-                    false => Some(owid_record[58].parse::<f64>().unwrap_or_default()),
-                },
-                total_tests: Some(owid_record[26].parse::<f64>().unwrap_or_default().round() as i64),
-                total_tests_per_thousand: Some(owid_record[27].parse::<f64>().unwrap_or_default()),
-                total_vaccinations: Some(
-                    owid_record[34].parse::<f64>().unwrap_or_default().round() as i64,
-                ),
-                people_vaccinated: Some(
-                    owid_record[35].parse::<f64>().unwrap_or_default().round() as i64
-                ),
-                people_fully_vaccinated: Some(
-                    owid_record[36].parse::<f64>().unwrap_or_default().round() as i64,
-                ),
-                total_vaccinations_per_hundred: Some(
-                    owid_record[39].parse::<f64>().unwrap_or_default(),
-                ),
-                people_vaccinated_per_hundred: Some(
-                    owid_record[40].parse::<f64>().unwrap_or_default(),
-                ),
-                people_fully_vaccinated_per_hundred: Some(
-                    owid_record[41].parse::<f64>().unwrap_or_default(),
-                ),
-                extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
-            };
-            global_population += population;
             county_and_statistic.insert(country_name, country_statistic);
+        } else if iso_code == "OWID_WRL" {
+            global_owid_stats = Some(country_statistic);
         }
     }
 
-    Ok((county_and_statistic, global_population))
+    Ok((county_and_statistic, global_owid_stats.unwrap())) //TODO: use or_default blank
 }
 
 pub fn process_csv(
