@@ -123,37 +123,11 @@ pub fn merge_csv_gis_cases(
             };
             let deaths_today =
                 force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
-            let blank_stat = CountyStatistic {
-                iso_code: String::new(),
-                country_name: String::new(),
-                continent: String::new(),
-                population: 0,
-                population_density: None,
-                median_age: None,
-                aged_65_older: None,
-                aged_70_older: None,
-                gdp_per_capita: None,
-                diabetes_prevalence: None,
-                cardiovasc_death_rate: None,
-                life_expectancy: 0.0,
-                human_development_index: None,
-                total_tests: None,
-                total_tests_per_thousand: None,
-                total_vaccinations: None,
-                people_vaccinated: None,
-                people_fully_vaccinated: None,
-                total_vaccinations_per_hundred: None,
-                people_vaccinated_per_hundred: None,
-                people_fully_vaccinated_per_hundred: None,
-                extreme_poverty: None,
-            };
-            let country_statistic = match owid_data.get(&csv_case.Country_Region) {
-                Some(stat) => stat,
-                None => {
-                    println!("Not in OWID data{}", csv_case.Country_Region); // TODO: remove later
-                    &blank_stat
-                }
-            }; // TODO: unwrap_or()
+
+            let blank_stat = CountyStatistic::default();
+            let country_statistic = owid_data
+                .get(&csv_case.Country_Region)
+                .unwrap_or(&blank_stat);
 
             let confirmed_per_capita = match country_statistic.population {
                 0 => None,
@@ -455,7 +429,7 @@ pub fn process_owid_csv(
 ) -> Result<(HashMap<String, CountyStatistic>, CountyStatistic), Box<dyn Error>> {
     let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
     let mut county_and_statistic: HashMap<String, CountyStatistic> = HashMap::new();
-    let mut global_owid_stats: Option<CountyStatistic> = None;
+    let mut global_owid_stats = CountyStatistic::default();
 
     for owid_record in owid_csv_reader.records() {
         let owid_record = owid_record?;
@@ -527,11 +501,11 @@ pub fn process_owid_csv(
             // Typical country code sizes only
             county_and_statistic.insert(country_name, country_statistic);
         } else if iso_code == "OWID_WRL" {
-            global_owid_stats = Some(country_statistic);
+            global_owid_stats = country_statistic;
         }
     }
 
-    Ok((county_and_statistic, global_owid_stats.unwrap())) //TODO: use or_default blank
+    Ok((county_and_statistic, global_owid_stats))
 }
 
 pub fn process_csv(

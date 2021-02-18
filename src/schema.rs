@@ -18,13 +18,13 @@ pub struct GlobalCaseByLocation {
     pub deathsToday: i64,
     pub confirmedPerCapita: f64,
     pub deathsPerCapita: f64,
-    pub globalPopulation: i64,
     pub timeSeriesTotalCasesByDate: Vec<TimeSeriesCase>,
     pub globalCasesByDate: Vec<GlobalDayCase>,
     pub dateOfFirstCase: Option<String>,
     pub dateOfFirstDeath: Option<String>,
     pub highestDailyConfirmed: HighestCase,
     pub highestDailyDeaths: HighestCase,
+    pub globalPopulation: i64,
     pub populationDensity: Option<f64>,
     pub medianAge: Option<f64>,
     pub aged65older: Option<f64>,
@@ -124,7 +124,6 @@ pub struct Province {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct CountyStatistic {
-    // TODO: implement default
     pub iso_code: String,
     pub country_name: String,
     pub continent: String,
@@ -147,6 +146,36 @@ pub struct CountyStatistic {
     pub people_vaccinated_per_hundred: Option<f64>,
     pub people_fully_vaccinated_per_hundred: Option<f64>,
     pub extreme_poverty: Option<f64>,
+}
+
+#[allow(non_snake_case)]
+impl Default for CountyStatistic {
+    fn default() -> Self {
+        CountyStatistic {
+            iso_code: String::new(),
+            country_name: String::new(),
+            continent: String::new(),
+            population: 0,
+            population_density: None,
+            median_age: None,
+            aged_65_older: None,
+            aged_70_older: None,
+            gdp_per_capita: None,
+            diabetes_prevalence: None,
+            cardiovasc_death_rate: None,
+            life_expectancy: 0.0,
+            human_development_index: None,
+            total_tests: None,
+            total_tests_per_thousand: None,
+            total_vaccinations: None,
+            people_vaccinated: None,
+            people_fully_vaccinated: None,
+            total_vaccinations_per_hundred: None,
+            people_vaccinated_per_hundred: None,
+            people_fully_vaccinated_per_hundred: None,
+            extreme_poverty: None,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
