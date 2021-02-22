@@ -495,6 +495,12 @@ pub fn process_owid_csv(
             people_fully_vaccinated_per_hundred: Some(
                 owid_record[41].parse::<f64>().unwrap_or_default(),
             ),
+            reproduction_rate: Some(
+                owid_record[16].parse::<f64>().unwrap_or_default(),
+            ),
+            positive_rate: Some(
+                owid_record[31].parse::<f64>().unwrap_or_default(),
+            ),
             extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
         };
         if iso_code.len() <= 3 {
