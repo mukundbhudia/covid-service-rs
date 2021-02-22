@@ -241,6 +241,8 @@ pub fn merge_csv_gis_cases(
                                 .people_vaccinated_per_hundred,
                             peopleFullyVaccinatedPerHundred: country_statistic
                                 .people_fully_vaccinated_per_hundred,
+                            reproductionRate: country_statistic.reproduction_rate,
+                            positiveRate: country_statistic.positive_rate,
                             extremePoverty: country_statistic.extreme_poverty,
                         },
                     );
@@ -335,6 +337,14 @@ pub fn merge_csv_gis_cases(
                     peopleFullyVaccinatedPerHundred: match province {
                         Some(_) => None,
                         None => country_statistic.people_fully_vaccinated_per_hundred,
+                    },
+                    reproductionRate: match province {
+                        Some(_) => None,
+                        None => country_statistic.reproduction_rate,
+                    },
+                    positiveRate: match province {
+                        Some(_) => None,
+                        None => country_statistic.positive_rate,
                     },
                     extremePoverty: country_statistic.extreme_poverty,
                     continent: Some(country_statistic.continent.clone()),
@@ -495,12 +505,8 @@ pub fn process_owid_csv(
             people_fully_vaccinated_per_hundred: Some(
                 owid_record[41].parse::<f64>().unwrap_or_default(),
             ),
-            reproduction_rate: Some(
-                owid_record[16].parse::<f64>().unwrap_or_default(),
-            ),
-            positive_rate: Some(
-                owid_record[31].parse::<f64>().unwrap_or_default(),
-            ),
+            reproduction_rate: Some(owid_record[16].parse::<f64>().unwrap_or_default()),
+            positive_rate: Some(owid_record[31].parse::<f64>().unwrap_or_default()),
             extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
         };
         if iso_code.len() <= 3 {

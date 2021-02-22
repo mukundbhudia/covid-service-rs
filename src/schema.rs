@@ -42,6 +42,8 @@ pub struct GlobalCaseByLocation {
     pub totalVaccinationsPerHundred: Option<f64>,
     pub peopleVaccinatedPerHundred: Option<f64>,
     pub peopleFullyVaccinatedPerHundred: Option<f64>,
+    pub reproductionRate: Option<f64>,
+    pub positiveRate: Option<f64>,
     pub extremePoverty: Option<f64>,
     pub timeStamp: bson::DateTime,
 }
@@ -90,6 +92,8 @@ pub struct CaseByLocation {
     pub totalVaccinationsPerHundred: Option<f64>,
     pub peopleVaccinatedPerHundred: Option<f64>,
     pub peopleFullyVaccinatedPerHundred: Option<f64>,
+    pub reproductionRate: Option<f64>,
+    pub positiveRate: Option<f64>,
     pub extremePoverty: Option<f64>,
 }
 

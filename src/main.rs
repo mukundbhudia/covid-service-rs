@@ -196,6 +196,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         totalVaccinationsPerHundred: global_owid_stats.total_vaccinations_per_hundred,
         peopleVaccinatedPerHundred: global_owid_stats.people_vaccinated_per_hundred,
         peopleFullyVaccinatedPerHundred: global_owid_stats.people_fully_vaccinated_per_hundred,
+        reproductionRate: global_owid_stats.reproduction_rate,
+        positiveRate: global_owid_stats.positive_rate,
         extremePoverty: global_owid_stats.extreme_poverty,
         timeSeriesTotalCasesByDate: global_time_series,
         globalCasesByDate: global_day_cases,
