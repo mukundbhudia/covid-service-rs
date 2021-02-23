@@ -42,6 +42,8 @@ pub struct GlobalCaseByLocation {
     pub totalVaccinationsPerHundred: Option<f64>,
     pub peopleVaccinatedPerHundred: Option<f64>,
     pub peopleFullyVaccinatedPerHundred: Option<f64>,
+    pub reproductionRate: Option<f64>,
+    pub positiveRate: Option<f64>,
     pub extremePoverty: Option<f64>,
     pub timeStamp: bson::DateTime,
 }
@@ -90,6 +92,8 @@ pub struct CaseByLocation {
     pub totalVaccinationsPerHundred: Option<f64>,
     pub peopleVaccinatedPerHundred: Option<f64>,
     pub peopleFullyVaccinatedPerHundred: Option<f64>,
+    pub reproductionRate: Option<f64>,
+    pub positiveRate: Option<f64>,
     pub extremePoverty: Option<f64>,
 }
 
@@ -145,6 +149,8 @@ pub struct CountyStatistic {
     pub total_vaccinations_per_hundred: Option<f64>,
     pub people_vaccinated_per_hundred: Option<f64>,
     pub people_fully_vaccinated_per_hundred: Option<f64>,
+    pub reproduction_rate: Option<f64>,
+    pub positive_rate: Option<f64>,
     pub extreme_poverty: Option<f64>,
 }
 
@@ -173,6 +179,8 @@ impl Default for CountyStatistic {
             total_vaccinations_per_hundred: None,
             people_vaccinated_per_hundred: None,
             people_fully_vaccinated_per_hundred: None,
+            reproduction_rate: None,
+            positive_rate: None,
             extreme_poverty: None,
         }
     }
