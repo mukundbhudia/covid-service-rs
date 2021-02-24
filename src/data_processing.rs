@@ -448,6 +448,16 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
     cases_by_country_map
 }
 
+fn get_parsed_csv_value_given_index(
+    csv_index: usize,
+    owid_record: &csv::StringRecord,
+) -> Option<f64> {
+    match owid_record[csv_index].is_empty() {
+        true => None,
+        false => Some(owid_record[csv_index].parse::<f64>().unwrap_or_default()),
+    }
+}
+
 pub fn process_owid_csv(
     owid_data: String,
 ) -> Result<(HashMap<String, CountyStatistic>, CountyStatistic), Box<dyn Error>> {
@@ -468,39 +478,15 @@ pub fn process_owid_csv(
             country_name: country_name.clone(),
             continent: owid_record[1].to_string(),
             population: population,
-            population_density: match owid_record[45].is_empty() {
-                true => None,
-                false => Some(owid_record[45].parse::<f64>().unwrap_or_default()),
-            },
-            median_age: match owid_record[46].is_empty() {
-                true => None,
-                false => Some(owid_record[46].parse::<f64>().unwrap_or_default()),
-            },
-            aged_65_older: match owid_record[47].is_empty() {
-                true => None,
-                false => Some(owid_record[47].parse::<f64>().unwrap_or_default()),
-            },
-            aged_70_older: match owid_record[48].is_empty() {
-                true => None,
-                false => Some(owid_record[48].parse::<f64>().unwrap_or_default()),
-            },
-            gdp_per_capita: match owid_record[49].is_empty() {
-                true => None,
-                false => Some(owid_record[49].parse::<f64>().unwrap_or_default()),
-            },
-            diabetes_prevalence: match owid_record[52].is_empty() {
-                true => None,
-                false => Some(owid_record[52].parse::<f64>().unwrap_or_default()),
-            },
-            cardiovasc_death_rate: match owid_record[51].is_empty() {
-                true => None,
-                false => Some(owid_record[51].parse::<f64>().unwrap_or_default()),
-            },
+            population_density: get_parsed_csv_value_given_index(45, &owid_record),
+            median_age: get_parsed_csv_value_given_index(46, &owid_record),
+            aged_65_older: get_parsed_csv_value_given_index(47, &owid_record),
+            aged_70_older: get_parsed_csv_value_given_index(48, &owid_record),
+            gdp_per_capita: get_parsed_csv_value_given_index(49, &owid_record),
+            diabetes_prevalence: get_parsed_csv_value_given_index(52, &owid_record),
+            cardiovasc_death_rate: get_parsed_csv_value_given_index(51, &owid_record),
             life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
-            human_development_index: match owid_record[58].is_empty() {
-                true => None,
-                false => Some(owid_record[58].parse::<f64>().unwrap_or_default()),
-            },
+            human_development_index: get_parsed_csv_value_given_index(58, &owid_record),
             total_tests: Some(owid_record[26].parse::<f64>().unwrap_or_default().round() as i64),
             total_tests_per_thousand: Some(owid_record[27].parse::<f64>().unwrap_or_default()),
             total_vaccinations: Some(
