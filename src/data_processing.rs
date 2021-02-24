@@ -243,6 +243,10 @@ pub fn merge_csv_gis_cases(
                                 .people_fully_vaccinated_per_hundred,
                             reproductionRate: country_statistic.reproduction_rate,
                             positiveRate: country_statistic.positive_rate,
+                            femaleSmokers: country_statistic.female_smokers,
+                            maleSmokers: country_statistic.male_smokers,
+                            handwashingFacilities: country_statistic.handwashing_facilities,
+                            hospitalBedsPerThousand: country_statistic.hospital_beds_per_thousand,
                             extremePoverty: country_statistic.extreme_poverty,
                         },
                     );
@@ -345,6 +349,16 @@ pub fn merge_csv_gis_cases(
                     positiveRate: match province {
                         Some(_) => None,
                         None => country_statistic.positive_rate,
+                    },
+                    femaleSmokers: country_statistic.female_smokers,
+                    maleSmokers: country_statistic.male_smokers,
+                    handwashingFacilities: match province {
+                        Some(_) => None,
+                        None => country_statistic.handwashing_facilities,
+                    },
+                    hospitalBedsPerThousand: match province {
+                        Some(_) => None,
+                        None => country_statistic.hospital_beds_per_thousand,
                     },
                     extremePoverty: country_statistic.extreme_poverty,
                     continent: Some(country_statistic.continent.clone()),
@@ -507,6 +521,10 @@ pub fn process_owid_csv(
             ),
             reproduction_rate: Some(owid_record[16].parse::<f64>().unwrap_or_default()),
             positive_rate: Some(owid_record[31].parse::<f64>().unwrap_or_default()),
+            female_smokers: Some(owid_record[53].parse::<f64>().unwrap_or_default()),
+            male_smokers: Some(owid_record[54].parse::<f64>().unwrap_or_default()),
+            handwashing_facilities: Some(owid_record[55].parse::<f64>().unwrap_or_default()),
+            hospital_beds_per_thousand: Some(owid_record[56].parse::<f64>().unwrap_or_default()),
             extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
         };
         if iso_code.len() <= 3 {
