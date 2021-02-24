@@ -243,6 +243,10 @@ pub fn merge_csv_gis_cases(
                                 .people_fully_vaccinated_per_hundred,
                             reproductionRate: country_statistic.reproduction_rate,
                             positiveRate: country_statistic.positive_rate,
+                            femaleSmokers: country_statistic.female_smokers,
+                            maleSmokers: country_statistic.male_smokers,
+                            handwashingFacilities: country_statistic.handwashing_facilities,
+                            hospitalBedsPerThousand: country_statistic.hospital_beds_per_thousand,
                             extremePoverty: country_statistic.extreme_poverty,
                         },
                     );
@@ -259,93 +263,82 @@ pub fn merge_csv_gis_cases(
                 CaseByLocation {
                     idKey: id_key,
                     countryCode: country_code.to_string(),
-                    population: match province {
-                        Some(_) => None,
-                        None => Some(country_statistic.population),
-                    },
+                    population: return_if_no_province(
+                        &province,
+                        Some(country_statistic.population),
+                    ),
                     active: gis_case.Active,
                     confirmed: gis_case.Confirmed,
-                    confirmedPerCapita: match province {
-                        Some(_) => None,
-                        None => confirmed_per_capita,
-                    },
+                    confirmedPerCapita: return_if_no_province(&province, confirmed_per_capita),
                     recovered: gis_case.Recovered,
                     country: csv_case.Country_Region,
                     deaths: gis_case.Deaths,
-                    deathsPerCapita: match province {
-                        Some(_) => None,
-                        None => deaths_per_capita,
-                    },
-                    populationDensity: match province {
-                        Some(_) => None,
-                        None => country_statistic.population_density,
-                    },
-                    medianAge: match province {
-                        Some(_) => None,
-                        None => country_statistic.median_age,
-                    },
-                    aged65older: match province {
-                        Some(_) => None,
-                        None => country_statistic.aged_65_older,
-                    },
-                    aged70older: match province {
-                        Some(_) => None,
-                        None => country_statistic.aged_70_older,
-                    },
+                    deathsPerCapita: return_if_no_province(&province, deaths_per_capita),
+                    populationDensity: return_if_no_province(
+                        &province,
+                        country_statistic.population_density,
+                    ),
+                    medianAge: return_if_no_province(&province, country_statistic.median_age),
+                    aged65older: return_if_no_province(&province, country_statistic.aged_65_older),
+                    aged70older: return_if_no_province(&province, country_statistic.aged_70_older),
                     gdpPerCapita: country_statistic.gdp_per_capita,
-                    diabetesPrevalence: match province {
-                        Some(_) => None,
-                        None => country_statistic.diabetes_prevalence,
-                    },
-                    cardiovascDeathRate: match province {
-                        Some(_) => None,
-                        None => country_statistic.cardiovasc_death_rate,
-                    },
-                    lifeExpectancy: match province {
-                        Some(_) => None,
-                        None => Some(country_statistic.life_expectancy),
-                    },
+                    diabetesPrevalence: return_if_no_province(
+                        &province,
+                        country_statistic.diabetes_prevalence,
+                    ),
+                    cardiovascDeathRate: return_if_no_province(
+                        &province,
+                        country_statistic.cardiovasc_death_rate,
+                    ),
+                    lifeExpectancy: return_if_no_province(
+                        &province,
+                        Some(country_statistic.life_expectancy),
+                    ),
                     humanDevelopmentIndex: country_statistic.human_development_index,
-                    totalTests: match province {
-                        Some(_) => None,
-                        None => country_statistic.total_tests,
-                    },
-                    totalTestsPerThousand: match province {
-                        Some(_) => None,
-                        None => country_statistic.total_tests_per_thousand,
-                    },
-                    totalVaccinations: match province {
-                        Some(_) => None,
-                        None => country_statistic.total_vaccinations,
-                    },
-                    peopleVaccinated: match province {
-                        Some(_) => None,
-                        None => country_statistic.people_vaccinated,
-                    },
-                    peopleFullyVaccinated: match province {
-                        Some(_) => None,
-                        None => country_statistic.people_fully_vaccinated,
-                    },
-                    totalVaccinationsPerHundred: match province {
-                        Some(_) => None,
-                        None => country_statistic.total_vaccinations_per_hundred,
-                    },
-                    peopleVaccinatedPerHundred: match province {
-                        Some(_) => None,
-                        None => country_statistic.people_vaccinated_per_hundred,
-                    },
-                    peopleFullyVaccinatedPerHundred: match province {
-                        Some(_) => None,
-                        None => country_statistic.people_fully_vaccinated_per_hundred,
-                    },
-                    reproductionRate: match province {
-                        Some(_) => None,
-                        None => country_statistic.reproduction_rate,
-                    },
-                    positiveRate: match province {
-                        Some(_) => None,
-                        None => country_statistic.positive_rate,
-                    },
+                    totalTests: return_if_no_province(&province, country_statistic.total_tests),
+                    totalTestsPerThousand: return_if_no_province(
+                        &province,
+                        country_statistic.total_tests_per_thousand,
+                    ),
+                    totalVaccinations: return_if_no_province(
+                        &province,
+                        country_statistic.total_vaccinations,
+                    ),
+                    peopleVaccinated: return_if_no_province(
+                        &province,
+                        country_statistic.people_vaccinated,
+                    ),
+                    peopleFullyVaccinated: return_if_no_province(
+                        &province,
+                        country_statistic.people_fully_vaccinated,
+                    ),
+                    totalVaccinationsPerHundred: return_if_no_province(
+                        &province,
+                        country_statistic.total_vaccinations_per_hundred,
+                    ),
+                    peopleVaccinatedPerHundred: return_if_no_province(
+                        &province,
+                        country_statistic.people_vaccinated_per_hundred,
+                    ),
+                    peopleFullyVaccinatedPerHundred: return_if_no_province(
+                        &province,
+                        country_statistic.people_fully_vaccinated_per_hundred,
+                    ),
+                    reproductionRate: return_if_no_province(
+                        &province,
+                        country_statistic.reproduction_rate,
+                    ),
+                    positiveRate: return_if_no_province(&province, country_statistic.positive_rate),
+                    femaleSmokers: country_statistic.female_smokers,
+                    maleSmokers: country_statistic.male_smokers,
+                    handwashingFacilities: return_if_no_province(
+                        &province,
+                        country_statistic.handwashing_facilities,
+                    ),
+                    hospitalBedsPerThousand: return_if_no_province(
+                        &province,
+                        country_statistic.hospital_beds_per_thousand,
+                    ),
                     extremePoverty: country_statistic.extreme_poverty,
                     continent: Some(country_statistic.continent.clone()),
                     confirmedCasesToday: confirmed_cases_today,
@@ -367,6 +360,13 @@ pub fn merge_csv_gis_cases(
     }
     cases_by_location.extend(countries_with_provinces);
     cases_by_location
+}
+
+fn return_if_no_province<T>(province: &Option<String>, value: Option<T>) -> Option<T> {
+    match province {
+        Some(_) => None,
+        None => value,
+    }
 }
 
 pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, Case> {
@@ -434,6 +434,16 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
     cases_by_country_map
 }
 
+fn get_parsed_csv_value_given_index(
+    csv_index: usize,
+    owid_record: &csv::StringRecord,
+) -> Option<f64> {
+    match owid_record[csv_index].is_empty() {
+        true => None,
+        false => Some(owid_record[csv_index].parse::<f64>().unwrap_or_default()),
+    }
+}
+
 pub fn process_owid_csv(
     owid_data: String,
 ) -> Result<(HashMap<String, CountyStatistic>, CountyStatistic), Box<dyn Error>> {
@@ -454,39 +464,15 @@ pub fn process_owid_csv(
             country_name: country_name.clone(),
             continent: owid_record[1].to_string(),
             population: population,
-            population_density: match owid_record[45].is_empty() {
-                true => None,
-                false => Some(owid_record[45].parse::<f64>().unwrap_or_default()),
-            },
-            median_age: match owid_record[46].is_empty() {
-                true => None,
-                false => Some(owid_record[46].parse::<f64>().unwrap_or_default()),
-            },
-            aged_65_older: match owid_record[47].is_empty() {
-                true => None,
-                false => Some(owid_record[47].parse::<f64>().unwrap_or_default()),
-            },
-            aged_70_older: match owid_record[48].is_empty() {
-                true => None,
-                false => Some(owid_record[48].parse::<f64>().unwrap_or_default()),
-            },
-            gdp_per_capita: match owid_record[49].is_empty() {
-                true => None,
-                false => Some(owid_record[49].parse::<f64>().unwrap_or_default()),
-            },
-            diabetes_prevalence: match owid_record[52].is_empty() {
-                true => None,
-                false => Some(owid_record[52].parse::<f64>().unwrap_or_default()),
-            },
-            cardiovasc_death_rate: match owid_record[51].is_empty() {
-                true => None,
-                false => Some(owid_record[51].parse::<f64>().unwrap_or_default()),
-            },
+            population_density: get_parsed_csv_value_given_index(45, &owid_record),
+            median_age: get_parsed_csv_value_given_index(46, &owid_record),
+            aged_65_older: get_parsed_csv_value_given_index(47, &owid_record),
+            aged_70_older: get_parsed_csv_value_given_index(48, &owid_record),
+            gdp_per_capita: get_parsed_csv_value_given_index(49, &owid_record),
+            diabetes_prevalence: get_parsed_csv_value_given_index(52, &owid_record),
+            cardiovasc_death_rate: get_parsed_csv_value_given_index(51, &owid_record),
             life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
-            human_development_index: match owid_record[58].is_empty() {
-                true => None,
-                false => Some(owid_record[58].parse::<f64>().unwrap_or_default()),
-            },
+            human_development_index: get_parsed_csv_value_given_index(58, &owid_record),
             total_tests: Some(owid_record[26].parse::<f64>().unwrap_or_default().round() as i64),
             total_tests_per_thousand: Some(owid_record[27].parse::<f64>().unwrap_or_default()),
             total_vaccinations: Some(
@@ -507,6 +493,10 @@ pub fn process_owid_csv(
             ),
             reproduction_rate: Some(owid_record[16].parse::<f64>().unwrap_or_default()),
             positive_rate: Some(owid_record[31].parse::<f64>().unwrap_or_default()),
+            female_smokers: Some(owid_record[53].parse::<f64>().unwrap_or_default()),
+            male_smokers: Some(owid_record[54].parse::<f64>().unwrap_or_default()),
+            handwashing_facilities: Some(owid_record[55].parse::<f64>().unwrap_or_default()),
+            hospital_beds_per_thousand: Some(owid_record[56].parse::<f64>().unwrap_or_default()),
             extreme_poverty: Some(owid_record[51].parse::<f64>().unwrap_or_default()),
         };
         if iso_code.len() <= 3 {
