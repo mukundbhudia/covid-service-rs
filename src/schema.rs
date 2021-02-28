@@ -24,7 +24,7 @@ pub struct GlobalCaseByLocation {
     pub dateOfFirstDeath: Option<String>,
     pub highestDailyConfirmed: HighestCase,
     pub highestDailyDeaths: HighestCase,
-    pub globalPopulation: i64,
+    pub population: i64,
     pub populationDensity: Option<f64>,
     pub medianAge: Option<f64>,
     pub aged65older: Option<f64>,

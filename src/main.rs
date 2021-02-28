@@ -178,7 +178,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         deathsToday: global_deaths_today,
         confirmedPerCapita: global_confirmed_per_capita,
         deathsPerCapita: global_deaths_per_capita,
-        globalPopulation: global_population,
+        population: global_population,
         populationDensity: global_owid_stats.population_density,
         medianAge: global_owid_stats.median_age,
         aged65older: global_owid_stats.aged_65_older,
