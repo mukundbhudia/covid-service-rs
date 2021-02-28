@@ -450,6 +450,8 @@ pub fn process_owid_csv(
     let mut owid_csv_reader = csv::Reader::from_reader(owid_data.as_bytes());
     let mut county_and_statistic: HashMap<String, CountyStatistic> = HashMap::new();
     let mut global_owid_stats = CountyStatistic::default();
+    let mut global_total_tests = 0;
+    let mut global_total_tests_per_thousand = 0.0;
 
     for owid_record in owid_csv_reader.records() {
         let owid_record = owid_record?;
@@ -459,6 +461,12 @@ pub fn process_owid_csv(
         };
         let country_name = patch_country_names(owid_record[2].to_string());
         let population = owid_record[44].parse::<f64>().unwrap_or_default().round() as i64;
+        let total_tests = owid_record[26].parse::<f64>().unwrap_or_default().round() as i64;
+        let total_tests_per_thousand = owid_record[27].parse::<f64>().unwrap_or_default();
+        // We add these separately fro global as OWID does not include it at the moment
+        global_total_tests += total_tests;
+        global_total_tests_per_thousand += total_tests_per_thousand;
+
         let country_statistic = CountyStatistic {
             iso_code: iso_code.clone(),
             country_name: country_name.clone(),
@@ -473,8 +481,8 @@ pub fn process_owid_csv(
             cardiovasc_death_rate: get_parsed_csv_value_given_index(51, &owid_record),
             life_expectancy: owid_record[57].parse::<f64>().unwrap_or_default(),
             human_development_index: get_parsed_csv_value_given_index(58, &owid_record),
-            total_tests: Some(owid_record[26].parse::<f64>().unwrap_or_default().round() as i64),
-            total_tests_per_thousand: Some(owid_record[27].parse::<f64>().unwrap_or_default()),
+            total_tests: Some(total_tests),
+            total_tests_per_thousand: Some(total_tests_per_thousand),
             total_vaccinations: Some(
                 owid_record[34].parse::<f64>().unwrap_or_default().round() as i64
             ),
@@ -504,6 +512,8 @@ pub fn process_owid_csv(
             county_and_statistic.insert(country_name, country_statistic);
         } else if iso_code == "OWID_WRL" {
             global_owid_stats = country_statistic;
+            global_owid_stats.total_tests = Some(global_total_tests);
+            global_owid_stats.total_tests_per_thousand = Some(global_total_tests_per_thousand);
         }
     }
 
