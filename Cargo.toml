@@ -1,6 +1,6 @@
 [package]
 name = "covid-service-rs"
-version = "1.2.2"
+version = "1.2.3"
 authors = ["Mukund Bhudia <mukund_bhudia@hotmail.com>"]
 edition = "2018"
 
