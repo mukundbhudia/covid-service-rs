@@ -15,7 +15,7 @@ use data_processing::{
 };
 use data_sources::get_data_from_sources;
 use logging::initialise_logging;
-use schema::{Case, CaseByLocation, GlobalCaseByLocation, GlobalDayCase, Region, TimeSeriesCase};
+use schema::{Case, CaseByLocation, GlobalCaseByLocation, Region, TimeSeriesCase};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -137,10 +137,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let global_day_cases =
         process_global_cases_by_date(&cases_by_location_map, &global_time_series_map);
-    let global_day_cases = global_day_cases
-        .values()
-        .cloned()
-        .collect::<Vec<GlobalDayCase>>();
+
+    // Due to BSON size constraint of 16MB, we only store the last global day case
+    let global_day_cases = vec![global_day_cases.values().last().unwrap().clone()];
 
     let cases_by_location = cases_by_location_map
         .values()
