@@ -6,7 +6,7 @@ use log4rs::{
     filter::threshold::ThresholdFilter,
 };
 
-pub fn initialise_logging() -> () {
+pub fn initialise_logging() {
     let logging_file_path = "log/output.log";
     let logging_time_format = "{d(%d-%m-%Y %H:%M:%S)}::{l}: {m}{n}";
     let logging_level = LevelFilter::Info;

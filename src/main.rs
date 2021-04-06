@@ -1,4 +1,3 @@
-use ::std::io::Write;
 use chrono::{DateTime, Utc};
 use log::{debug, error, info, warn};
 use mongodb::{bson, Client};
@@ -28,18 +27,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let args = std::env::args().collect::<Vec<String>>();
 
     if args.len() != 3 {
-        writeln!(std::io::stderr(), "Incorrect number of arguments supplied.").unwrap();
-        writeln!(
-            std::io::stderr(),
-            "Usage: covid-service-rs \"DB_URI\" \"DB_NAME\""
-        )
-        .unwrap();
-        writeln!(
-            std::io::stderr(),
-            "Example: {} \"mongodb://localhost:27017/\" \"covid19\". For connection to local mongoDb instance to the database: covid19.",
-            args[0]
-        )
-        .unwrap();
+        eprintln!("Incorrect number of arguments supplied.");
+        eprintln!("Usage: covid-service-rs \"DB_URI\" \"DB_NAME\"");
+        eprintln!("Example: {} \"mongodb://localhost:27017/\" \"covid19\". For connection to local mongoDb instance to the database: covid19.", args[0]);
         std::process::exit(1);
     }
 

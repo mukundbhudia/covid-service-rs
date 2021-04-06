@@ -23,10 +23,10 @@ pub fn hyphenate_string(s: String) -> String {
     .replace(' ', "-")
 }
 
-pub fn generate_id_key(province: &Option<String>, country: &String) -> String {
+pub fn generate_id_key(province: &Option<String>, country: &str) -> String {
     country.to_lowercase();
     let country = hyphenate_string(country.to_string());
-    if country.len() > 0 {
+    if !country.is_empty() {
         if let Some(province) = province {
             if province == "Unknown" {
                 country
@@ -117,10 +117,7 @@ pub fn merge_csv_gis_cases(
             let confirmed_cases_today = force_to_zero_if_negative(
                 gis_case.Confirmed - csv_case.cases.last().unwrap().confirmed,
             );
-            let last_updated = match gis_case.Last_Update {
-                Some(time_stamp) => time_stamp,
-                None => 0,
-            };
+            let last_updated = gis_case.Last_Update.unwrap_or(0);
             let deaths_today =
                 force_to_zero_if_negative(gis_case.Deaths - csv_case.cases.last().unwrap().deaths);
 
@@ -471,7 +468,7 @@ pub fn process_owid_csv(
             iso_code: iso_code.clone(),
             country_name: country_name.clone(),
             continent: owid_record[1].to_string(),
-            population: population,
+            population,
             population_density: get_parsed_csv_value_given_index(45, &owid_record),
             median_age: get_parsed_csv_value_given_index(46, &owid_record),
             aged_65_older: get_parsed_csv_value_given_index(47, &owid_record),
@@ -736,7 +733,7 @@ pub fn process_csv(
             global_deaths,
             force_to_zero_if_negative(global_confirmed_today),
             force_to_zero_if_negative(global_deaths_today),
-            today.to_string(),
+            today,
         );
         time_series_cases_map.insert(last_day_index + 1, current_time_series_case);
     }
@@ -772,10 +769,9 @@ pub fn process_global_cases_by_date(
     time_series_cases_map: &BTreeMap<usize, TimeSeriesCase>,
 ) -> BTreeMap<usize, GlobalDayCase> {
     let mut global_cases_by_date: BTreeMap<usize, GlobalDayCase> = BTreeMap::new();
-    let mut i = 0;
-    for (_ts_key, ts_case) in time_series_cases_map {
+    for (i, (_ts_key, ts_case)) in time_series_cases_map.iter().enumerate() {
         let day = &ts_case.day;
-        for (_case_key, country_case) in cases {
+        for country_case in cases.values() {
             if country_case.province.is_none()
                 || country_case.province == Some("mainland".to_string())
                 || country_case.province == Some("Greenland".to_string())
@@ -805,7 +801,6 @@ pub fn process_global_cases_by_date(
                 }
             }
         }
-        i += 1;
     }
     global_cases_by_date
 }
