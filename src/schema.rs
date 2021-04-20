@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Eq)]
 pub enum Region {
     Global,
-    US,
+    UnitedStates,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

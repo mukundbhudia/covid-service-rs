@@ -551,7 +551,7 @@ pub fn process_csv(
     let mut first_day_csv_header_index = 4;
 
     // US CSV has extra columns compared to global CSV
-    if region == Region::US {
+    if region == Region::UnitedStates {
         country_csv_header_index = 7;
         province_csv_header_index = 6;
         latitude_csv_header_index = 8;
@@ -607,7 +607,7 @@ pub fn process_csv(
                 confirmed_record[i - 1].parse::<i64>().unwrap_or_default();
             // US death cases CSV has an extra column before dates and so needs to be shifted
             let deaths_index = match region {
-                Region::US => i + 1,
+                Region::UnitedStates => i + 1,
                 _ => i,
             };
             let death_cases = deaths_record[deaths_index]

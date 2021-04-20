@@ -94,7 +94,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let (us_processed_csv, _, _) = process_csv(
         confirmed_us_cases,
         deaths_us_cases,
-        Region::US,
+        Region::UnitedStates,
         today_m_d_y.to_string(),
         None,
     )?;
