@@ -74,14 +74,8 @@ fn get_highest_confirmed_and_deaths(
             count: max_daily_deaths.deathsToday,
             date: Some(max_daily_deaths.day.clone()),
         },
-        match first_case {
-            Some(ts_case) => Some(ts_case.day.clone()),
-            None => None,
-        },
-        match first_death {
-            Some(ts_case) => Some(ts_case.day.clone()),
-            None => None,
-        },
+        first_case.map(|ts_case| ts_case.day.clone()),
+        first_death.map(|ts_case| ts_case.day.clone()),
     )
 }
 
