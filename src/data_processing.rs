@@ -511,27 +511,26 @@ pub fn process_owid_csv(
     Ok((county_and_statistic, global_owid_stats))
 }
 
+type ProcessedCsv = (
+    HashMap<String, CsvCase>,
+    BTreeMap<usize, TimeSeriesCase>,
+    (
+        Option<String>,
+        Option<String>,
+        HighestCase,
+        HighestCase,
+        f64,
+        f64,
+    ),
+);
+
 pub fn process_csv(
     confirmed: String,
     deaths: String,
     region: Region,
     today: String,
     global_current_cases: Option<(i64, i64, i64)>,
-) -> Result<
-    (
-        HashMap<String, CsvCase>,
-        BTreeMap<usize, TimeSeriesCase>,
-        (
-            Option<String>,
-            Option<String>,
-            HighestCase,
-            HighestCase,
-            f64,
-            f64,
-        ),
-    ),
-    Box<dyn Error>,
-> {
+) -> Result<ProcessedCsv, Box<dyn Error>> {
     let mut cases: HashMap<String, CsvCase> = HashMap::new();
     let mut countries_encountered: HashSet<String> = HashSet::new();
     let mut time_series_cases_map: BTreeMap<usize, TimeSeriesCase> = BTreeMap::new();
