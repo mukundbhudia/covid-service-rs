@@ -386,7 +386,7 @@ pub fn process_cases_by_country(cases_by_country: Vec<Case>) -> HashMap<String, 
             _ => &case_by_country.Province_State,
         };
 
-        let mut id_key = generate_id_key(&province_state, &country_name);
+        let mut id_key = generate_id_key(province_state, &country_name);
         let mainland_id_key = generate_id_key(&Some("mainland".to_string()), &country_name);
 
         if let Some(province_name) = &case_by_country.Province_State {
