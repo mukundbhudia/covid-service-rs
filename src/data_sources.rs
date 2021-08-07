@@ -103,19 +103,19 @@ pub async fn get_data_from_sources() -> Result<
 
     let get_global_confirmed_task = tokio::spawn(async move {
         let total_confirmed_response = reqwest::get(&total_confirmed_url).await.unwrap();
-        let total_confirmed: Total = total_confirmed_response.json().await.unwrap();
+        let total_confirmed: Total = total_confirmed_response.json().await.unwrap_or_default();
         total_confirmed.features[0].attributes.value
     });
 
     let get_global_recovered_task = tokio::spawn(async move {
         let total_recovered_response = reqwest::get(&total_recovered_url).await.unwrap();
-        let total_recovered: Total = total_recovered_response.json().await.unwrap();
+        let total_recovered: Total = total_recovered_response.json().await.unwrap_or_default();
         total_recovered.features[0].attributes.value
     });
 
     let get_global_deaths_task = tokio::spawn(async move {
         let total_deaths_response = reqwest::get(&total_deaths_url).await.unwrap();
-        let total_deaths: Total = total_deaths_response.json().await.unwrap();
+        let total_deaths: Total = total_deaths_response.json().await.unwrap_or_default();
         total_deaths.features[0].attributes.value
     });
 

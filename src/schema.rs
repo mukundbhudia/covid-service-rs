@@ -266,7 +266,7 @@ pub struct HighestCase {
     pub date: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 pub struct TotalsValue {
     pub value: i64,
 }
@@ -279,6 +279,16 @@ pub struct TotalsAttributes {
 #[derive(Deserialize, Debug)]
 pub struct Total {
     pub features: Vec<TotalsAttributes>,
+}
+
+impl Default for Total {
+    fn default() -> Self {
+        Total {
+            features: vec![TotalsAttributes {
+                attributes: TotalsValue::default(),
+            }],
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Clone)]
