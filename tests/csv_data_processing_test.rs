@@ -812,7 +812,7 @@ fn basic_process_2_countries_4_days_12_confirmed_10_deaths_global_csv() {
             deaths: a.deaths + b.deaths,
             confirmedCasesToday: a.confirmedCasesToday + b.confirmedCasesToday,
             deathsToday: a.deathsToday + b.deathsToday,
-            day: a.day.clone(),
+            day: a.day,
         })
         .collect::<Vec<TimeSeriesCase>>();
     let expected_time_series_map = (first_day_csv_index..)
@@ -1040,7 +1040,7 @@ Falkland Islands (Malvinas),United Kingdom,-51.7963,-59.5236,0,0,1,2"
                 + b.confirmedCasesToday
                 + c.confirmedCasesToday,
             deathsToday: a.deathsToday + b.deathsToday + c.deathsToday,
-            day: a.day.clone(),
+            day: a.day,
         })
         .collect::<Vec<TimeSeriesCase>>();
     let expected_time_series_map = (first_day_csv_index..)
