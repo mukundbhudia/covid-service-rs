@@ -24,8 +24,7 @@ pub fn hyphenate_string(s: String) -> String {
 }
 
 pub fn generate_id_key(province: &Option<String>, country: &str) -> String {
-    country.to_lowercase();
-    let country = hyphenate_string(country.to_string());
+    let country = hyphenate_string(country.to_lowercase());
     if !country.is_empty() {
         if let Some(province) = province {
             if province == "Unknown" {

@@ -198,7 +198,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         dateOfFirstDeath: date_of_first_death,
         highestDailyConfirmed: highest_daily_confirmed,
         highestDailyDeaths: highest_daily_deaths,
-        timeStamp: From::from(Utc::now()),
+        timeStamp: bson::DateTime::now(),
     };
 
     let core_processing_time_stop = Utc::now().time();
