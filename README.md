@@ -7,9 +7,9 @@ Collects, processes and aggregates live COVID-19, and historical time series dat
 
 This is a conversion of the (now archived) JavaScript https://github.com/mukundbhudia/covid-service project into a Rust project.
 
-The target environment (for my personal use case) will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (aarch64-unknown-linux-gnu). However any environment that supports the Rust toolchain should suffice. The service will run as a cron task at regular intervals for example every 20 minutes.
+The target environment (for my personal use case) will be a Raspberry Pi 4 Model B running Ubuntu 20.04 (`aarch64-unknown-linux-gnu`). However any environment that supports the Rust toolchain should suffice. The service will run as a cron task at regular intervals for example every 20 minutes.
 
-**Note**: only Linux & OS X environments with aarch64 & x86_64 architectures have been tested though.
+**Note**: only Linux & OS X environments with `aarch64` & `x86_64` architectures have been tested though.
 
 ## Pre-requisites
 
@@ -46,12 +46,16 @@ The target environment (for my personal use case) will be a Raspberry Pi 4 Model
 
 - To run **all** your tests, within the repo directory run `cargo t`. This will run all tests in the `/tests` directory.
 - To run test a **specific** test such as `/tests/my_test.rs`, within the repo directory run `cargo t --test my_test`.
+- To run ignored tests, run `cargo t -- --ignored`.
 
 ## Installation
 
-- If there is a [release asset](https://github.com/mukundbhudia/covid-service-rs/releases) for your target platform, you can run a command like `wget -q -O tmp.zip https://github.com/mukundbhudia/covid-service-rs/releases/download/<my_version_here>/covid-service-rs_aarch64-unknown-linux-gnu.zip && unzip -o tmp.zip && rm tmp.zip && strip covid-service-rs && mv covid-service-rs /home/ubuntu/.cargo/bin/covid-service-rs` (where `<my_version_here>` is the tagged version e.g. `v1.0.3`) to have the binary placed in the cargo bin folder.
+- If there is a [release asset](https://github.com/mukundbhudia/covid-service-rs/releases) for your target platform, you can run a command like `wget -q -O tmp.zip https://github.com/mukundbhudia/covid-service-rs/releases/latest/download/covid-service-rs_aarch64-unknown-linux-gnu.zip && unzip -o tmp.zip && rm tmp.zip && strip covid-service-rs && mv covid-service-rs /home/ubuntu/.cargo/bin/covid-service-rs` to have the binary placed in the cargo bin folder.
+
 - For a fresh build and install on your target environment, run `cargo install --path .` within the repo directory. Then `covid-service-rs` will be moved to your cargo bin directory and will be callable throughout your host environment as a standard binary.
+
 - To install as a cron task, an example entry under `crontab -e` to run the service every 20 minutes would be `*/20 * * * *    /home/my-user-name/.cargo/bin/covid-service-rs "mongodb://localhost:27017/" "covid19"`
+
 - Subsequent upgrades would then only require a `git pull` and `cargo install --path .` to be run again to build and move the binary to cargo bin.
 
 ## Advanced builds (cross-compilation)
