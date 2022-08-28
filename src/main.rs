@@ -1,6 +1,9 @@
 use chrono::{DateTime, Utc};
 use log::{debug, error, info, warn};
-use mongodb::{bson, Client};
+use mongodb::{
+    bson::{self, doc},
+    Client, Collection, IndexModel,
+};
 use std::error::Error;
 
 pub mod data_processing;
@@ -40,7 +43,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let client = Client::with_uri_str(db_uri).await?;
     let db = client.database(db_name);
-    let cases_collection = db.collection("casesByLocation");
+    let cases_collection: Collection<bson::Document> = db.collection("casesByLocation");
     let totals_collection = db.collection("totals");
     let max_db_execution_seconds = 60;
 
@@ -225,6 +228,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .insert_many(processed_cases_by_location, None)
             .await
             .unwrap();
+
+        // Build up indexes for collection
+        let index_model = vec![
+            IndexModel::builder().keys(doc! {"province": 1}).build(),
+            IndexModel::builder().keys(doc! {"country": 1}).build(),
+        ];
+        // Add indexes to newly created collection
+        cases_collection
+            .create_indexes(index_model, None)
+            .await
+            .expect("error creating index");
     });
 
     tokio::try_join!(save_to_db_totals_task, save_to_db_cases_task)?;
